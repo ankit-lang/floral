@@ -1,0 +1,124 @@
+<div class="w-full max-w-7xl mx-auto px-4 py-12 animate-on-scroll" id="product-tabs-{{ section.id }}">
+  <div class="text-center mb-8">
+    <h2 class="text-3xl font-bold text-gray-900 mb-6">{{ section.settings.title | default: 'Featured Collections' }}</h2>
+    
+    <!-- Tabs Navigation -->
+    <div class="flex flex-wrap justify-center gap-2 md:gap-4 mb-8">
+      <button class="tab-btn active px-6 py-2 rounded-full border-2 border-secondary bg-secondary text-white font-medium transition-colors" data-target="tab-1">Trending</button>
+      <button class="tab-btn px-6 py-2 rounded-full border-2 border-gray-200 text-gray-600 hover:border-secondary hover:text-secondary font-medium transition-colors" data-target="tab-2">Bestsellers</button>
+      <button class="tab-btn px-6 py-2 rounded-full border-2 border-gray-200 text-gray-600 hover:border-secondary hover:text-secondary font-medium transition-colors" data-target="tab-3">New Arrivals</button>
+    </div>
+  </div>
+
+  <!-- Tab Content Area -->
+  <div class="relative">
+    
+    <!-- Tab 1 -->
+    <div id="tab-1" class="tab-content block">
+      <div class="flex overflow-x-auto hide-scrollbar space-x-6 pb-6">
+        {%- assign collection = collections['all'] -%}
+        {%- if collection != blank and collection.products_count > 0 -%}
+          {%- for product in collection.products limit: 6 -%}
+            <div class="min-w-[260px] w-[260px] flex-shrink-0">
+               {% render 'product-card', product_card_product: product %}
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          {% for i in (1..6) %}
+            <div class="min-w-[260px] w-[260px] flex-shrink-0">
+               {% render 'magic-card', title: 'Trending Item', subtitle: '₹999' %}
+            </div>
+          {% endfor %}
+        {%- endif -%}
+      </div>
+    </div>
+
+    <!-- Tab 2 -->
+    <div id="tab-2" class="tab-content hidden">
+      <div class="flex overflow-x-auto hide-scrollbar space-x-6 pb-6">
+        {%- assign collection = collections['all'] -%}
+        {%- if collection != blank and collection.products_count > 0 -%}
+          {%- for product in collection.products limit: 6 offset: 4 -%}
+            <div class="min-w-[260px] w-[260px] flex-shrink-0">
+               {% render 'product-card', product_card_product: product %}
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          {% for i in (1..6) %}
+            <div class="min-w-[260px] w-[260px] flex-shrink-0">
+               {% render 'magic-card', title: 'Bestseller Item', subtitle: '₹1499' %}
+            </div>
+          {% endfor %}
+        {%- endif -%}
+      </div>
+    </div>
+
+    <!-- Tab 3 -->
+    <div id="tab-3" class="tab-content hidden">
+      <div class="flex overflow-x-auto hide-scrollbar space-x-6 pb-6">
+        {%- assign collection = collections['all'] -%}
+        {%- if collection != blank and collection.products_count > 0 -%}
+          {%- for product in collection.products limit: 6 offset: 8 -%}
+            <div class="min-w-[260px] w-[260px] flex-shrink-0">
+               {% render 'product-card', product_card_product: product %}
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          {% for i in (1..6) %}
+            <div class="min-w-[260px] w-[260px] flex-shrink-0">
+               {% render 'magic-card', title: 'New Arrival', subtitle: '₹799' %}
+            </div>
+          {% endfor %}
+        {%- endif -%}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const section = document.getElementById('product-tabs-{{ section.id }}');
+    if(!section) return;
+    
+    const btns = section.querySelectorAll('.tab-btn');
+    const contents = section.querySelectorAll('.tab-content');
+
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Reset all
+        btns.forEach(b => {
+          b.classList.remove('bg-secondary', 'text-white', 'border-secondary');
+          b.classList.add('border-gray-200', 'text-gray-600');
+        });
+        contents.forEach(c => c.classList.add('hidden'));
+
+        // Activate clicked
+        btn.classList.remove('border-gray-200', 'text-gray-600');
+        btn.classList.add('bg-secondary', 'text-white', 'border-secondary');
+        
+        const target = section.querySelector('#' + btn.dataset.target);
+        if(target) target.classList.remove('hidden');
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Product Tabs Slider",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Featured Collections"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Tabs Slider"
+    }
+  ]
+}
+{% endschema %}

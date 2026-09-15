@@ -1,0 +1,71 @@
+<!-- Same Day / Midnight Delivery Page -->
+<section class="max-w-7xl mx-auto px-4 py-8">
+
+  <!-- Urgency Hero -->
+  <div class="relative rounded-3xl overflow-hidden min-h-[320px] md:min-h-[380px] flex items-center justify-center py-12 mb-10" style="animation:headerIn 0.8s ease forwards;">
+    <div class="absolute inset-0 bg-gradient-to-br from-red-600 via-red-500 to-orange-400"></div>
+    <div class="relative z-10 flex flex-col items-center justify-center text-center text-white px-6">
+      <h1 class="text-4xl md:text-5xl font-serif font-bold mb-3">Same Day & Midnight Delivery</h1>
+      <p class="text-lg text-white/80 max-w-xl mb-6">Order before 4 PM for guaranteed same-day delivery. Midnight surprises available in 500+ cities.</p>
+      <div class="flex flex-wrap gap-3 justify-center">
+        <span class="bg-white/20 backdrop-blur-sm text-white text-sm font-bold px-5 py-2 rounded-full"> Same Day Before 4PM</span>
+        <span class="bg-white/20 backdrop-blur-sm text-white text-sm font-bold px-5 py-2 rounded-full"> Midnight 11PM–12AM</span>
+        <span class="bg-white/20 backdrop-blur-sm text-white text-sm font-bold px-5 py-2 rounded-full"> Express 2-Hour Slot</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Service Badges -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12 anim-up">
+    <div class="bg-red-50 rounded-2xl p-6 text-center border border-red-100">
+      <span class="text-4xl mb-3 block"></span>
+      <h3 class="text-lg font-bold text-gray-900 mb-1">Same Day Delivery</h3>
+      <p class="text-sm text-gray-600">Order by 4 PM, receive by evening. Available across India.</p>
+    </div>
+    <div class="bg-violet-50 rounded-2xl p-6 text-center border border-violet-100">
+      <span class="text-4xl mb-3 block"></span>
+      <h3 class="text-lg font-bold text-gray-900 mb-1">Midnight Delivery</h3>
+      <p class="text-sm text-gray-600">Surprise at the stroke of midnight. 11 PM – 12 AM delivery window.</p>
+    </div>
+    <div class="bg-amber-50 rounded-2xl p-6 text-center border border-amber-100">
+      <span class="text-4xl mb-3 block"></span>
+      <h3 class="text-lg font-bold text-gray-900 mb-1">Combo Specials</h3>
+      <p class="text-sm text-gray-600">Flowers + Cake + Balloon combos curated for instant celebration.</p>
+    </div>
+  </div>
+
+  <!-- Express Product Grid -->
+  <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6 anim-left">
+    <h2 class="text-2xl font-serif font-bold text-gray-900">Express Delivery Products</h2>
+    {% render 'sort-by-box', target_grid_id: 'express-product-grid' %}
+  </div>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-10 anim-left product-grid tier-product-grid" id="express-product-grid" data-limit="9999">
+    {% assign display_collection = collections[section.settings.express_collection] %}
+    {% if display_collection == blank or display_collection.products.size == 0 %}
+      {% assign display_collection = collections['all'] %}
+    {% endif %}
+
+    {% for product in display_collection.products %}
+      <div class="anim-scale stagger-{{ forloop.index | modulo: 6 | plus: 1 }}">
+        {% render 'product-card', product_card_product: product %}
+      </div>
+    {% else %}
+      <p class="text-gray-500 col-span-2 md:col-span-4 text-center py-10">No products found. Please add products to your store.</p>
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Same Day Hero",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "express_collection",
+      "label": "Express Delivery Collection",
+      "info": "Select a collection to display in the grid. If empty, the 'All' collection will be shown."
+    }
+  ],
+  "presets": [{ "name": "Same Day Hero" }]
+}
+{% endschema %}

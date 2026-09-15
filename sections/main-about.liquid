@@ -1,0 +1,239 @@
+{% style %}
+  .bg-forest { background-color: #1b3b2b; }
+  .text-forest { color: #1b3b2b; }
+  .text-gold { color: #d4af37; }
+  .border-gold { border-color: #d4af37; }
+  .bg-gold { background-color: #d4af37; }
+  
+  /* Animations */
+  .fade-up { opacity: 0; transform: translateY(40px); transition: all 1s ease-out; }
+  .fade-up.in-view { opacity: 1; transform: translateY(0); }
+  
+  .fade-in { opacity: 0; transition: all 1.5s ease-out; }
+  .fade-in.in-view { opacity: 1; }
+
+  /* Map line drawing */
+  .map-path { stroke-dasharray: 1000; stroke-dashoffset: 1000; transition: stroke-dashoffset 2s ease-in-out; }
+  .map-path.in-view { stroke-dashoffset: 0; }
+  
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+{% endstyle %}
+
+{%- capture hero_bg -%}
+  {%- if section.settings.hero_image != blank -%}
+    {{ section.settings.hero_image | img_url: 'master' }}
+  {%- else -%}
+    {{ 'banner.jpg' | file_url }}
+  {%- endif -%}
+{%- endcapture -%}
+
+<!-- 1. Hero Image Section (Parallax) -->
+<section class="relative w-full h-[600px] md:h-[800px] overflow-hidden bg-cover bg-center bg-no-repeat bg-fixed" style="background-image: url('{{ hero_bg | strip }}');">
+  <div class="absolute inset-0 bg-forest/60 z-10 flex flex-col items-center justify-center text-center px-4">
+    <h1 class="text-4xl md:text-6xl lg:text-7xl font-serif text-white mb-6 drop-shadow-lg" style="animation: fadeInUp 0.8s ease forwards;"> About Floral India</h1>
+    
+  </div>
+</section>
+
+<!-- 2. Split Screen: About Floral India -->
+<section class="py-24 bg-white overflow-hidden">
+  <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+    <div class="fade-up">
+      <h2 class="text-3xl md:text-5xl font-serif text-forest mb-6">About Floral India</h2>
+      <div class="w-16 h-1 bg-gold mb-8"></div>
+      <p class="text-gray-600 leading-relaxed mb-6">At Floral India, we believe that every gift tells a story. A bouquet celebrates love, a gift hamper expresses gratitude, and every thoughtful delivery creates a lasting memory. Our mission is simple—to help people stay connected with those they cherish, no matter where they are in the world.</p>
+      <p class="text-gray-600 leading-relaxed">With years of expertise in domestic and international floral and gifting solutions, Floral India has grown into a trusted global gifting partner, delivering flowers, cakes, gourmet hampers, plants, and personalized gifts across hundreds of destinations worldwide. Whether it's a birthday in India, an anniversary in London, a wedding in Dubai, or a celebration in New York, we ensure every gift arrives fresh, beautiful, and on time.</p>
+    </div>
+    <div class="fade-up relative" style="transition-delay: 0.2s">
+      <div class="absolute inset-0 bg-gold transform translate-x-4 translate-y-4 rounded-tl-[4rem] rounded-br-[4rem]"></div>
+      {%- if section.settings.about_image != blank -%}
+        <img src="{{ section.settings.about_image | img_url: '1000x' }}" alt="Floral Arrangement" class="relative w-full h-[600px] object-cover rounded-tl-[4rem] rounded-br-[4rem] shadow-2xl">
+      {%- else -%}
+        <img src="https://cdn.shopify.com/s/files/1/0748/1766/7150/files/cellImage_1632884507_241.jpg?v=1783505578" alt="Floral Arrangement" class="relative w-full h-[600px] object-cover rounded-tl-[4rem] rounded-br-[4rem] shadow-2xl">
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<!-- 2b. Split Screen: Trusted Partner (Reversed) -->
+<section class="py-24 bg-gray-50 overflow-hidden">
+  <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+    <div class="fade-up relative order-2 md:order-1">
+      <div class="absolute inset-0 bg-forest transform -translate-x-4 translate-y-4 rounded-tr-[4rem] rounded-bl-[4rem]"></div>
+      {%- if section.settings.partner_image != blank -%}
+        <img src="{{ section.settings.partner_image | img_url: '1000x' }}" alt="Corporate Gifting" class="relative w-full h-[500px] object-cover rounded-tr-[4rem] rounded-bl-[4rem] shadow-2xl">
+      {%- else -%}
+        <img src="https://cdn.shopify.com/s/files/1/0748/1766/7150/files/cellImage_1632884507_241.jpg?v=1783505578" alt="Corporate Gifting" class="relative w-full h-[500px] object-cover rounded-tr-[4rem] rounded-bl-[4rem] shadow-2xl">
+      {%- endif -%}
+    </div>
+    <div class="fade-up order-1 md:order-2" style="transition-delay: 0.2s">
+      <h2 class="text-3xl md:text-5xl font-serif text-forest mb-6">A Trusted Partner for Premium Clientele</h2>
+      <div class="w-16 h-1 bg-gold mb-8"></div>
+      <p class="text-gray-600 leading-relaxed mb-6">Floral India is proud to work with leading financial institutions, concierge services, and corporate organizations that serve premium and high-value customers. Through these trusted partnerships, we handle personalized gifting requests with the highest level of professionalism, confidentiality, and attention to detail.</p>
+      <p class="text-gray-600 leading-relaxed">Our clients rely on us because we understand that every order represents an important relationship. Every bouquet, hamper, and gift is carefully curated to reflect elegance, quality, and thoughtfulness.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Interactive World Map -->
+<section class="py-32 bg-forest text-white overflow-hidden relative">
+  <div class="max-w-7xl mx-auto px-4 relative z-10 text-center mb-16 fade-up">
+    <h2 class="text-3xl md:text-5xl font-serif text-gold mb-6">Our Global Network</h2>
+    <p class="text-gray-300 max-w-3xl mx-auto text-lg leading-relaxed mb-6">Our extensive international network enables us to fulfill orders across the globe through carefully selected local floral partners and logistics specialists. By combining global reach with local expertise, we ensure every arrangement is handcrafted with fresh flowers and delivered according to the highest quality standards.</p>
+    <p class="text-gold font-light italic text-xl">No matter the destination, our goal remains the same—creating memorable gifting experiences that bring people closer together.</p>
+  </div>
+  
+  <div class="w-full max-w-5xl mx-auto relative px-4 fade-in">
+    <!-- Abstract SVG Map Lines -->
+    <svg viewBox="0 0 1000 500" class="w-full h-auto opacity-40 stroke-gold fill-none" stroke-width="1.5">
+      <!-- Latitude / Longitude stylized curves representing the globe -->
+      <path d="M0,250 Q250,150 500,250 T1000,250" />
+      <path d="M0,250 Q250,350 500,250 T1000,250" />
+      <path d="M500,0 Q600,250 500,500" />
+      <path d="M500,0 Q400,250 500,500" />
+      <circle cx="500" cy="250" r="240" stroke-width="1"/>
+      
+      <!-- India Node (x: 650, y: 220) -->
+      <circle cx="650" cy="220" r="6" fill="#d4af37" class="animate-pulse" />
+      <text x="660" y="225" fill="#d4af37" font-size="12" font-family="sans-serif">India</text>
+      
+      <!-- London Node (x: 480, y: 150) -->
+      <path class="map-path stroke-white" stroke-width="2" stroke-dasharray="10 10" d="M650,220 Q560,100 480,150" fill="none" />
+      <circle cx="480" cy="150" r="4" fill="#ffffff" />
+      <text x="460" y="140" fill="#ffffff" font-size="10" font-family="sans-serif">London</text>
+      
+      <!-- Dubai Node (x: 590, y: 230) -->
+      <path class="map-path stroke-white" stroke-width="2" stroke-dasharray="10 10" d="M650,220 Q620,200 590,230" fill="none" style="transition-delay: 0.5s"/>
+      <circle cx="590" cy="230" r="4" fill="#ffffff" />
+      <text x="580" y="245" fill="#ffffff" font-size="10" font-family="sans-serif">Dubai</text>
+
+      <!-- NY Node (x: 280, y: 180) -->
+      <path class="map-path stroke-white" stroke-width="2" stroke-dasharray="10 10" d="M650,220 Q450,50 280,180" fill="none" style="transition-delay: 1s"/>
+      <circle cx="280" cy="180" r="4" fill="#ffffff" />
+      <text x="250" y="175" fill="#ffffff" font-size="10" font-family="sans-serif">New York</text>
+    </svg>
+    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[120%] text-center pointer-events-none">
+      <h3 class="text-4xl md:text-7xl lg:text-8xl font-serif text-white/5 uppercase tracking-[0.2em] md:tracking-[0.5em] lg:tracking-[0.8em]">Worldwide</h3>
+    </div>
+  </div>
+</section>
+
+<!-- 4. What We Offer (Gradient Cards) -->
+<section class="py-24 bg-white">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="text-center mb-16 fade-up">
+      <h2 class="text-3xl md:text-5xl font-serif text-forest mb-4">What We Offer</h2>
+      <div class="w-16 h-1 bg-gold mx-auto"></div>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {% assign offers = "Fresh flower bouquets and floral arrangements,Premium gift hampers,Cakes and celebration essentials,Plants and lifestyle gifts,Personalized gifting solutions,Luxury and festive gifting,Corporate gifting programs,International flower and gift delivery,Custom gifting solutions for special occasions" | split: "," %}
+      {% for offer in offers %}
+        <div class="fade-up p-[2px] rounded-2xl group hover:-translate-y-2 transition-all duration-500" style="background: linear-gradient(135deg, #1b3b2b 0%, #d4af37 100%); transition-delay: {{ forloop.index0 | modulo: 3 | times: 0.1 }}s">
+          <div class="bg-white rounded-2xl h-full p-8 flex flex-col justify-center items-center text-center shadow-lg shadow-gray-100 group-hover:shadow-2xl group-hover:shadow-gold/20 transition-all duration-500 min-h-[140px]">
+            <h3 class="text-lg font-serif text-forest font-bold">{{ offer }}</h3>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- 5. Why Choose Us -->
+<section class="py-24 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-16">
+    <div class="fade-up">
+      <h2 class="text-3xl md:text-5xl font-serif text-forest mb-8">Why Choose Floral India?</h2>
+      <ul class="space-y-6">
+        {% assign reasons = "Worldwide Delivery Across 100+ Countries|Trusted by leading financial institutions and corporate partners|Thousands of Successful Deliveries|Fresh, premium-quality flowers and gifts|Carefully selected global florist network|Reliable and timely delivery|Customized gifting solutions for individuals and businesses|Secure International Payments|Same-Day & Scheduled Delivery (where available)|Personalized customer support via phone and email" | split: "|" %}
+        {% for reason in reasons %}
+          <li class="flex items-start gap-4 fade-up" style="transition-delay: {{ forloop.index0 | times: 0.05 }}s">
+            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-gold/20 flex items-center justify-center mt-1">
+              <svg class="w-4 h-4 text-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <span class="text-gray-700 font-medium">{{ reason }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    
+    <div class="flex flex-col gap-8 justify-center">
+      <div class="fade-up bg-white p-8 rounded-[2rem] border-l-4 border-gold shadow-xl hover:shadow-2xl transition-all">
+        <h3 class="text-2xl font-serif text-forest mb-4 flex items-center gap-3">
+          <svg class="w-6 h-6 text-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7Z"/></svg>
+          Our Vision
+        </h3>
+        <p class="text-gray-600 leading-relaxed">To become one of the world's most trusted names in international floral and gifting solutions by delivering exceptional quality, seamless global service, and unforgettable gifting experiences.</p>
+      </div>
+      <div class="fade-up bg-white p-8 rounded-[2rem] border-l-4 border-forest shadow-xl hover:shadow-2xl transition-all" style="transition-delay: 0.2s">
+        <h3 class="text-2xl font-serif text-forest mb-4 flex items-center gap-3">
+          <svg class="w-6 h-6 text-forest" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m12 14 9-5-9-5-9 5 9 5z"/><path d="m12 14 9-5-9-5-9 5 9 5z"/><path d="m12 21 9-5-9-5-9 5 9 5z"/></svg>
+          Our Mission
+        </h3>
+        <p class="text-gray-600 leading-relaxed">To connect people across borders through thoughtfully curated flowers and gifts, combining personalized service, reliable global delivery, and a commitment to excellence in every order.</p>
+      </div>
+      <div class="fade-up bg-white p-8 rounded-[2rem] border-l-4 border-gold shadow-xl hover:shadow-2xl transition-all" style="transition-delay: 0.4s">
+        <h3 class="text-2xl font-serif text-forest mb-4 flex items-center gap-3">
+          <svg class="w-6 h-6 text-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          Our Promise
+        </h3>
+        <p class="text-gray-600 leading-relaxed">Every order is treated with the care it deserves. From the moment a customer contacts us until the gift reaches its destination, our team focuses on quality, reliability, and exceptional customer service.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Emotional Close -->
+<section class="py-32 bg-forest relative overflow-hidden flex items-center justify-center text-center px-4">
+  <div class="absolute inset-0 bg-gold/5 mix-blend-overlay"></div>
+  <div class="absolute inset-0 bg-gradient-to-t from-forest to-transparent"></div>
+  <div class="relative z-10 max-w-4xl fade-up">
+    <svg class="w-12 h-12 text-gold mx-auto mb-8 opacity-60" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+    <p class="text-2xl md:text-3xl lg:text-4xl font-serif text-gold italic leading-relaxed mb-8">"At Floral India, we don't simply deliver flowers—we deliver emotions, celebrate milestones, strengthen relationships, and help create memories that last a lifetime.<br><br>Wherever your loved ones are, Floral India helps you make every occasion unforgettable."</p>
+  </div>
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const observerOptions = {
+      root: null,
+      rootMargin: "0px",
+      threshold: 0.15
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-up, .fade-in, .map-path').forEach(el => {
+      observer.observe(el);
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Luxury About Us",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Hero Banner Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "about_image",
+      "label": "About Section Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "partner_image",
+      "label": "Trusted Partner Image"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,478 @@
+<div class="max-w-7xl mx-auto px-4 py-8" id="collection-page-container" data-collection-handle="{{ collection.handle }}">
+
+{% comment %} Exotic Flowers Collection: Metro City Gate {% endcomment %}
+{% assign handle_lower = collection.handle | downcase %}
+{% if handle_lower == 'exotic-flowers' or handle_lower == 'exoticflowers' %}
+<div id="exotic-city-gate-notice" class="hidden text-center py-16 bg-rose-50/80 rounded-3xl border border-rose-200 mb-8">
+  <div class="w-20 h-20 mx-auto bg-white rounded-full flex items-center justify-center mb-4 shadow-sm text-4xl">🌺</div>
+  <h2 class="text-2xl font-serif font-bold text-rose-900 mb-2">Exotic Flowers — Metro Cities Only</h2>
+  <p class="text-sm text-rose-700 max-w-md mx-auto mb-6">Exotic flowers are currently available for delivery in <strong>Delhi, Mumbai, Kolkata, Pune, and Bangalore</strong> only. Please change your delivery city to view and order these products.</p>
+  <button type="button" onclick="if(window.openPincodeModal) window.openPincodeModal('india');" class="inline-flex items-center justify-center h-11 px-8 rounded-full bg-primary text-white font-bold hover:bg-primary/90 transition-colors shadow-md text-sm cursor-pointer">
+    Change Delivery City
+  </button>
+</div>
+<script>
+(function() {
+  var metroCities = ['delhi', 'new delhi', 'mumbai', 'kolkata', 'pune', 'bangalore', 'bengaluru'];
+  function getCookieVal(name) {
+    var nameEQ = name + '=';
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) === ' ') c = c.substring(1);
+      if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length));
+    }
+    return '';
+  }
+  function checkExoticAccess() {
+    var city = (localStorage.getItem('user_city') || getCookieVal('user_city') || '').toLowerCase().trim();
+    var isMetro = !city || metroCities.some(function(c) { return city.indexOf(c) !== -1; });
+    var gateNotice = document.getElementById('exotic-city-gate-notice');
+    var gridEl = document.getElementById('collection-product-grid');
+    var breadcrumb = document.querySelector('nav[aria-label="Breadcrumb"]');
+    var headerBar = document.querySelector('#collection-page-container > .flex.flex-col.md\\:flex-row');
+    var pagination = document.querySelector('#collection-page-container nav[aria-label="Pagination"]');
+    if (!isMetro) {
+      if (gateNotice) { gateNotice.classList.remove('hidden'); gateNotice.style.display = ''; }
+      if (gridEl) gridEl.style.setProperty('display', 'none', 'important');
+      if (pagination) pagination.style.setProperty('display', 'none', 'important');
+    } else {
+      if (gateNotice) { gateNotice.classList.add('hidden'); gateNotice.style.display = 'none'; }
+      if (gridEl) gridEl.style.removeProperty('display');
+      if (pagination) pagination.style.removeProperty('display');
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkExoticAccess);
+  } else {
+    checkExoticAccess();
+  }
+  document.addEventListener('pincodeUpdated', checkExoticAccess);
+  document.addEventListener('deliveryModeChanged', checkExoticAccess);
+  window.addEventListener('storage', function(e) { if (e.key === 'user_city') checkExoticAccess(); });
+})();
+</script>
+{% endif %}
+  {% assign display_title = collection.title | replace: '-', ' ' | capitalize %}
+  {% if collection.handle == 'same-day' or collection.title == 'same-day' %}
+    {% assign display_title = 'Same Day Delivery' %}
+  {% endif %}
+
+  <!-- Breadcrumb Navigation -->
+  <nav class="flex text-xs text-gray-500 mb-6" aria-label="Breadcrumb">
+    <ol class="inline-flex items-center space-x-1 md:space-x-2">
+      <li class="inline-flex items-center">
+        <a href="/" class="hover:text-primary transition-colors">Home</a>
+      </li>
+      <li><span class="text-gray-400 mx-1">></span></li>
+      <li>
+        <a href="/collections/all" class="hover:text-primary transition-colors">Collections</a>
+      </li>
+      <li><span class="text-gray-400 mx-1">></span></li>
+      <li class="font-medium text-gray-800 truncate" aria-current="page">{{ display_title }}</li>
+    </ol>
+  </nav>
+
+  <!-- Collection Header Bar: Title, Count, Sort By Box -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+    <div>
+      <h1 class="text-2xl md:text-4xl font-serif font-bold text-gray-900 flex items-center gap-3">
+        {{ display_title }}
+        <span class="text-sm md:text-base font-sans font-normal text-gray-500">({{ collection.products_count | default: collection.products.size }} Products)</span>
+      </h1>
+      {% if collection.description != blank %}
+        <div class="text-sm text-gray-600 mt-2 max-w-3xl leading-relaxed">{{ collection.description }}</div>
+      {% endif %}
+    </div>
+
+    <!-- Sort By Box -->
+    <div class="flex-shrink-0">
+      {% render 'sort-by-box', target_grid_id: 'collection-product-grid' %}
+    </div>
+  </div>
+
+  {% assign handle_lc = collection.handle | downcase %}
+  {% assign title_lc = collection.title | downcase %}
+  {% assign is_hamper_collection = false %}
+  {% if handle_lc contains 'hamper' or title_lc contains 'hamper' or handle_lc contains 'rakhi' or handle_lc contains 'diwali' or handle_lc contains 'idol' %}
+    {% assign is_hamper_collection = true %}
+  {% endif %}
+
+  <style>
+    .filter-hidden {
+      display: none !important;
+    }
+    .category-filter-btn.active {
+      background-color: #0b6434 !important;
+      color: #ffffff !important;
+      border-color: #0b6434 !important;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    .category-filter-btn.active span, .category-filter-btn.active * {
+      color: #ffffff !important;
+    }
+    .category-filter-btn:not(.active) {
+      background-color: #ffffff !important;
+      color: #374151 !important;
+      border-color: #e5e7eb !important;
+    }
+  </style>
+
+  {% if collection.handle == 'same-day' or collection.handle == 'same-day-delivery' or collection.title == 'same-day' %}
+    <!-- Category Quick Filter Pills (Same-Day Collection Only) -->
+    <div class="relative group mb-6 filter-scroll-wrapper">
+      <button type="button" class="filter-scroll-btn left-btn absolute left-0 sm:left-1 top-1/2 -translate-y-1/2 -mt-1 z-10 w-9 h-9 rounded-full bg-white border border-gray-100 text-gray-700 shadow-lg flex items-center justify-center hover:bg-gray-50 transition-all duration-200 focus:outline-none cursor-pointer" aria-label="Scroll filter left" onclick="scrollFilterContainer(this, -240)">
+        <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <div class="flex items-center gap-2.5 overflow-x-auto pb-2 no-scrollbar scroll-smooth px-6 sm:px-8" id="collection-category-filters" style="scrollbar-width: none; -ms-overflow-style: none;">
+        <button type="button" class="category-filter-btn active whitespace-nowrap inline-flex items-center gap-1.5 shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all shadow-xs border" data-filter="all">
+          <span>All Products</span>
+        </button>
+        <button type="button" class="category-filter-btn whitespace-nowrap inline-flex items-center gap-1.5 shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all shadow-xs border" data-filter="flower">
+          <span>🌸</span><span>Flowers</span>
+        </button>
+        <button type="button" class="category-filter-btn whitespace-nowrap inline-flex items-center gap-1.5 shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all shadow-xs border" data-filter="cake">
+          <span>🎂</span><span>Cakes</span>
+        </button>
+        <button type="button" class="category-filter-btn whitespace-nowrap inline-flex items-center gap-1.5 shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all shadow-xs border" data-filter="combo">
+          <span>🎁</span><span>Combos</span>
+        </button>
+        <button type="button" class="category-filter-btn whitespace-nowrap inline-flex items-center gap-1.5 shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all shadow-xs border" data-filter="plant">
+          <span>🪴</span><span>Plants</span>
+        </button>
+      </div>
+      <button type="button" class="filter-scroll-btn right-btn absolute right-0 sm:right-1 top-1/2 -translate-y-1/2 -mt-1 z-10 w-9 h-9 rounded-full bg-white border border-gray-100 text-gray-700 shadow-lg flex items-center justify-center hover:bg-gray-50 transition-all duration-200 focus:outline-none cursor-pointer" aria-label="Scroll filter right" onclick="scrollFilterContainer(this, 240)">
+        <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  {% elsif collection.handle != 'chocolates' and handle_lc != 'exotic-flowers' and handle_lc != 'exoticflowers' and title_lc != 'exotic flowers' %}
+    <!-- Hamper Tag & Sub-Collection Quick Filter Pills (Shown on all collection pages except chocolates) -->
+    <div class="relative group mb-6 filter-scroll-wrapper">
+      <button type="button" class="filter-scroll-btn left-btn absolute left-0 sm:left-1 top-1/2 -translate-y-1/2 -mt-1 z-10 w-9 h-9 rounded-full bg-white border border-gray-100 text-gray-700 shadow-lg flex items-center justify-center hover:bg-gray-50 transition-all duration-200 focus:outline-none cursor-pointer" aria-label="Scroll filter left" onclick="scrollFilterContainer(this, -240)">
+        <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <div class="flex items-center gap-2.5 overflow-x-auto pb-2 no-scrollbar scroll-smooth px-6 sm:px-8" id="collection-category-filters" style="scrollbar-width: none; -ms-overflow-style: none;">
+        <a href="/collections/hampers" class="category-filter-btn {% if handle_lc == 'hampers' or handle_lc == 'all' %}active{% endif %} whitespace-nowrap inline-flex items-center gap-1.5 shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all shadow-xs border">
+          <span>🎁</span><span>{% if handle_lc == 'all' %}All Products{% else %}All Hampers{% endif %}</span>
+        </a>
+        <a href="/collections/gourmet-hampers" class="category-filter-btn {% if handle_lc == 'gourmet-hampers' or handle_lc contains 'gourmet' or title_lc contains 'gourmet' %}active{% endif %} whitespace-nowrap inline-flex items-center gap-1.5 shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all shadow-xs border">
+          <span>🍷</span><span>Gourmet Hamper</span>
+        </a>
+        <a href="/collections/diwali-hampers" class="category-filter-btn {% if handle_lc == 'diwali-hampers' or title_lc contains 'diwali' %}active{% endif %} whitespace-nowrap inline-flex items-center gap-1.5 shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all shadow-xs border">
+          <span>🪔</span><span>Diwali Hamper</span>
+        </a>
+        <a href="/collections/rakhihampers" class="category-filter-btn {% if handle_lc == 'rakhihampers' or handle_lc contains 'rakhi' or title_lc contains 'rakhi' %}active{% endif %} whitespace-nowrap inline-flex items-center gap-1.5 shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all shadow-xs border">
+          <span>🪢</span><span>Rakhi Hamper</span>
+        </a>
+        <a href="/collections/christmas-hampers" class="category-filter-btn {% if handle_lc == 'christmas-hampers' or title_lc contains 'christmas' %}active{% endif %} whitespace-nowrap inline-flex items-center gap-1.5 shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all shadow-xs border">
+          <span>🎄</span><span>Christmas Hamper</span>
+        </a>
+        <a href="/collections/new-year-hampers" class="category-filter-btn {% if handle_lc == 'new-year-hampers' or title_lc contains 'new year' %}active{% endif %} whitespace-nowrap inline-flex items-center gap-1.5 shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all shadow-xs border">
+          <span>🎆</span><span>New Year Hamper</span>
+        </a>
+        <a href="/collections/dry-fruit-hampers" class="category-filter-btn {% if handle_lc == 'dry-fruit-hampers' or title_lc contains 'dry fruit' %}active{% endif %} whitespace-nowrap inline-flex items-center gap-1.5 shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all shadow-xs border">
+          <span>🥜</span><span>Dry Fruit Hamper</span>
+        </a>
+        <a href="/collections/fruit-hampers" class="category-filter-btn {% if handle_lc == 'fruit-hampers' or title_lc contains 'fruit' %}active{% endif %} whitespace-nowrap inline-flex items-center gap-1.5 shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all shadow-xs border">
+          <span>🍎</span><span>Fresh Fruit Hamper</span>
+        </a>
+      </div>
+      <button type="button" class="filter-scroll-btn right-btn absolute right-0 sm:right-1 top-1/2 -translate-y-1/2 -mt-1 z-10 w-9 h-9 rounded-full bg-white border border-gray-100 text-gray-700 shadow-lg flex items-center justify-center hover:bg-gray-50 transition-all duration-200 focus:outline-none cursor-pointer" aria-label="Scroll filter right" onclick="scrollFilterContainer(this, 240)">
+        <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  {% endif %}
+
+  <!-- Product Grid -->
+  {% paginate collection.products by 100 %}
+    {% if collection.products.size > 0 %}
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 tier-product-grid product-grid" id="collection-product-grid" data-limit="9999">
+        {% for product in collection.products %}
+          <div class="anim-scale stagger-{{ forloop.index | modulo: 6 | plus: 1 }}">
+            {% render 'product-card', product_card_product: product %}
+          </div>
+        {% endfor %}
+      </div>
+      
+      {% if paginate.pages > 1 %}
+        <div class="mt-12 flex justify-center">
+          <nav class="inline-flex items-center gap-2 bg-white rounded-full px-4 py-2 border border-gray-200 shadow-sm" aria-label="Pagination">
+            {% if paginate.previous %}
+              <a href="{{ paginate.previous.url }}" class="px-3.5 py-1.5 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-primary transition-colors flex items-center gap-1">
+                « Prev
+              </a>
+            {% endif %}
+
+            {% for part in paginate.parts %}
+              {% if part.is_link %}
+                <a href="{{ part.url }}" class="w-9 h-9 flex items-center justify-center rounded-full text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-primary transition-colors">
+                  {{ part.title }}
+                </a>
+              {% else %}
+                {% if part.title == paginate.current_page %}
+                  <span class="w-9 h-9 flex items-center justify-center rounded-full text-sm font-semibold bg-primary text-white shadow-xs">
+                    {{ part.title }}
+                  </span>
+                {% else %}
+                  <span class="w-9 h-9 flex items-center justify-center rounded-full text-sm font-medium text-gray-400">
+                    {{ part.title }}
+                  </span>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+
+            {% if paginate.next %}
+              <a href="{{ paginate.next.url }}" class="px-3.5 py-1.5 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-primary transition-colors flex items-center gap-1">
+                Next »
+              </a>
+            {% endif %}
+          </nav>
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="text-center py-12 bg-gray-50 rounded-3xl border border-gray-100 mb-8">
+        <div class="w-16 h-16 mx-auto bg-white rounded-full flex items-center justify-center mb-3 shadow-xs text-3xl">🌸</div>
+        <h3 class="text-xl font-serif font-bold text-gray-800 mb-2">No products found</h3>
+        <p class="text-gray-500 max-w-md mx-auto text-sm mb-4">There are no products in this collection yet. Please check back soon or explore other categories!</p>
+        <a href="/collections/all" class="inline-flex items-center justify-center h-10 px-6 rounded-full bg-primary text-white font-semibold hover:bg-primary-600 transition-colors shadow-md text-xs">
+          Browse All Products
+        </a>
+      </div>
+      {% if collection.handle != 'chocolates' %}
+        <div class="my-6">
+          {% render 'hamper-subcollections-grid' %}
+        </div>
+      {% endif %}
+    {% endif %}
+  {% endpaginate %}
+</div>
+
+<script>
+  (function() {
+    function initCategoryFilters() {
+      const filterBtns = document.querySelectorAll('.category-filter-btn');
+      const grid = document.getElementById('collection-product-grid');
+      if (!grid || filterBtns.length === 0) return;
+
+      const keywords = {
+        flower: ['flower', 'rose', 'lili', 'lily', 'bouquet', 'orchid', 'carnation', 'gerbera', 'tulip', 'blossom', 'floral', 'stem', 'bunch', 'vase'],
+        cake: ['cake', 'truffle', 'velvet', 'pineapple', 'chocolate', 'black forest', 'butterscotch', 'pastry', 'gateau', 'fudge', 'cheesecake', 'sponge'],
+        combo: ['combo', 'hamper', 'set', 'pack', 'bundle', 'pair', 'surprise', '+', '&'],
+        plant: ['plant', 'bonsai', 'pothos', 'sansevieria', 'bamboo', 'succulent', 'jade', 'syngonium', 'money plant', 'indoor'],
+        // Hamper Tag Specific Keywords
+        diwali: ['diwali', 'deepavali', 'diya'],
+        idol: ['idol', 'idols', 'murti', 'statue', 'laxmi', 'lakshmi', 'ganesha', 'ganesh', 'god', 'pooja'],
+        rakhi: ['rakhi', 'raksha', 'rakshabandhan', 'bandhan', 'brother', 'sister'],
+        chocolate: ['chocolate', 'chocolates', 'ferrero', 'cadbury', 'truffle', 'cacao', 'cocoa'],
+        gourmet: ['gourmet', 'dry fruit', 'nuts', 'snack', 'cookies', 'sweets', 'treats', 'almond', 'cashew'],
+        floral: ['flower', 'floral', 'bloom', 'rose', 'orchid', 'bouquet', 'carnation'],
+        // Hamper Sub-Collection Keywords
+        healthy: ['healthy', 'health', 'organic', 'nut', 'diet', 'fit', 'seeds', 'salads'],
+        snacks: ['snack', 'snacks', 'namkeen', 'munch', 'chip', 'cookies', 'savory', 'crisp'],
+        grooming: ['grooming', 'care', 'spa', 'body', 'skin', 'wellness', 'fragrance', 'lotion', 'bath'],
+        tea: ['tea', 'coffee', 'brew', 'mug', 'sipper', 'chai', 'espresso', 'green tea', 'cozy'],
+        fruit: ['fruit', 'fruits', 'apple', 'orange', 'berry', 'fresh fruit'],
+        sweet: ['sweet', 'sweets', 'mithai', 'halwa', 'laddu', 'barfi', 'gulab', 'dessert'],
+        dryfruit: ['dry fruit', 'dryfruit', 'nuts', 'cashew', 'almond', 'pista', 'raisin', 'walnut'],
+        diy: ['diy', 'kit', 'craft', 'paint', 'make', 'activity', 'create']
+      };
+
+      // 1. Pre-index all items in memory (0ms lookup, avoids layout reflows from innerText)
+      const cachedItems = Array.from(grid.children).map(wrapper => {
+        if (wrapper.id === 'intl-collection-empty-notice' || wrapper.id === 'tag-filter-empty-notice') {
+          return { wrapper, isNotice: true };
+        }
+        const card = wrapper.classList.contains('product-card') ? wrapper : (wrapper.querySelector('.product-card') || wrapper);
+        const title = (card.dataset.title || card.getAttribute('alt') || '').toLowerCase();
+        const type  = (card.dataset.type || '').toLowerCase();
+        const tags  = (card.dataset.tags || card.dataset.tiers || '').toLowerCase();
+        const fullText = `${title} ${type} ${tags}`;
+        return { wrapper, card, fullText, isNotice: false };
+      });
+
+      function applyFilter(filterVal) {
+        // Fast UI pill active toggle
+        filterBtns.forEach(b => {
+          if (b.dataset.filter === filterVal) {
+            b.classList.add('active');
+          } else {
+            b.classList.remove('active');
+          }
+        });
+
+        let matchCount = 0;
+        const matchesKeywords = keywords[filterVal] || [filterVal.toLowerCase()];
+
+        // Ultra-fast Batch DOM Updates (<1ms)
+        cachedItems.forEach(item => {
+          if (item.isNotice) return;
+
+          if (filterVal === 'all') {
+            item.wrapper.classList.remove('filter-hidden');
+            item.wrapper.style.display = '';
+            matchCount++;
+          } else {
+            const isMatch = matchesKeywords.some(kw => item.fullText.includes(kw));
+            if (isMatch) {
+              item.wrapper.classList.remove('filter-hidden');
+              item.wrapper.style.display = '';
+              matchCount++;
+            } else {
+              item.wrapper.classList.add('filter-hidden');
+              item.wrapper.style.display = 'none';
+            }
+          }
+        });
+
+        // Toggle empty tag filter state notice
+        let emptyTagNotice = document.getElementById('tag-filter-empty-notice');
+        if (matchCount === 0) {
+          if (!emptyTagNotice) {
+            emptyTagNotice = document.createElement('div');
+            emptyTagNotice.id = 'tag-filter-empty-notice';
+            emptyTagNotice.className = 'w-full my-8 p-8 rounded-3xl bg-amber-50 border border-amber-200/70 text-center col-span-full anim-scale';
+            grid.appendChild(emptyTagNotice);
+          }
+          const allLabel = window.location.pathname.includes('/all') ? 'All Products' : 'All Hampers';
+          emptyTagNotice.innerHTML = `
+            <div class="w-16 h-16 mx-auto bg-amber-100 rounded-full flex items-center justify-center mb-3 text-3xl">🎁</div>
+            <h3 class="text-lg font-serif font-bold text-amber-900 mb-1">No ${filterVal.toUpperCase()} Items Found</h3>
+            <p class="text-xs text-amber-700 max-w-md mx-auto mb-4">No items matching "${filterVal}" are available in this grid right now.</p>
+            <button type="button" class="reset-filter-btn px-5 py-2 rounded-full bg-primary text-white text-xs font-bold shadow-sm hover:bg-primary-600 transition-all cursor-pointer">
+              Show ${allLabel}
+            </button>
+          `;
+          emptyTagNotice.style.display = '';
+          const resetBtn = emptyTagNotice.querySelector('.reset-filter-btn');
+          if (resetBtn) {
+            resetBtn.onclick = () => applyFilter('all');
+          }
+        } else if (emptyTagNotice) {
+          emptyTagNotice.style.display = 'none';
+        }
+      }
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          if (this.tagName === 'A' && this.getAttribute('href')) {
+            return; // Allow standard link navigation
+          }
+          e.preventDefault();
+          applyFilter(this.dataset.filter);
+        });
+      });
+
+      // 2. High-performance Instant URL & Link Interceptor
+      function checkAndApplyUrlFilter() {
+        try {
+          const urlParams = new URLSearchParams(window.location.search);
+          let paramVal = (urlParams.get('tag') || urlParams.get('filter') || window.location.hash.replace('#', '')).toLowerCase();
+
+          if (paramVal && keywords[paramVal]) {
+            applyFilter(paramVal);
+          }
+        } catch(e) {}
+      }
+
+      // Run initial filter check immediately
+      checkAndApplyUrlFilter();
+
+      // Intercept same-page links (e.g. clicking /collections/hampers?tag=rakhi while already on hampers page)
+      document.addEventListener('click', function(e) {
+        const link = e.target.closest('a[href*="tag="], a[href*="filter="]');
+        if (!link) return;
+        
+        try {
+          const targetUrl = new URL(link.href, window.location.origin);
+          if (targetUrl.pathname === window.location.pathname) {
+            const tagParam = targetUrl.searchParams.get('tag') || targetUrl.searchParams.get('filter') || targetUrl.hash.replace('#', '');
+            let filterName = tagParam ? tagParam.toLowerCase() : '';
+            if (filterName && keywords[filterName]) {
+              e.preventDefault();
+              history.pushState(null, '', link.href);
+              applyFilter(filterName);
+            }
+          }
+        } catch(err) {}
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCategoryFilters);
+    } else {
+      initCategoryFilters();
+    }
+  })();
+
+  // Filter Scroll Buttons Helper
+  window.scrollFilterContainer = function(btn, distance) {
+    const wrapper = btn.closest('.filter-scroll-wrapper') || btn.closest('.relative');
+    if (!wrapper) return;
+    const container = wrapper.querySelector('#collection-category-filters, .overflow-x-auto');
+    if (container) {
+      container.scrollBy({ left: distance, behavior: 'smooth' });
+    }
+  };
+
+  function initFilterScrollArrows() {
+    const wrappers = document.querySelectorAll('.filter-scroll-wrapper');
+    wrappers.forEach(wrapper => {
+      const container = wrapper.querySelector('#collection-category-filters, .overflow-x-auto');
+      const leftBtn = wrapper.querySelector('.filter-scroll-btn.left-btn');
+      const rightBtn = wrapper.querySelector('.filter-scroll-btn.right-btn');
+      if (!container) return;
+
+      function updateArrows() {
+        const maxScrollLeft = container.scrollWidth - container.clientWidth;
+        if (maxScrollLeft <= 5) {
+          if (leftBtn) leftBtn.style.display = 'none';
+          if (rightBtn) rightBtn.style.display = 'none';
+          return;
+        }
+
+        if (leftBtn) {
+          leftBtn.style.display = 'flex';
+          if (container.scrollLeft <= 5) {
+            leftBtn.classList.add('opacity-30', 'pointer-events-none');
+          } else {
+            leftBtn.classList.remove('opacity-30', 'pointer-events-none');
+          }
+        }
+
+        if (rightBtn) {
+          rightBtn.style.display = 'flex';
+          if (container.scrollLeft >= maxScrollLeft - 5) {
+            rightBtn.classList.add('opacity-30', 'pointer-events-none');
+          } else {
+            rightBtn.classList.remove('opacity-30', 'pointer-events-none');
+          }
+        }
+      }
+
+      container.addEventListener('scroll', updateArrows, { passive: true });
+      window.addEventListener('resize', updateArrows, { passive: true });
+      updateArrows();
+
+      // Auto scroll active filter pill into view on load
+      const activePill = container.querySelector('.category-filter-btn.active');
+      if (activePill) {
+        setTimeout(() => {
+          activePill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }, 150);
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFilterScrollArrows);
+  } else {
+    initFilterScrollArrows();
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Product Grid",
+  "settings": []
+}
+{% endschema %}

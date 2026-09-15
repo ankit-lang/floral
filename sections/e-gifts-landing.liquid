@@ -1,0 +1,82 @@
+<!-- E-Gifts Landing Page -->
+<section class="max-w-7xl mx-auto px-4 py-8">
+
+  <!-- Hero -->
+  <div class="relative rounded-3xl overflow-hidden h-[250px] md:h-[350px] mb-12" style="animation:headerIn 0.8s ease forwards;">
+    <div class="absolute inset-0 bg-gradient-to-br from-pink-500 via-secondary to-violet-500"></div>
+    <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-6">
+      <span class="text-5xl mb-4"></span>
+      <h1 class="text-4xl md:text-5xl font-serif font-bold mb-3">E-Gifts</h1>
+      <p class="text-lg text-white/80 max-w-xl">Send joy instantly — no wrapping required. Digital gifts delivered straight to their inbox.</p>
+    </div>
+  </div>
+
+  <!-- Two Cards: Video Message + E-Card -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+
+    <!-- Video Message -->
+    <div id="video-message" class="anim-left">
+      <div class="bg-gradient-to-br from-violet-50 to-purple-50 rounded-3xl p-8 md:p-10 border border-violet-200 h-full flex flex-col hover:shadow-xl transition-shadow duration-300">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-14 h-14 rounded-2xl bg-violet-100 flex items-center justify-center">
+            <span class="text-3xl"></span>
+          </div>
+          <div>
+            <h2 class="text-2xl font-serif font-bold text-gray-900">Video Message</h2>
+            <p class="text-sm text-gray-500">From ₹1,999/-</p>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 leading-relaxed mb-6 flex-grow">
+          Send a personalized video greeting from a celebrity, musician, or artist. Perfect for birthdays, anniversaries, and special milestones. Record your wishes and we'll deliver a professionally edited video.
+        </p>
+        <ul class="space-y-2 mb-8">
+          <li class="flex items-center gap-2 text-sm text-gray-700"><span class="text-primary"></span> Choose from 100+ artists</li>
+          <li class="flex items-center gap-2 text-sm text-gray-700"><span class="text-primary"></span> HD quality video delivery</li>
+          <li class="flex items-center gap-2 text-sm text-gray-700"><span class="text-primary"></span> Delivered in 24–48 hours</li>
+          <li class="flex items-center gap-2 text-sm text-gray-700"><span class="text-primary"></span> Shareable via WhatsApp, Email</li>
+        </ul>
+        <a href="/pages/contact" class="inline-flex items-center justify-center gap-2 w-full bg-violet-600 text-white py-3 rounded-xl font-semibold hover:bg-violet-700 transition-colors">
+          Request Video Message
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- E-Card -->
+    <div id="e-card" class="anim-right">
+      <div class="bg-gradient-to-br from-pink-50 to-rose-50 rounded-3xl p-8 md:p-10 border border-pink-200 h-full flex flex-col hover:shadow-xl transition-shadow duration-300">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-14 h-14 rounded-2xl bg-pink-100 flex items-center justify-center">
+            <span class="text-3xl"></span>
+          </div>
+          <div>
+            <h2 class="text-2xl font-serif font-bold text-gray-900">E-Card</h2>
+            <p class="text-sm text-gray-500">From ₹199/-</p>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 leading-relaxed mb-6 flex-grow">
+          Beautiful digital greeting cards for every occasion. Choose from our curated collection of animated and static e-cards, add your personal message, and send it instantly via email or WhatsApp.
+        </p>
+        <ul class="space-y-2 mb-8">
+          <li class="flex items-center gap-2 text-sm text-gray-700"><span class="text-secondary"></span> 200+ card designs</li>
+          <li class="flex items-center gap-2 text-sm text-gray-700"><span class="text-secondary"></span> Animated & interactive</li>
+          <li class="flex items-center gap-2 text-sm text-gray-700"><span class="text-secondary"></span> Add personal message & photos</li>
+          <li class="flex items-center gap-2 text-sm text-gray-700"><span class="text-secondary"></span> Instant delivery</li>
+        </ul>
+        <a href="/pages/contact" class="inline-flex items-center justify-center gap-2 w-full bg-secondary text-white py-3 rounded-xl font-semibold hover:bg-pink-600 transition-colors">
+          Send an E-Card
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "E-Gifts Landing",
+  "settings": [],
+  "presets": [{ "name": "E-Gifts Landing" }]
+}
+{% endschema %}

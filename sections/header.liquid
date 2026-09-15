@@ -1,0 +1,1017 @@
+<!-- ============================================ -->
+<!-- TOP UTILITY BAR                              -->
+<!-- ============================================ -->
+<div class="bg-primary text-white text-[11px] font-medium py-1.5 sm:py-0">
+  <div class="max-w-7xl mx-auto px-3 sm:px-4 flex items-center justify-between min-h-[34px] gap-2">
+    <div class="flex items-center gap-1.5 shrink-0">
+      <a href="tel:01141050051" class="hidden sm:inline-flex items-center gap-1 animate-pulse-soft text-yellow-100 font-semibold hover:underline">011-41050051</a>
+      <span class="hidden sm:inline text-white/40">/</span>
+      <a href="tel:+919910200043" class="flex items-center gap-1 text-white font-semibold hover:underline">
+        <svg class="w-3 h-3 text-yellow-300 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+        <span>+91 9910200043</span>
+      </a>
+    </div>
+    <div class="flex items-center gap-2 text-white/90 shrink-0">
+      <span class="hidden sm:inline font-semibold text-amber-200" id="header-topbar-delivery-badge">Same Day & Midnight Delivery</span>
+      <span class="hidden sm:inline text-white/40">|</span>
+      <a href="/pages/contact" class="hover:text-white transition-colors font-semibold underline sm:no-underline">Contact Us</a>
+      <span class="text-white/40">|</span>
+      <!-- Currency Switcher Widget -->
+      <div class="relative group z-[60]" id="currency-switcher-wrapper">
+        <button type="button" id="curr-switcher-btn" class="curr-switcher-btn flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[11px] font-semibold transition-all cursor-pointer border border-white/20">
+          <span class="curr-switcher-flag text-xs">🇮🇳</span>
+          <span class="curr-switcher-code">INR</span>
+          <span class="curr-switcher-symbol text-amber-200">₹</span>
+          <svg class="w-3 h-3 text-white/80 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m19 9-7 7-7-7"/></svg>
+        </button>
+        <!-- Dropdown panel -->
+        <div class="absolute right-0 top-full mt-1 w-40 bg-white text-gray-800 rounded-xl shadow-2xl border border-gray-100 py-1.5 z-[210] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+          <div class="curr-switcher-option flex items-center justify-between px-3 py-1.5 text-xs font-semibold hover:bg-primary/10 hover:text-primary cursor-pointer transition-colors" data-currency="INR" onclick="window.FloralCurrencyManager && window.FloralCurrencyManager.setCurrency('INR', true)">
+            <span class="flex items-center gap-2"><span>🇮🇳</span> <span>INR</span></span>
+            <span class="text-gray-400 font-bold">₹</span>
+          </div>
+          <div class="curr-switcher-option flex items-center justify-between px-3 py-1.5 text-xs font-semibold hover:bg-primary/10 hover:text-primary cursor-pointer transition-colors" data-currency="USD" onclick="window.FloralCurrencyManager && window.FloralCurrencyManager.setCurrency('USD', true)">
+            <span class="flex items-center gap-2"><span>🇺🇸</span> <span>USD</span></span>
+            <span class="text-gray-400 font-bold">$</span>
+          </div>
+          <div class="curr-switcher-option flex items-center justify-between px-3 py-1.5 text-xs font-semibold hover:bg-primary/10 hover:text-primary cursor-pointer transition-colors" data-currency="CAD" onclick="window.FloralCurrencyManager && window.FloralCurrencyManager.setCurrency('CAD', true)">
+            <span class="flex items-center gap-2"><span>🇨🇦</span> <span>CAD</span></span>
+            <span class="text-gray-400 font-bold">$</span>
+          </div>
+          <div class="curr-switcher-option flex items-center justify-between px-3 py-1.5 text-xs font-semibold hover:bg-primary/10 hover:text-primary cursor-pointer transition-colors" data-currency="GBP" onclick="window.FloralCurrencyManager && window.FloralCurrencyManager.setCurrency('GBP', true)">
+            <span class="flex items-center gap-2"><span>🇬🇧</span> <span>GBP</span></span>
+            <span class="text-gray-400 font-bold">£</span>
+          </div>
+          <div class="curr-switcher-option flex items-center justify-between px-3 py-1.5 text-xs font-semibold hover:bg-primary/10 hover:text-primary cursor-pointer transition-colors" data-currency="AED" onclick="window.FloralCurrencyManager && window.FloralCurrencyManager.setCurrency('AED', true)">
+            <span class="flex items-center gap-2"><span>🇦🇪</span> <span>AED</span></span>
+            <span class="text-gray-400 font-bold">AED</span>
+          </div>
+          <div class="curr-switcher-option flex items-center justify-between px-3 py-1.5 text-xs font-semibold hover:bg-primary/10 hover:text-primary cursor-pointer transition-colors" data-currency="AUD" onclick="window.FloralCurrencyManager && window.FloralCurrencyManager.setCurrency('AUD', true)">
+            <span class="flex items-center gap-2"><span>🇦🇺</span> <span>AUD</span></span>
+            <span class="text-gray-400 font-bold">$</span>
+          </div>
+          <div class="curr-switcher-option flex items-center justify-between px-3 py-1.5 text-xs font-semibold hover:bg-primary/10 hover:text-primary cursor-pointer transition-colors" data-currency="EUR" onclick="window.FloralCurrencyManager && window.FloralCurrencyManager.setCurrency('EUR', true)">
+            <span class="flex items-center gap-2"><span>🇪🇺</span> <span>EUR</span></span>
+            <span class="text-gray-400 font-bold">€</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- MAIN HEADER BAR                              -->
+<!-- ============================================ -->
+<header id="main-header" class="bg-white/95 backdrop-blur-md sticky top-0 z-50 shadow-sm transition-all duration-500" style="animation:headerIn 0.8s ease forwards;">
+  <div class="max-w-7xl mx-auto px-2.5 sm:px-4 py-2 sm:py-3 flex items-center justify-between gap-1.5 sm:gap-4">
+
+    <!-- Logo & Location Button Container -->
+    <div class="flex items-center gap-1.5 sm:gap-4 shrink min-w-0">
+      <a href="/" class="flex items-center shrink-0">
+        <img src="https://cdn.shopify.com/s/files/1/0748/1766/7150/files/logopink.png?v=1784187803" alt="{{ section.settings.logo_text | default: 'Floral India' }}" class="h-9 sm:h-14 md:h-20 w-auto object-contain hover:animate-leaf-sway origin-bottom">
+      </a>
+
+      <!-- Divider -->
+      <div class="h-8 sm:h-10 w-px bg-gray-200 hidden sm:block"></div>
+
+      <!-- Stacked Delivery Selector Buttons (Desktop Only - hidden on mobile main row) -->
+      <div class="hidden md:flex flex-col gap-1 shrink-0 py-0.5 w-[220px] md:w-[240px]">
+        <!-- India Delivery Button -->
+        <button type="button" id="header-india-delivery-btn" onclick="openPincodeModal('india')" class="flex items-center justify-between gap-1.5 bg-emerald-50 border-2 border-emerald-600 px-2.5 py-1 rounded-lg transition-all cursor-pointer text-left group shadow-xs w-full" title="India Delivery Location">
+          <div class="flex items-center gap-1.5 min-w-0 flex-1">
+            <span class="w-4 h-3 rounded-xs overflow-hidden shrink-0 border border-gray-300 flex flex-col justify-between">
+              <span class="h-1/3 bg-[#FF9933] w-full block"></span>
+              <span class="h-1/3 bg-white w-full flex items-center justify-center relative">
+                <span class="w-1 h-1 rounded-full border border-[#000080] flex items-center justify-center"></span>
+              </span>
+              <span class="h-1/3 bg-[#138808] w-full block"></span>
+            </span>
+            <span class="text-[11px] font-bold text-gray-900 group-hover:text-emerald-800 shrink-0">India:</span>
+            <span class="text-[11px] text-gray-700 header-city-display truncate font-semibold">Select Pincode</span>
+          </div>
+          <svg class="w-3 h-3 text-gray-500 shrink-0 group-hover:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m19 9-7 7-7-7"/></svg>
+        </button>
+
+        <!-- International Delivery Button -->
+        <button type="button" id="header-intl-delivery-btn" onclick="openPincodeModal('international')" class="flex items-center justify-between gap-1.5 bg-gray-50/70 hover:bg-gray-100 border border-gray-200 opacity-75 px-2.5 py-1 rounded-lg transition-all cursor-pointer text-left group w-full" title="International Delivery (Flowers & Cakes Only)">
+          <div class="flex items-center gap-1.5 min-w-0 flex-1">
+            <span class="text-xs shrink-0 leading-none">🌐</span>
+            <span class="text-[11px] font-bold text-amber-900 shrink-0">Intl:</span>
+            <span class="text-[11px] font-semibold text-pink-800 header-intl-country-display truncate hidden">Select Country</span>
+          </div>
+          <svg class="w-3 h-3 text-amber-700 shrink-0 group-hover:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m19 9-7 7-7-7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search Bar (Desktop) -->
+    <div class="hidden md:flex flex-1 max-w-xl mx-6">
+      <form action="/search" method="get" class="w-full relative">
+        <input type="text" name="q" placeholder="Search flowers, cakes, gifts..." class="w-full h-11 pl-5 pr-12 rounded-full border-2 border-gray-200 bg-gray-50 text-sm focus:outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/20 transition-all duration-300 placeholder:text-gray-400">
+        <button type="submit" class="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary-600 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </button>
+      </form>
+    </div>
+
+    <!-- Right Icons -->
+    <div class="flex items-center gap-1 sm:gap-2 md:gap-3 shrink-0">
+      <button id="mobile-search-btn" class="md:hidden w-8 h-8 sm:w-10 sm:h-10 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors">
+        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      </button>
+
+      <!-- Wallet / Rewards Quick Link & User Profile Icon -->
+      {% if customer %}
+        <a href="https://shopify.com/74817667150/account/pages/3e8a5ac3-0805-4b8e-a799-cf65451fab29" class="flex items-center px-3 py-1.5 bg-[#fdf8f0] hover:bg-[#f8ede0] border border-[#c5a67c]/50 text-[#0e7040] rounded-full text-xs font-semibold tracking-wide transition-all shadow-sm hover:shadow-md" title="My Wallet & Rewards">
+          <span class="font-serif whitespace-nowrap">My Wallet</span>
+        </a>
+        <a href="{{ routes.account_url }}" class="flex w-8 h-8 sm:w-10 sm:h-10 rounded-full hover:bg-gray-100 items-center justify-center transition-colors" title="Account">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 20c0-4 3.5-7 7-7s7 3 7 7"/></svg>
+        </a>
+      {% else %}
+        <button onclick="openLoginModal()" class="flex items-center px-3 py-1.5 bg-[#fdf8f0] hover:bg-[#f8ede0] border border-[#c5a67c]/50 text-[#0e7040] rounded-full text-xs font-semibold tracking-wide transition-all shadow-sm hover:shadow-md cursor-pointer" title="My Wallet & Rewards">
+          <span class="font-serif whitespace-nowrap">My Wallet</span>
+        </button>
+        <button onclick="openLoginModal()" class="flex w-8 h-8 sm:w-10 sm:h-10 rounded-full hover:bg-gray-100 items-center justify-center transition-colors" title="Login">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 20c0-4 3.5-7 7-7s7 3 7 7"/></svg>
+        </button>
+      {% endif %}
+
+      {% assign real_item_count = 0 %}
+      {% for item in cart.items %}
+        {% if item.product.handle != 'peak-season-delivery-surcharge' %}
+          {% assign real_item_count = real_item_count | plus: item.quantity %}
+        {% endif %}
+      {% endfor %}
+
+      <!-- Cart Icon with Hover Dropdown -->
+      <div class="relative hidden md:block" id="cart-hover-wrapper">
+        <a href="{{ routes.cart_url }}" class="relative w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors group" title="Cart" id="cart-icon-btn">
+          <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="absolute -top-0.5 -right-0.5 w-5 h-5 bg-secondary text-white text-[10px] font-bold rounded-full flex items-center justify-center" id="cart-count-badge">{{ real_item_count }}</span>
+        </a>
+
+        <!-- Hover Cart Dropdown -->
+        <div id="cart-hover-dropdown"
+          class="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 z-[200] opacity-0 invisible translate-y-2 transition-all duration-200 pointer-events-none"
+          style="min-width:300px;">
+
+          <!-- Arrow -->
+          <div class="absolute -top-2 right-3 w-4 h-4 bg-white border-l border-t border-gray-100 rotate-45"></div>
+
+          <!-- Header -->
+          <div class="px-4 pt-4 pb-3 border-b border-gray-100 flex items-center justify-between">
+            <span class="font-bold text-gray-900 text-sm">My Cart</span>
+            <span class="text-xs text-gray-400" id="cart-dropdown-count">{{ real_item_count }} item{{ real_item_count | pluralize: '', 's' }}</span>
+          </div>
+
+          <!-- Items List -->
+          <div id="cart-dropdown-items" class="max-h-64 overflow-y-auto divide-y divide-gray-50 px-2 py-1">
+            {% if real_item_count == 0 %}
+              <div class="py-8 text-center text-gray-400 text-sm" id="cart-empty-state">
+                <div class="text-4xl mb-2">🛒</div>
+                <p>Your cart is empty</p>
+                <a href="/collections/all" class="mt-3 inline-block text-xs font-bold text-primary hover:underline">Shop Now →</a>
+              </div>
+            {% else %}
+              {% for item in cart.items %}
+                {% if item.product.handle != 'peak-season-delivery-surcharge' %}
+                  <div class="flex items-center gap-3 py-2.5 px-2 hover:bg-gray-50 rounded-xl transition-colors cart-item-row" data-key="{{ item.key }}">
+                    <a href="{{ item.url }}" class="flex-shrink-0">
+                      <img src="{{ item.image | img_url: '80x80', crop: 'center' }}" alt="{{ item.title | escape }}" class="w-12 h-12 rounded-xl object-cover border border-gray-100">
+                    </a>
+                    <div class="flex-1 min-w-0">
+                      <a href="{{ item.url }}" class="text-xs font-semibold text-gray-800 line-clamp-1 hover:text-primary transition-colors">{{ item.product.title }}</a>
+                      {% if item.variant.title != 'Default Title' %}
+                        <p class="text-[10px] text-gray-400 mt-0.5">{{ item.variant.title }}</p>
+                      {% endif %}
+                      <div class="flex items-center justify-between mt-1">
+                        <span class="text-xs font-bold text-gray-900" data-base-price="{{ item.final_line_price }}">{{ item.final_line_price | money }}</span>
+                        <span class="text-[10px] text-gray-400">Qty: {{ item.quantity }}</span>
+                      </div>
+                    </div>
+                    <button class="cart-remove-btn flex-shrink-0 w-6 h-6 rounded-full bg-gray-100 hover:bg-red-50 hover:text-red-500 flex items-center justify-center text-gray-400 transition-colors" data-key="{{ item.key }}" title="Remove">
+                      <svg class="w-3 h-3 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                    </button>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          </div>
+
+          <!-- Footer -->
+          {% if real_item_count > 0 %}
+          <div class="px-4 pb-4 pt-3 border-t border-gray-100">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-semibold text-gray-700">Subtotal</span>
+              <span class="text-sm font-bold text-gray-900" id="cart-dropdown-total" data-base-price="{{ cart.total_price }}">{{ cart.total_price | money }}</span>
+            </div>
+            <a href="{{ routes.cart_url }}"
+              class="block w-full h-10 bg-primary text-white text-sm font-bold rounded-xl text-center leading-10 hover:bg-primary-600 transition-colors">
+              View Cart
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Mobile cart icon (no dropdown) -->
+      <a href="{{ routes.cart_url }}" class="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors md:hidden" title="Cart">
+        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="absolute -top-0.5 -right-0.5 w-4 h-4 sm:w-5 sm:h-5 bg-secondary text-white text-[9px] sm:text-[10px] font-bold rounded-full flex items-center justify-center">{{ real_item_count }}</span>
+      </a>
+
+      <!-- Mobile Hamburger -->
+      <button id="mobile-menu-btn" class="lg:hidden w-8 h-8 sm:w-10 sm:h-10 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors">
+        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </div>
+  </div>
+
+  <!-- Dedicated Mobile Delivery Location Bar -->
+  <div class="md:hidden bg-gradient-to-r from-amber-50/90 via-emerald-50/90 to-amber-50/90 border-t border-b border-amber-200/60 px-2.5 py-1.5 shadow-2xs">
+    <div class="flex items-center gap-1.5 justify-between max-w-7xl mx-auto">
+      <!-- India Delivery Mobile Button -->
+      <button type="button" id="header-india-delivery-btn-mobile" onclick="openPincodeModal('india')" class="flex-1 flex items-center justify-between gap-1 bg-white border-2 border-emerald-600 px-2 py-1 rounded-lg text-left shadow-2xs group cursor-pointer min-w-0" title="India Delivery Location">
+        <div class="flex items-center gap-1 min-w-0 flex-1">
+          <span class="w-3.5 h-2.5 rounded-xs overflow-hidden shrink-0 border border-gray-300 flex flex-col justify-between">
+            <span class="h-1/3 bg-[#FF9933] w-full block"></span>
+            <span class="h-1/3 bg-white w-full flex items-center justify-center relative">
+              <span class="w-0.5 h-0.5 rounded-full border border-[#000080]"></span>
+            </span>
+            <span class="h-1/3 bg-[#138808] w-full block"></span>
+          </span>
+          <span class="text-[10px] font-bold text-gray-900 shrink-0">India:</span>
+          <span class="text-[10px] text-gray-700 header-city-display truncate font-semibold">Select Pincode</span>
+        </div>
+        <svg class="w-2.5 h-2.5 text-gray-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m19 9-7 7-7-7"/></svg>
+      </button>
+
+      <!-- International Delivery Mobile Button -->
+      <button type="button" id="header-intl-delivery-btn-mobile" onclick="openPincodeModal('international')" class="flex-1 flex items-center justify-between gap-1 bg-white border border-gray-200 opacity-80 px-2 py-1 rounded-lg text-left shadow-2xs group cursor-pointer min-w-0" title="International Delivery Location">
+        <div class="flex items-center gap-1 min-w-0 flex-1">
+          <span class="text-[11px] shrink-0 leading-none">🌐</span>
+          <span class="text-[10px] font-bold text-amber-900 shrink-0">Intl:</span>
+          <span class="text-[10px] font-semibold text-pink-800 header-intl-country-display truncate hidden">Select Country</span>
+        </div>
+        <svg class="w-2.5 h-2.5 text-amber-700 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m19 9-7 7-7-7"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- DESKTOP NAVIGATION                           -->
+  <!-- ============================================ -->
+  <nav class="border-t border-gray-100 bg-white block overflow-x-auto scrollbar-hide" style="-webkit-overflow-scrolling: touch; -ms-overflow-style: none; scrollbar-width: none;">
+    <style>.scrollbar-hide::-webkit-scrollbar { display: none; }</style>
+    <div class="max-w-7xl mx-auto px-2 md:px-4">
+      <ul class="flex items-center md:justify-center h-10 md:h-11 text-[11px] md:text-[13px] font-semibold relative flex-nowrap min-w-max">
+
+        <!-- Exotic Flowers -->
+        <li>
+          <a href="/collections/exotic-flowers" class="px-2.5 md:px-3.5 py-1 md:py-1.5 mx-0.5 md:mx-1 rounded-xl bg-gradient-to-r from-amber-50 to-pink-50 hover:from-amber-100 hover:to-pink-100 border border-amber-200/90 font-bold whitespace-nowrap flex items-center gap-1 md:gap-1.5 transition-all shadow-2xs cursor-pointer text-[10px] md:text-[13px]">
+            <span>Exotic</span>
+            <span class="text-[8px] md:text-[9px] font-extrabold text-emerald-700 bg-emerald-100 px-1 md:px-1.5 py-0.2 rounded-full uppercase tracking-wider">Flowers</span>
+          </a>
+        </li>
+
+        <!-- 1. Gift Categories (MEGA MENU) -->
+        <li class="mega-parent group">
+          <button class="px-2.5 md:px-4 py-1.5 md:py-2 nav-bloom relative hover:text-primary transition-colors text-gray-700 whitespace-nowrap flex items-center gap-1">
+            Gift Categories
+            <svg class="w-3 h-3 md:w-3.5 md:h-3.5 text-gray-400 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+
+          <!-- Mega Dropdown Panel -->
+          <div class="mega-panel fixed md:absolute left-0 right-0 top-[120px] md:top-full bg-white border-t border-gray-100 shadow-2xl md:shadow-xl rounded-b-2xl opacity-0 invisible transition-all duration-300 z-[100] md:z-50 max-h-[70vh] md:max-h-none overflow-y-auto md:overflow-visible mobile-dropdown-panel">
+            <div class="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+
+              <!-- Column A1: BY PRODUCT -->
+              <div>
+                <h3 class="text-xs font-bold text-primary uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <span class="w-5 h-0.5 bg-primary rounded"></span> By Product
+                </h3>
+                <ul class="space-y-1.5 text-sm text-gray-600 max-h-[340px] overflow-y-auto pr-2 custom-scroll">
+                  {%- assign products_list = 'Exotic Flowers,Plants,Flowers,Cakes,Combo,Balloons,Chocolates,Essentials,Stones,Hampers,Indian Sweets,Perfumes,Artificial Jewelry,Soft Toys,Greeting Cards,Wine & Champagne' | split: ',' -%}
+                  {% for item in products_list %}
+                    {%- assign product_link = '/collections/' | append: item | handleize -%}
+                    {%- if item == 'Combo' -%}{%- assign product_link = '/collections/combos' -%}{%- endif -%}
+                    <li><a href="{{ product_link }}" class="block py-1 px-2 rounded hover:bg-primary/5 hover:text-primary transition-colors">{{ item }}</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+
+              <!-- Column A2: BY OCCASION -->
+              <div>
+                <h3 class="text-xs font-bold text-secondary uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <span class="w-5 h-0.5 bg-secondary rounded"></span> By Occasion
+                </h3>
+                <ul class="space-y-1.5 text-sm text-gray-600 max-h-[340px] overflow-y-auto pr-2 custom-scroll">
+                  {%- assign occasions = "Anniversary,Wedding Day,Congratulations,Mother's Day,Father's Day,Valentine's Day,Women's Day,Friendship Day,Teacher's Day,Children's Day,Doctor's Day,Love & Romance,Miss You,Sympathy,Funeral,Sorry,Thank You" | split: ',' -%}
+                  {% for item in occasions %}
+                    <li><a href="/collections/{{ item | handleize }}" class="block py-1 px-2 rounded hover:bg-secondary/5 hover:text-secondary transition-colors">{{ item }}</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+
+              <!-- Column B1: BY FESTIVAL -->
+              <div>
+                <h3 class="text-xs font-bold text-amber-600 uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <span class="w-5 h-0.5 bg-amber-500 rounded"></span> By Festival
+                </h3>
+                <ul class="space-y-1.5 text-sm text-gray-600">
+                  {%- assign festivals = 'Eid,Diwali Hampers,Diwali Idol,Christmas,Lohri,Holi,Bhai Dooj,Rakhi Hampers,Easter,Pongal,Republic Day,Independence Day,Karwa Chauth,Teej' | split: ',' -%}
+                  {% for item in festivals %}
+                    {% assign fest_handle = item | handleize %}
+                    {% assign fest_link = '/collections/' | append: fest_handle %}
+                    {% if item == 'Rakhi Hampers' or item == 'Rakhi' %}{% assign fest_link = '/collections/rakhihampers' %}{% endif %}
+                    {% if item == 'Diwali Hampers' or item == 'Diwali' %}{% assign fest_link = '/collections/diwali-hampers' %}{% endif %}
+                    {% if item == 'Diwali Idol' %}{% assign fest_link = '/collections/diwali-idol' %}{% endif %}
+                    <li><a href="{{ fest_link }}" class="block py-1 px-2 rounded hover:bg-amber-50 hover:text-amber-700 transition-colors">{{ item }}</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+
+              <!-- Column B2: BY RELATION -->
+              <div>
+                <h3 class="text-xs font-bold text-violet-600 uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <span class="w-5 h-0.5 bg-violet-500 rounded"></span> By Relation
+                </h3>
+                <ul class="space-y-1.5 text-sm text-gray-600">
+                  {%- assign relations = 'Girlfriend,Boyfriend,Husband,Wife,Father,Mother,Brother,Sister,Grandmother,Grandfather,Colleagues,Boss,Doctor,Children,Teacher' | split: ',' -%}
+                  {% for item in relations %}
+                    <li><a href="/collections/{{ item | handleize }}" class="block py-1 px-2 rounded hover:bg-violet-50 hover:text-violet-700 transition-colors">{{ item }}</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+
+            </div>
+          </div>
+        </li>
+
+        <!-- 2. International Delivery Menu Item -->
+        <li class="relative group">
+          <button type="button" onclick="openPincodeModal('international')" class="px-2.5 md:px-3.5 py-1 md:py-1.5 mx-0.5 md:mx-1 rounded-xl bg-gradient-to-r from-amber-50 to-pink-50 hover:from-amber-100 hover:to-pink-100 border border-amber-200/90 text-amber-900 font-bold whitespace-nowrap flex items-center gap-1 md:gap-1.5 transition-all shadow-2xs cursor-pointer text-[10px] md:text-[13px]">
+            <span>🌐</span>
+            <span>International Delivery</span>
+            <span class="text-[8px] md:text-[9px] font-extrabold text-pink-700 bg-pink-100 px-1 md:px-1.5 py-0.2 rounded-full uppercase tracking-wider">Flowers & Cakes</span>
+          </button>
+          <div class="fixed md:absolute left-0 md:left-auto right-0 md:right-auto top-[120px] md:top-full pt-1 opacity-0 invisible transition-all duration-200 z-[100] md:z-40 w-full md:w-auto px-4 md:px-0 mobile-dropdown-panel">
+            <div class="bg-white rounded-2xl shadow-2xl md:shadow-xl border border-amber-100 py-3 w-full md:w-64 p-3 space-y-1.5 text-xs mx-auto max-w-sm md:max-w-none">
+              <div class="font-bold text-amber-900 border-b border-gray-100 pb-2 px-1 flex items-center gap-1.5">
+                <span>✈️</span> <span>Worldwide Destinations</span>
+              </div>
+              <a href="/collections/flowers" class="block px-3 py-2 rounded-xl text-gray-700 hover:bg-amber-50 hover:text-amber-800 transition-colors flex items-center justify-between font-semibold">
+                <span>🌸 International Flowers</span>
+                <span class="text-[9px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded-full font-bold">Worldwide</span>
+              </a>
+              <a href="/collections/cakes" class="block px-3 py-2 rounded-xl text-gray-700 hover:bg-pink-50 hover:text-pink-800 transition-colors flex items-center justify-between font-semibold">
+                <span>🍰 International Cakes</span>
+                <span class="text-[9px] bg-pink-100 text-pink-800 px-1.5 py-0.5 rounded-full font-bold">Worldwide</span>
+              </a>
+              <div class="pt-2 border-t border-gray-100 text-[10px] text-gray-500 px-1">
+                ⚠️ Gifts (Hampers, Sweets, Plants) are available for India Delivery only.
+              </div>
+              <div class="pt-1">
+                <button type="button" onclick="openPincodeModal('international')" class="w-full py-2 bg-gradient-to-r from-amber-600 to-pink-600 text-white rounded-xl font-bold text-center hover:opacity-95 transition-opacity cursor-pointer">
+                  Select Country & Deliver 🌐
+                </button>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <!-- 3. Same Day / Midnight -->
+        <li>
+          <a href="/pages/same-day?view=same-day" class="px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors text-gray-700 whitespace-nowrap flex items-center gap-1">
+            <span class="header-sameday-nav-text">Same Day / Midnight</span>
+          </a>
+        </li>
+
+        <!-- 4. Corporate & Events (Small Dropdown) -->
+        <li class="relative group">
+          <button class="px-2.5 md:px-4 py-1.5 md:py-2 nav-bloom relative hover:text-primary transition-colors text-gray-700 whitespace-nowrap flex items-center gap-1">
+            Corporate & Events
+            <svg class="w-3 h-3 md:w-3.5 md:h-3.5 text-gray-400 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="fixed md:absolute left-0 md:left-auto right-0 md:right-auto top-[120px] md:top-full pt-1 opacity-0 invisible transition-all duration-200 z-[100] md:z-40 w-full md:w-auto px-4 md:px-0 mobile-dropdown-panel">
+            <div class="bg-white rounded-xl shadow-2xl md:shadow-xl border border-gray-100 py-2 w-full md:w-56 mx-auto max-w-sm md:max-w-none">
+              <a href="/pages/corporate-events?view=corporate-events" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary transition-colors">Corporate Gifting</a>
+              <a href="/pages/corporate-events?view=corporate-events#weddings" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary transition-colors">Weddings</a>
+              <a href="/pages/corporate-events?view=corporate-events#parties" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary transition-colors">Parties</a>
+
+            </div>
+          </div>
+        </li>
+
+        <!-- 5. Elite / Concierge (Small Dropdown) -->
+        <li class="relative group">
+          <button class="px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg hover:bg-amber-50 hover:text-amber-700 transition-colors text-gray-700 whitespace-nowrap flex items-center gap-1">
+            Elite Concierge
+            <svg class="w-3 h-3 md:w-3.5 md:h-3.5 text-gray-400 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="fixed md:absolute left-0 md:left-auto right-0 md:right-auto top-[120px] md:top-full pt-1 opacity-0 invisible transition-all duration-200 z-[100] md:z-40 w-full md:w-auto px-4 md:px-0 mobile-dropdown-panel">
+            <div class="bg-white rounded-xl shadow-2xl md:shadow-xl border border-gray-100 py-2 w-full md:w-56 mx-auto max-w-sm md:max-w-none">
+              <a href="/pages/elite-concierge?view=elite-concierge#musician" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-700 transition-colors">Musician on Call</a>
+              <a href="/pages/elite-concierge?view=elite-concierge#guitarist" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-700 transition-colors">Guitarist on Call</a>
+              <a href="/pages/elite-concierge?view=elite-concierge#pianist" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-700 transition-colors">Pianist on Call</a>
+              <a href="/pages/elite-concierge?view=elite-concierge#flute" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-700 transition-colors">Flute on Call</a>
+              <a href="/pages/elite-concierge?view=elite-concierge#video" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-700 transition-colors">Video Message</a>
+            </div>
+          </div>
+        </li>
+
+        <!-- 6. E Gifts (No dropdown) -->
+        <li>
+          <a href="/pages/e-gifts?view=e-gifts" class="px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg hover:bg-pink-50 hover:text-secondary transition-colors text-gray-700 whitespace-nowrap flex items-center gap-1">
+            E-Gifts
+          </a>
+        </li>
+
+
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<!-- ============================================ -->
+<!-- INTERNATIONAL DELIVERY ACTIVE NOTIFICATION BAR -->
+<!-- ============================================ -->
+<div id="intl-active-banner" class="hidden bg-gradient-to-r from-amber-700 via-pink-700 to-primary text-white text-xs font-semibold py-2 px-3 sm:px-4 shadow-md">
+  <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+    <div class="flex items-center justify-center sm:justify-start gap-1.5 flex-wrap text-xs">
+      <span class="bg-white/20 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shrink-0">International Active</span>
+      <span>Delivering <strong class="text-amber-200 underline">Flowers & Cakes</strong> to <span id="intl-banner-country-name" class="font-bold">Worldwide</span>. <span class="text-amber-200/80 text-[10px] sm:text-xs">(Gifts available for India Delivery only)</span></span>
+    </div>
+    <button type="button" onclick="openPincodeModal('india')" class="bg-white text-gray-900 hover:bg-amber-100 text-[11px] font-bold px-3 py-1 rounded-full transition-colors shrink-0 cursor-pointer shadow-xs">
+      Switch to India Delivery 🇮🇳
+    </button>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- MOBILE SEARCH DRAWER                         -->
+<!-- ============================================ -->
+<div id="mobile-search" class="fixed inset-x-0 top-0 z-[60] bg-white p-4 shadow-lg -translate-y-full transition-transform duration-300 lg:hidden">
+  <form action="/search" method="get" class="flex gap-2">
+    <input type="text" name="q" placeholder="Search flowers, cakes, gifts..." class="flex-1 h-11 pl-4 rounded-full border-2 border-gray-200 text-sm focus:outline-none focus:border-primary">
+    <button type="button" id="close-search" class="w-11 h-11 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 text-lg hover:bg-gray-200 transition-colors" title="Close">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  </form>
+</div>
+
+<!-- ============================================ -->
+<!-- MOBILE SLIDE-OUT MENU                        -->
+<!-- ============================================ -->
+<div id="mobile-menu-overlay" class="fixed inset-0 bg-black/40 z-[70] opacity-0 invisible transition-all duration-300 lg:hidden" onclick="closeMobileMenu()"></div>
+<aside id="mobile-menu" class="fixed top-0 right-0 bottom-0 w-[320px] max-w-[85vw] bg-white z-[80] translate-x-full transition-transform duration-300 lg:hidden flex flex-col shadow-2xl">
+
+  <!-- Mobile Menu Header -->
+  <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+    <span class="font-serif text-xl font-bold text-primary">Menu</span>
+    <button onclick="closeMobileMenu()" class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors" title="Close Menu">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <!-- Mobile Menu Links -->
+  <div class="flex-1 overflow-y-auto py-4">
+
+    <!-- Mobile Delivery Options (Stacked India Delivery & International Delivery) -->
+    <div class="px-5 pb-3 space-y-2">
+      <div class="text-[11px] font-bold uppercase tracking-wider text-gray-400">Select Delivery Destination</div>
+      
+      <!-- India Delivery Button -->
+      <button type="button" onclick="closeMobileMenu(); openPincodeModal('india');" class="flex items-center justify-between w-full p-2.5 bg-emerald-50/60 border border-emerald-200 rounded-xl text-left cursor-pointer">
+        <div class="flex items-center gap-2.5">
+          <span class="w-5 h-3.5 rounded-xs overflow-hidden shrink-0 border border-gray-300 shadow-2xs flex flex-col justify-between">
+            <span class="h-1/3 bg-[#FF9933] w-full block"></span>
+            <span class="h-1/3 bg-white w-full flex items-center justify-center"></span>
+            <span class="h-1/3 bg-[#138808] w-full block"></span>
+          </span>
+          <div>
+            <div class="text-xs font-bold text-gray-900">India Delivery</div>
+            <div class="text-[10px] text-gray-500 header-city-display">Delhi (Enter Pincode)</div>
+          </div>
+        </div>
+        <span class="text-xs text-emerald-700 font-bold">Select ›</span>
+      </button>
+
+      <!-- International Delivery Button -->
+      <button type="button" onclick="closeMobileMenu(); openPincodeModal('international');" class="flex items-center justify-between w-full p-2.5 bg-gradient-to-r from-amber-50 to-pink-50 border border-amber-200 rounded-xl text-left cursor-pointer">
+        <div class="flex items-center gap-2.5">
+          <span class="text-base">🌐</span>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs font-bold text-amber-900">International Delivery</span>
+              <span class="text-[9px] font-bold text-pink-700 bg-pink-100 px-1.5 py-0.2 rounded-full">Flowers & Cakes</span>
+            </div>
+            <div class="text-[10px] text-pink-700 header-intl-country-display font-medium">Select Country</div>
+          </div>
+        </div>
+        <span class="text-xs text-amber-800 font-bold">Select ›</span>
+      </button>
+    </div>
+
+    <!-- My Wallet Mobile Drawer Button -->
+    <div class="px-5 pb-3">
+      {% if customer %}
+        <a href="https://shopify.com/74817667150/account/pages/3e8a5ac3-0805-4b8e-a799-cf65451fab29" class="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-[#fdf8f0] border border-[#c5a67c]/50 text-[#0e7040] rounded-xl text-sm font-semibold shadow-sm" onclick="closeMobileMenu()">
+          <span class="font-serif">My Wallet & Rewards</span>
+        </a>
+      {% else %}
+        <button onclick="closeMobileMenu(); openLoginModal();" class="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-[#fdf8f0] border border-[#c5a67c]/50 text-[#0e7040] rounded-xl text-sm font-semibold shadow-sm cursor-pointer">
+          <span class="font-serif">My Wallet & Rewards</span>
+        </button>
+      {% endif %}
+    </div>
+
+    <!-- Mobile Festival Accordion -->
+    {% assign today_num = 'now' | date: '%Y%m%d' | plus: 0 %}
+    {% assign current_month = 'now' | date: '%m' %}
+    {% capture raw_festivals_list %}{% render 'festivals-list' %}{% endcapture %}
+    {% assign all_festivals_list = raw_festivals_list | strip | split: ',' %}
+    <script>
+      window.__allFestivalsData = [
+        {% for entry in all_festivals_list %}
+          {% assign f_parts = entry | split: ':' %}
+          { 
+            date: "{{ f_parts[0] }}", 
+            title: "{{ f_parts[1] }}", 
+            short: "{{ f_parts[2] }}", 
+            icon: "{{ f_parts[3] }}", 
+            handle: "{{ f_parts[4] }}",
+            region: "{{ f_parts[5] | default: 'ALL' }}"
+          }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ];
+    </script>
+
+    {% assign mob_active_fest_name = 'Independence Day' %}
+    {% assign mob_active_fest_icon = '🇮🇳' %}
+    {% assign mob_found_active = false %}
+
+    {% for entry in all_festivals_list %}
+      {% assign f_parts = entry | split: ':' %}
+      {% assign f_date  = f_parts[0] %}
+      {% assign f_short = f_parts[2] %}
+      {% assign f_icon  = f_parts[3] %}
+      {% assign f_num   = f_date | remove: '-' | plus: 0 %}
+
+      {% if f_num >= today_num and mob_found_active == false %}
+        {% assign mob_active_fest_name = f_short %}
+        {% assign mob_active_fest_icon = f_icon %}
+        {% assign mob_found_active = true %}
+      {% endif %}
+    {% endfor %}
+
+    {% if mob_found_active == false %}
+      {% assign mob_first_entry = all_festivals_list.first | split: ':' %}
+      {% assign mob_active_fest_name = mob_first_entry[2] %}
+      {% assign mob_active_fest_icon = mob_first_entry[3] %}
+    {% endif %}
+
+    <div class="mobile-accordion">
+      <button class="accordion-trigger flex items-center justify-between w-full px-5 py-3 text-sm font-bold text-amber-900 bg-amber-50/60 hover:bg-amber-100/60 transition-colors" data-target="mob-festivals">
+        <span class="flex items-center gap-2">
+          <span class="text-base animate-pulse">{{ mob_active_fest_icon }}</span>
+          <span>{{ mob_active_fest_name }}</span>
+        </span>
+        <svg class="w-4 h-4 text-gray-400 accordion-arrow transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+
+      <div id="mob-festivals" class="accordion-content hidden bg-amber-50/20 divide-y divide-amber-100/60 max-h-96 overflow-y-auto">
+        {% for entry in all_festivals_list %}
+          {% assign f_parts = entry | split: ':' %}
+          {% assign f_date  = f_parts[0] %}
+          {% assign f_title = f_parts[1] %}
+          {% assign f_short = f_parts[2] %}
+          {% assign f_icon  = f_parts[3] %}
+          {% assign f_handle= f_parts[4] %}
+          {% assign f_num   = f_date | remove: '-' | plus: 0 %}
+          {% assign mob_show_festival = false %}
+          {% if f_num >= today_num %}
+            {% assign mob_show_festival = true %}
+          {% endif %}
+
+          {% if mob_show_festival %}
+            <div class="py-1 fest-nav-li"
+                 data-festival-region="{{ f_parts[5] | default: 'ALL' }}" 
+                 data-festival-date="{{ f_date }}" 
+                 data-festival-short="{{ f_short }}" 
+                 data-festival-icon="{{ f_icon }}">
+              <button type="button" class="flex items-center justify-between w-full px-6 py-2.5 text-xs text-gray-800 font-semibold hover:text-amber-800 text-left cursor-pointer" onclick="toggleSubAccordion('mob-fest-sub-{{ forloop.index }}')">
+                <span class="flex items-center gap-2">
+                  <span>{{ f_icon }}</span>
+                  <span>{{ f_short }}</span>
+                </span>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[10px] text-gray-500 font-bold bg-white px-1.5 py-0.5 rounded border border-gray-200">{{ f_date | date: '%b %d' }}</span>
+                  <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+                </div>
+              </button>
+
+              <!-- Festival Subcategories Accordion Content -->
+              <div id="mob-fest-sub-{{ forloop.index }}" class="hidden pl-10 pr-4 py-1.5 space-y-1 bg-white/80 border-t border-amber-100/40">
+                {% if f_handle == 'diwali' or f_short == 'Diwali' %}
+                  <a href="/collections/diwali-hampers" class="flex items-center gap-2 py-1.5 px-2 text-[11px] text-gray-700 font-medium hover:text-amber-800" onclick="closeMobileMenu()">
+                    <span>🪔 Diwali Hampers</span>
+                  </a>
+                  <a href="/collections/diwali-idol" class="flex items-center gap-2 py-1.5 px-2 text-[11px] text-gray-700 font-medium hover:text-amber-800" onclick="closeMobileMenu()">
+                    <span>✨ Diwali Idol & Statues</span>
+                  </a>
+                {% elsif f_handle == 'rakhi' or f_short == 'Rakhi' %}
+                  <a href="/collections/rakhihampers" class="flex items-center gap-2 py-1.5 px-2 text-[11px] text-gray-700 font-medium hover:text-amber-800" onclick="closeMobileMenu()">
+                    <span>🪢 Rakhi Hampers</span>
+                  </a>
+                {% else %}
+                  <a href="/collections/all" class="flex items-center gap-2 py-1.5 px-2 text-[11px] text-gray-700 font-medium hover:text-amber-800" onclick="closeMobileMenu()">
+                    <span>🎁 Gifts for {{ f_short }}</span>
+                  </a>
+                {% endif %}
+                <a href="/collections/combos" class="flex items-center gap-2 py-1.5 px-2 text-[11px] text-gray-700 font-medium hover:text-amber-800" onclick="closeMobileMenu()">
+                  <span>🎈 Combos for {{ f_short }}</span>
+                </a>
+                <a href="/collections/flowers" class="flex items-center gap-2 py-1.5 px-2 text-[11px] text-gray-700 font-medium hover:text-amber-800" onclick="closeMobileMenu()">
+                  <span>🌸 Flowers for {{ f_short }}</span>
+                </a>
+                <a href="/collections/cakes" class="flex items-center gap-2 py-1.5 px-2 text-[11px] text-gray-700 font-medium hover:text-amber-800" onclick="closeMobileMenu()">
+                  <span>🎂 Cakes for {{ f_short }}</span>
+                </a>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Exotic Flowers -->
+    <a href="/collections/exotic-flowers" class="flex items-center gap-3 px-5 py-3 text-sm font-medium text-gray-700 hover:bg-primary/5 hover:text-primary transition-colors">
+      <span>Exotic Flowers</span>
+    </a>
+
+    <!-- Gift Categories Accordion -->
+    <div class="mobile-accordion">
+      <button class="accordion-trigger flex items-center justify-between w-full px-5 py-3 text-sm font-medium text-gray-700 hover:bg-primary/5 transition-colors" data-target="mob-gift-cats">
+        <span class="flex items-center gap-3">Gift Categories</span>
+        <svg class="w-4 h-4 text-gray-400 accordion-arrow transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div id="mob-gift-cats" class="accordion-content hidden">
+        <!-- By Product -->
+        <div class="px-5 py-2">
+          <span class="text-[10px] font-bold text-primary uppercase tracking-widest">By Product</span>
+        </div>
+        {%- assign mob_products = 'Exotic Flowers,Plants,Flowers,Cakes,Combo,Balloons,Chocolates,Essentials,Stones,Hampers,Fresh Fruits,Indian Sweets,Perfumes,Jewelry,Soft Toys' | split: ',' -%}
+        {% for item in mob_products %}
+          {%- assign mob_product_link = '/collections/' | append: item | handleize -%}
+          {%- if item == 'Combo' -%}{%- assign mob_product_link = '/collections/combos' -%}{%- endif -%}
+          <a href="{{ mob_product_link }}" class="block pl-12 pr-5 py-2 text-sm text-gray-600 hover:text-primary transition-colors">{{ item }}</a>
+        {% endfor %}
+        
+        <!-- By Occasion -->
+        <div class="px-5 py-2 mt-2">
+          <span class="text-[10px] font-bold text-secondary uppercase tracking-widest">By Occasion</span>
+        </div>
+        {%- assign mob_occasions = 'Anniversary,Birthday,Wedding,Congratulations,Love & Romance,Miss You,Thank You,Sorry' | split: ',' -%}
+        {% for item in mob_occasions %}
+          <a href="/collections/{{ item | handleize }}" class="block pl-12 pr-5 py-2 text-sm text-gray-600 hover:text-secondary transition-colors">{{ item }}</a>
+        {% endfor %}
+
+        <!-- By Festival -->
+        <div class="px-5 py-2 mt-2">
+          <span class="text-[10px] font-bold text-amber-600 uppercase tracking-widest">By Festival</span>
+        </div>
+        {%- assign mob_festivals = 'Diwali Hampers,Diwali Idol,Rakhi Hampers,Christmas,Holi,Eid,Bhai Dooj' | split: ',' -%}
+        {% for item in mob_festivals %}
+          {% assign fest_handle = item | handleize %}
+          {% if item == 'Rakhi Hampers' or item == 'Rakhi' %}{% assign fest_handle = 'rakhihampers' %}{% endif %}
+          {% if item == 'Diwali Hampers' or item == 'Diwali' %}{% assign fest_handle = 'diwali-hampers' %}{% endif %}
+          {% if item == 'Diwali Idol' %}{% assign fest_handle = 'diwali-idol' %}{% endif %}
+          <a href="/collections/{{ fest_handle }}" class="block pl-12 pr-5 py-2 text-sm text-gray-600 hover:text-amber-700 transition-colors">{{ item }}</a>
+        {% endfor %}
+
+        <!-- By Relation -->
+        <div class="px-5 py-2 mt-2">
+          <span class="text-[10px] font-bold text-violet-600 uppercase tracking-widest">By Relation</span>
+        </div>
+        {%- assign mob_relations = 'Girlfriend,Boyfriend,Husband,Wife,Mother,Father,Kids' | split: ',' -%}
+        {% for item in mob_relations %}
+          <a href="/collections/{{ item | handleize }}" class="block pl-12 pr-5 py-2 text-sm text-gray-600 hover:text-violet-700 transition-colors">{{ item }}</a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <a href="/pages/same-day?view=same-day" class="flex items-center gap-3 px-5 py-3 text-sm font-medium text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
+      <span class="header-sameday-nav-text">Same Day / Midnight</span>
+    </a>
+
+    <!-- Corporate Accordion -->
+    <div class="mobile-accordion">
+      <button class="accordion-trigger flex items-center justify-between w-full px-5 py-3 text-sm font-medium text-gray-700 hover:bg-primary/5 transition-colors" data-target="mob-corporate">
+        <span class="flex items-center gap-3">Corporate & Events</span>
+        <svg class="w-4 h-4 text-gray-400 accordion-arrow transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div id="mob-corporate" class="accordion-content hidden">
+        <a href="/pages/corporate-events?view=corporate-events" class="block pl-12 pr-5 py-2.5 text-sm text-gray-600 hover:text-primary transition-colors">Corporate Gifting</a>
+        <a href="/pages/corporate-events?view=corporate-events#weddings" class="block pl-12 pr-5 py-2.5 text-sm text-gray-600 hover:text-primary transition-colors">Weddings</a>
+        <a href="/pages/corporate-events?view=corporate-events#parties" class="block pl-12 pr-5 py-2.5 text-sm text-gray-600 hover:text-primary transition-colors">Parties</a>
+      </div>
+    </div>
+
+    <!-- Elite Accordion -->
+    <div class="mobile-accordion">
+      <button class="accordion-trigger flex items-center justify-between w-full px-5 py-3 text-sm font-medium text-gray-700 hover:bg-amber-50 transition-colors" data-target="mob-elite">
+        <span class="flex items-center gap-3">Elite Concierge</span>
+        <svg class="w-4 h-4 text-gray-400 accordion-arrow transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div id="mob-elite" class="accordion-content hidden">
+        <a href="/pages/elite-concierge?view=elite-concierge#musician" class="block pl-12 pr-5 py-2.5 text-sm text-gray-600 hover:text-amber-700 transition-colors">Musician on Call</a>
+        <a href="/pages/elite-concierge?view=elite-concierge#guitarist" class="block pl-12 pr-5 py-2.5 text-sm text-gray-600 hover:text-amber-700 transition-colors">Guitarist on Call</a>
+        <a href="/pages/elite-concierge?view=elite-concierge#pianist" class="block pl-12 pr-5 py-2.5 text-sm text-gray-600 hover:text-amber-700 transition-colors">Pianist on Call</a>
+        <a href="/pages/elite-concierge?view=elite-concierge#flute" class="block pl-12 pr-5 py-2.5 text-sm text-gray-600 hover:text-amber-700 transition-colors">Flute on Call</a>
+        <a href="/pages/elite-concierge?view=elite-concierge#video" class="block pl-12 pr-5 py-2.5 text-sm text-gray-600 hover:text-amber-700 transition-colors">Video Message</a>
+      </div>
+    </div>
+
+    <a href="/pages/e-gifts?view=e-gifts" class="flex items-center gap-3 px-5 py-3 text-sm font-medium text-gray-700 hover:bg-pink-50 hover:text-secondary transition-colors">
+      E-Gifts
+    </a>
+
+
+
+    <div class="border-t border-gray-100 my-3"></div>
+
+    {% if customer %}
+      <a href="{{ routes.account_url }}" class="flex items-center gap-3 px-5 py-3 text-sm font-medium text-gray-600 hover:text-primary transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 20c0-4 3.5-7 7-7s7 3 7 7"/></svg> My Account
+      </a>
+    {% else %}
+      <button onclick="openLoginModal()" class="w-full flex items-center gap-3 px-5 py-3 text-sm font-medium text-gray-600 hover:text-primary transition-colors text-left">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 20c0-4 3.5-7 7-7s7 3 7 7"/></svg> Login / Register
+      </button>
+    {% endif %}
+    <a href="{{ routes.cart_url }}" class="flex items-center gap-3 px-5 py-3 text-sm font-medium text-gray-600 hover:text-primary transition-colors">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Cart ({{ cart.item_count }})
+    </a>
+  </div>
+</aside>
+
+<!-- ============================================ -->
+<!-- SCRIPTS & STYLES                             -->
+<!-- ============================================ -->
+<style>
+  @keyframes headerIn { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+  .custom-scroll::-webkit-scrollbar { width: 3px; }
+  .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+  .custom-scroll::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
+  .accordion-trigger[aria-expanded="true"] .accordion-arrow { transform: rotate(180deg); }
+
+  .nav-bloom::after {
+    content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%) scaleX(0);
+    width: 60%; height: 2px; background: #0e7040; border-radius: 2px;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .nav-bloom:hover::after { transform: translateX(-50%) scaleX(1); }
+</style>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    /* Mobile Search */
+    const searchBtn = document.getElementById('mobile-search-btn');
+    const searchDrawer = document.getElementById('mobile-search');
+    const closeSearch = document.getElementById('close-search');
+    if(searchBtn && searchDrawer) searchBtn.addEventListener('click', () => searchDrawer.classList.toggle('-translate-y-full'));
+    if(closeSearch && searchDrawer) closeSearch.addEventListener('click', () => searchDrawer.classList.add('-translate-y-full'));
+
+    /* Mobile Menu */
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    const overlay = document.getElementById('mobile-menu-overlay');
+    if(menuBtn) menuBtn.addEventListener('click', () => { 
+      menu.classList.remove('translate-x-full'); 
+      overlay.classList.remove('opacity-0','invisible'); 
+      overlay.classList.add('opacity-100','visible');
+    });
+    window.closeMobileMenu = () => { 
+      menu.classList.add('translate-x-full'); 
+      overlay.classList.add('opacity-0','invisible'); 
+      overlay.classList.remove('opacity-100','visible');
+    };
+
+    window.toggleSubAccordion = (id) => {
+      const target = document.getElementById(id);
+      if (target) {
+        target.classList.toggle('hidden');
+      }
+    };
+
+    /* Accordion */
+    document.querySelectorAll('.accordion-trigger').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = document.getElementById(btn.dataset.target);
+        const isOpen = !target.classList.contains('hidden');
+        document.querySelectorAll('.accordion-content').forEach(c => c.classList.add('hidden'));
+        document.querySelectorAll('.accordion-trigger').forEach(b => b.setAttribute('aria-expanded','false'));
+        if(!isOpen) { target.classList.remove('hidden'); btn.setAttribute('aria-expanded','true'); }
+      });
+    });
+
+    /* Nav Dropdowns (Click Toggle for both Desktop & Mobile) */
+    document.querySelectorAll('.group > button').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation(); // prevent outside click from instantly closing
+        const panel = btn.nextElementSibling;
+        if (!panel || !panel.classList.contains('mobile-dropdown-panel')) return;
+        
+        const isOpen = panel.classList.contains('opacity-100');
+        
+        // Close all dropdowns first
+        document.querySelectorAll('.mobile-dropdown-panel').forEach(p => {
+          p.classList.remove('opacity-100', 'visible');
+          p.classList.add('opacity-0', 'invisible');
+        });
+        
+        // If it was not open, open it
+        if (!isOpen) {
+          panel.classList.remove('opacity-0', 'invisible');
+          panel.classList.add('opacity-100', 'visible');
+        }
+      });
+      
+      // Stop clicks inside the panel from closing it
+      const panel = btn.nextElementSibling;
+      if (panel && panel.classList.contains('mobile-dropdown-panel')) {
+        panel.addEventListener('click', (e) => e.stopPropagation());
+      }
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.mobile-dropdown-panel').forEach(p => {
+        p.classList.remove('opacity-100', 'visible');
+        p.classList.add('opacity-0', 'invisible');
+      });
+    });
+  });
+
+  /* Header scroll effect */
+  window.addEventListener('scroll', () => {
+    const header = document.getElementById('main-header');
+    if(window.scrollY > 50) {
+      header.classList.replace('bg-white/95', 'bg-white/70');
+      header.classList.add('shadow-md');
+    } else {
+      header.classList.replace('bg-white/70', 'bg-white/95');
+      header.classList.remove('shadow-md');
+    }
+  });
+
+  /* ===== HOVER CART DROPDOWN ===== */
+  (function() {
+    const wrapper  = document.getElementById('cart-hover-wrapper');
+    const dropdown = document.getElementById('cart-hover-dropdown');
+    if (!wrapper || !dropdown) return;
+
+    let hideTimer = null;
+
+    function showDropdown() {
+      clearTimeout(hideTimer);
+      dropdown.classList.remove('opacity-0', 'invisible', 'translate-y-2', 'pointer-events-none');
+      dropdown.classList.add('opacity-100', 'visible', 'translate-y-0');
+    }
+
+    function hideDropdown() {
+      hideTimer = setTimeout(function() {
+        dropdown.classList.add('opacity-0', 'invisible', 'translate-y-2', 'pointer-events-none');
+        dropdown.classList.remove('opacity-100', 'visible', 'translate-y-0');
+      }, 180);
+    }
+
+    wrapper.addEventListener('mouseenter', showDropdown);
+    wrapper.addEventListener('mouseleave', hideDropdown);
+    dropdown.addEventListener('mouseenter', showDropdown);
+    dropdown.addEventListener('mouseleave', hideDropdown);
+
+    /* ---- Remove item via AJAX ---- */
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('.cart-remove-btn');
+      if (!btn) return;
+      e.preventDefault();
+
+      const key = btn.dataset.key;
+      const row = btn.closest('.cart-item-row');
+      if (row) {
+        row.style.opacity = '0.4';
+        row.style.pointerEvents = 'none';
+      }
+
+      fetch('/cart/change.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: key, quantity: 0 })
+      })
+      .then(r => r.json())
+      .then(function(cart) {
+        // Update badge count
+        const badge = document.getElementById('cart-count-badge');
+        if (badge) badge.textContent = cart.item_count;
+
+        // Update dropdown count text
+        const countEl = document.getElementById('cart-dropdown-count');
+        if (countEl) countEl.textContent = cart.item_count + (cart.item_count === 1 ? ' item' : ' items');
+
+        // Update total
+        const totalEl = document.getElementById('cart-dropdown-total');
+        if (totalEl) {
+          const rupees = (cart.total_price / 100).toFixed(2);
+          totalEl.textContent = '₹' + parseFloat(rupees).toLocaleString('en-IN');
+        }
+
+        // Remove row
+        if (row) row.remove();
+
+        // If cart is now empty, show empty state
+        const itemsContainer = document.getElementById('cart-dropdown-items');
+        if (cart.item_count === 0 && itemsContainer) {
+          itemsContainer.innerHTML = '<div class="py-8 text-center text-gray-400 text-sm"><div class="text-4xl mb-2">🛒</div><p>Your cart is empty</p><a href="/collections/all" class="mt-3 inline-block text-xs font-bold text-primary hover:underline">Shop Now →</a></div>';
+          // Hide footer buttons
+          const footer = dropdown.querySelector('.border-t.border-gray-100.px-4.pb-4');
+          if (footer) footer.remove();
+        }
+
+        // Also update any other cart count on page (mobile badge etc.)
+        document.querySelectorAll('[data-cart-count]').forEach(el => el.textContent = cart.item_count);
+      })
+      .catch(function() {
+        if (row) { row.style.opacity = '1'; row.style.pointerEvents = ''; }
+      });
+    });
+
+    window.triggerFlitsRewardsWidget = function() {
+      const isLoggedIn = {% if customer %}true{% else %}false{% endif %};
+      if (!isLoggedIn) {
+        if (typeof window.openLoginModal === 'function') {
+          window.openLoginModal();
+        } else {
+          window.location.href = '{{ routes.account_login_url }}';
+        }
+        return;
+      }
+
+      if (window.Flits && typeof window.Flits.openLoyaltyWidget === 'function') {
+        window.Flits.openLoyaltyWidget();
+        return;
+      }
+
+      const launcherBtn = document.querySelector('.flits-launcher-parent, [data-flits-launcher], #flits-loyalty-launcher, .flits-widget-launcher-btn, .flits-rewards-btn');
+      if (launcherBtn) {
+        launcherBtn.click();
+      } else {
+        window.location.href = '{{ routes.account_url }}';
+      }
+    };
+
+    function updateHeaderDeliveryBadge() {
+      const el = document.getElementById('header-topbar-delivery-badge');
+      const navTexts = document.querySelectorAll('.header-sameday-nav-text');
+      const country = (localStorage.getItem('user_country') || 'India').toUpperCase();
+      const isIndia = (country === 'INDIA' || country === 'IN' || country === 'DOMESTIC');
+      
+      if (el) {
+        if (isIndia) {
+          el.textContent = 'Same Day & Midnight Delivery';
+        } else {
+          el.textContent = 'International Express Delivery';
+        }
+      }
+
+      navTexts.forEach(t => {
+        if (isIndia) {
+          t.textContent = 'Same Day / Midnight';
+        } else {
+          t.textContent = 'Same Day Delivery';
+        }
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', updateHeaderDeliveryBadge);
+    } else {
+      updateHeaderDeliveryBadge();
+    }
+    window.addEventListener('pincodeUpdated', updateHeaderDeliveryBadge);
+  })();
+</script>
+
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    { "type": "text", "id": "logo_text", "label": "Logo Text", "default": "FLORAL INDIA" }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,424 @@
+{% style %}
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+  :root {
+    --color-navy: #0d1521;
+    --color-charcoal: #151a1e;
+    --color-gold: #c5a059;
+    --color-ivory: #fdfbf7;
+    --color-gold-light: #e6c888;
+  }
+
+  .font-legal { font-family: 'Cormorant Garamond', serif; }
+  .font-modern { font-family: 'Inter', sans-serif; }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-navy);
+    color: var(--color-ivory);
+  }
+
+  /* Cards */
+  .legal-card {
+    background: rgba(253, 251, 247, 0.03);
+    border: 1px solid rgba(197, 160, 89, 0.15);
+    border-left: 2px solid transparent;
+    transition: all 0.4s ease;
+  }
+  .legal-card:hover {
+    border-left-color: var(--color-gold);
+    transform: translateY(-4px);
+    background: rgba(253, 251, 247, 0.05);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+
+  /* Pills */
+  .trust-pill {
+    background: rgba(197, 160, 89, 0.1);
+    border: 1px solid rgba(197, 160, 89, 0.3);
+    color: var(--color-gold-light);
+  }
+
+  /* Sidebar */
+  .sidebar-link {
+    transition: all 0.3s ease;
+    border-left: 1px solid rgba(197, 160, 89, 0.2);
+  }
+  .sidebar-link:hover {
+    color: var(--color-ivory);
+    border-left-color: var(--color-gold-light);
+  }
+  .sidebar-link.active {
+    color: var(--color-gold);
+    border-left-color: var(--color-gold);
+    font-weight: 500;
+  }
+
+  /* Mobile Select */
+  .mobile-select {
+    background: rgba(253, 251, 247, 0.05);
+    border: 1px solid rgba(197, 160, 89, 0.3);
+    color: var(--color-ivory);
+    appearance: none;
+  }
+  .mobile-select:focus {
+    outline: none;
+    border-color: var(--color-gold);
+  }
+
+  /* Animations */
+  .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+  .fade-up.in-view { opacity: 1; transform: translateY(0); }
+{% endstyle %}
+
+<div class="bg-[#0d1521] text-[#fdfbf7] font-modern min-h-screen pb-20">
+
+  <!-- HERO SECTION -->
+  <section class="pt-32 pb-16 px-4 text-center max-w-4xl mx-auto">
+    <h1 class="font-legal text-5xl md:text-6xl mb-6 fade-up in-view">Terms & Conditions</h1>
+    <div class="w-24 h-px bg-[#c5a059] mx-auto mb-6 fade-up in-view" style="transition-delay: 0.2s;"></div>
+    <p class="text-[#c5a059] font-legal italic text-xl mb-4 fade-up in-view" style="transition-delay: 0.3s;">The fine print, made beautifully clear.</p>
+    <p class="text-gray-400 text-sm tracking-widest uppercase fade-up in-view" style="transition-delay: 0.4s;">Last Updated: July 9, 2026</p>
+    
+    <!-- Trust Pills -->
+    <div class="mt-12 flex flex-wrap justify-center gap-4 fade-up in-view" style="transition-delay: 0.5s;">
+      <span class="trust-pill px-6 py-2 rounded-full text-xs tracking-widest uppercase font-semibold">Secure Payments</span>
+      <span class="trust-pill px-6 py-2 rounded-full text-xs tracking-widest uppercase font-semibold">Global Delivery</span>
+      <span class="trust-pill px-6 py-2 rounded-full text-xs tracking-widest uppercase font-semibold">Fair Policies</span>
+    </div>
+  </section>
+
+  <!-- CONTENT LAYOUT -->
+  <section class="max-w-7xl mx-auto px-4 py-12 flex flex-col lg:flex-row gap-12 relative">
+    
+    <!-- Mobile Navigation Dropdown -->
+    <div class="lg:hidden sticky top-20 z-40 bg-[#0d1521] py-4">
+      <div class="relative">
+        <select id="mobileNav" class="mobile-select w-full py-4 px-6 rounded-none text-sm font-semibold tracking-widest uppercase cursor-pointer">
+          <option value="section-intro">Welcome</option>
+          <option value="section-1">1. About Floral India</option>
+          <option value="section-2">2. Acceptance of Terms</option>
+          <option value="section-3">3. Products & Services</option>
+          <option value="section-4">4. Product Images & Descriptions</option>
+          <option value="section-5">5. Pricing</option>
+          <option value="section-6">6. Payments</option>
+          <option value="section-7">7. International Orders</option>
+          <option value="section-8">8. Delivery Policy</option>
+          <option value="section-9">9. Corporate & Concierge Orders</option>
+          <option value="section-10">10. Cancellations & Modifications</option>
+          <option value="section-11">11. Intellectual Property</option>
+          <option value="section-12">12. Website Usage</option>
+          <option value="section-13">13. Third-Party Services</option>
+          <option value="section-14">14. Limitation of Liability</option>
+          <option value="section-15">15. Force Majeure</option>
+          <option value="section-16">16. Promotional Offers</option>
+          <option value="section-17">17. Changes to These Terms</option>
+          <option value="section-18">18. Governing Law</option>
+          <option value="section-19">19. Contact Us</option>
+        </select>
+        <div class="absolute inset-y-0 right-6 flex items-center pointer-events-none">
+          <svg class="w-4 h-4 text-[#c5a059]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desktop Sidebar -->
+    <aside class="hidden lg:block w-64 flex-shrink-0 relative">
+      <div class="sticky top-32">
+        <h3 class="text-[#c5a059] font-legal italic text-2xl mb-6">Contents</h3>
+        <nav id="toc" class="flex flex-col text-sm text-gray-400 font-light">
+          <a href="#section-intro" class="sidebar-link active py-2 pl-4 mb-1">Welcome</a>
+          <a href="#section-1" class="sidebar-link py-2 pl-4 mb-1">1. About Floral India</a>
+          <a href="#section-2" class="sidebar-link py-2 pl-4 mb-1">2. Acceptance of Terms</a>
+          <a href="#section-3" class="sidebar-link py-2 pl-4 mb-1">3. Products & Services</a>
+          <a href="#section-4" class="sidebar-link py-2 pl-4 mb-1">4. Product Images & Descriptions</a>
+          <a href="#section-5" class="sidebar-link py-2 pl-4 mb-1">5. Pricing</a>
+          <a href="#section-6" class="sidebar-link py-2 pl-4 mb-1">6. Payments</a>
+          <a href="#section-7" class="sidebar-link py-2 pl-4 mb-1">7. International Orders</a>
+          <a href="#section-8" class="sidebar-link py-2 pl-4 mb-1">8. Delivery Policy</a>
+          <a href="#section-9" class="sidebar-link py-2 pl-4 mb-1">9. Corporate & Concierge Orders</a>
+          <a href="#section-10" class="sidebar-link py-2 pl-4 mb-1">10. Cancellations & Modifications</a>
+          <a href="#section-11" class="sidebar-link py-2 pl-4 mb-1">11. Intellectual Property</a>
+          <a href="#section-12" class="sidebar-link py-2 pl-4 mb-1">12. Website Usage</a>
+          <a href="#section-13" class="sidebar-link py-2 pl-4 mb-1">13. Third-Party Services</a>
+          <a href="#section-14" class="sidebar-link py-2 pl-4 mb-1">14. Limitation of Liability</a>
+          <a href="#section-15" class="sidebar-link py-2 pl-4 mb-1">15. Force Majeure</a>
+          <a href="#section-16" class="sidebar-link py-2 pl-4 mb-1">16. Promotional Offers</a>
+          <a href="#section-17" class="sidebar-link py-2 pl-4 mb-1">17. Changes to These Terms</a>
+          <a href="#section-18" class="sidebar-link py-2 pl-4 mb-1">18. Governing Law</a>
+          <a href="#section-19" class="sidebar-link py-2 pl-4 mb-1">19. Contact Us</a>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Main Content Clauses -->
+    <main class="flex-1 space-y-8" id="clauses-container">
+      
+      <div id="section-intro" class="legal-card p-8 md:p-10 fade-up clause-section">
+        <p class="text-gray-300 font-light leading-relaxed mb-4">Welcome to Floral India. These Terms & Conditions govern your use of our website and the purchase of flowers, cakes, gift hampers, plants, personalized gifts, and other products and services offered by Floral India.</p>
+        <p class="text-gray-300 font-light leading-relaxed">By accessing our website, placing an order, or using any of our services, you agree to be bound by these Terms & Conditions. If you do not agree with any part of these terms, please refrain from using our website or services.</p>
+      </div>
+
+      <div id="section-1" class="legal-card p-8 md:p-10 fade-up clause-section">
+        <h2 class="font-legal text-3xl mb-6 text-[#c5a059]">1. About Floral India</h2>
+        <p class="text-gray-300 font-light leading-relaxed">Floral India is a global floral and gifting company offering domestic and international flower delivery, cake delivery, gift hampers, personalized gifts, corporate gifting solutions, and related services through its website, email, telephone, and authorized business partners.</p>
+      </div>
+
+      <div id="section-2" class="legal-card p-8 md:p-10 fade-up clause-section">
+        <h2 class="font-legal text-3xl mb-6 text-[#c5a059]">2. Acceptance of Terms</h2>
+        <p class="text-gray-300 font-light leading-relaxed">By using this website, you confirm that you have read, understood, and agreed to these Terms & Conditions, our Privacy Policy, Refund Policy, Shipping & Delivery Policy, and any additional policies published on our website.</p>
+      </div>
+
+      <div id="section-3" class="legal-card p-8 md:p-10 fade-up clause-section">
+        <h2 class="font-legal text-3xl mb-6 text-[#c5a059]">3. Products & Services</h2>
+        <p class="text-gray-300 font-light leading-relaxed mb-4">Floral India offers:</p>
+        <ul class="list-none space-y-2 text-gray-300 font-light ml-4">
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-[#c5a059] rounded-full block"></span>Fresh flower bouquets</li>
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-[#c5a059] rounded-full block"></span>Floral arrangements</li>
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-[#c5a059] rounded-full block"></span>Cakes & Premium gift hampers</li>
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-[#c5a059] rounded-full block"></span>Plants & Personalized gifts</li>
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-[#c5a059] rounded-full block"></span>Corporate gifting & Flower subscriptions</li>
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-[#c5a059] rounded-full block"></span>International flower and gift delivery</li>
+        </ul>
+        <p class="text-gray-300 font-light leading-relaxed mt-4 italic">All products are subject to availability.</p>
+      </div>
+
+      <div id="section-4" class="legal-card p-8 md:p-10 fade-up clause-section">
+        <h2 class="font-legal text-3xl mb-6 text-[#c5a059]">4. Product Images & Descriptions</h2>
+        <p class="text-gray-300 font-light leading-relaxed mb-4">We make every effort to ensure that product photographs and descriptions accurately represent the final product. However, because flowers are natural, seasonal, and handcrafted, slight variations may occur in flower varieties, colours, wrapping, packaging, decorative accessories, arrangement style, size, and dimensions.</p>
+        <p class="text-gray-300 font-light leading-relaxed mb-4">These variations do not constitute defects.</p>
+        <p class="text-gray-300 font-light leading-relaxed">If a specific flower or gift item is unavailable due to seasonal or regional availability, Floral India reserves the right to substitute it with a product of equal or greater value while maintaining the overall design, quality, and colour theme.</p>
+      </div>
+
+      <div id="section-5" class="legal-card p-8 md:p-10 fade-up clause-section">
+        <h2 class="font-legal text-3xl mb-6 text-[#c5a059]">5. Pricing & Applicable GST Rates</h2>
+        <p class="text-gray-300 font-light leading-relaxed mb-4">All prices displayed on the website are inclusive of applicable Goods and Services Tax (GST) in accordance with the Official GST Schedule:</p>
+        <ul class="list-none space-y-2 text-gray-300 font-light ml-4 mb-4">
+          <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-[#c5a059] rounded-full block"></span><strong>Fresh Cut Flowers / Loose Flowers:</strong> 0% GST (Nil)</li>
+          <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-[#c5a059] rounded-full block"></span><strong>Live & Potted Plants:</strong> 5% GST</li>
+          <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-[#c5a059] rounded-full block"></span><strong>Cakes & Confectionery:</strong> 18% GST</li>
+          <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-[#c5a059] rounded-full block"></span><strong>Chocolates & Sweets:</strong> 18% GST</li>
+          <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-[#c5a059] rounded-full block"></span><strong>Balloons & Party Decor:</strong> 18% GST</li>
+          <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-[#c5a059] rounded-full block"></span><strong>Gourmet Gift Hampers:</strong> 18% GST</li>
+          <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-[#c5a059] rounded-full block"></span><strong>Artist on Call (Musician, Guitarist, Pianist, Flutist):</strong> 18% GST</li>
+          <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-[#c5a059] rounded-full block"></span><strong>Personalized Video Message Service:</strong> 18% GST</li>
+          <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-[#c5a059] rounded-full block"></span><strong>Delivery & Logistics Charges:</strong> 18% GST</li>
+        </ul>
+        <p class="text-gray-300 font-light leading-relaxed">The price applicable at the time an order is confirmed shall be considered final.</p>
+      </div>
+
+      <div id="section-6" class="legal-card p-8 md:p-10 fade-up clause-section">
+        <h2 class="font-legal text-3xl mb-6 text-[#c5a059]">6. Payments</h2>
+        <p class="text-gray-300 font-light leading-relaxed mb-4">We accept payments through secure payment gateways and other approved payment methods. Floral India does not store your complete payment card details.</p>
+        <p class="text-gray-300 font-light leading-relaxed">Orders are processed only after successful payment confirmation unless otherwise agreed for approved corporate accounts.</p>
+      </div>
+
+      <div id="section-7" class="legal-card p-8 md:p-10 fade-up clause-section">
+        <h2 class="font-legal text-3xl mb-6 text-[#c5a059]">7. International Orders</h2>
+        <p class="text-gray-300 font-light leading-relaxed mb-4">Floral India proudly delivers flowers and gifts worldwide through trusted florist and logistics partners. For international deliveries:</p>
+        <ul class="list-none space-y-2 text-gray-300 font-light ml-4 mb-4">
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-[#c5a059] rounded-full block"></span>Customs regulations vary by country.</li>
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-[#c5a059] rounded-full block"></span>Certain products may not be permitted in some destinations.</li>
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-[#c5a059] rounded-full block"></span>Local taxes, customs duties or import charges are the responsibility of the recipient unless otherwise specified.</li>
+        </ul>
+        <p class="text-gray-300 font-light leading-relaxed">Floral India is not responsible for delays caused by customs clearance, government authorities, weather conditions, airline disruptions, or circumstances beyond our control.</p>
+      </div>
+
+      <div id="section-8" class="legal-card p-8 md:p-10 fade-up clause-section">
+        <h2 class="font-legal text-3xl mb-6 text-[#c5a059]">8. Delivery Policy</h2>
+        <p class="text-gray-300 font-light leading-relaxed mb-4">We strive to deliver every order on the requested date and within the selected delivery window wherever possible. Delivery times may vary depending on destination, local weather, traffic conditions, public holidays, regional restrictions, and force majeure events.</p>
+        <p class="text-gray-300 font-light leading-relaxed mb-4">For perishable products such as flowers and cakes, delivery is generally attempted once. If delivery cannot be completed because the recipient is unavailable, the address is incorrect or incomplete, access to the premises is restricted, the recipient refuses delivery, or no authorized person is available to accept the order, the order may be considered fulfilled and no refund or replacement may be applicable.</p>
+        
+        <div class="mt-6 p-5 bg-[#c5a059]/10 border border-[#c5a059]/30 rounded-xl">
+          <h3 class="text-[#c5a059] font-semibold text-lg mb-2">Delay Due to Unforeseen Circumstances</h3>
+          <p class="text-gray-300 text-sm leading-relaxed mb-3">While Floral India strives to ensure timely delivery of every order, delays may occasionally occur due to circumstances beyond our reasonable control, including severe weather conditions, heavy rainfall, floods, storms, natural disasters, traffic disruptions, government restrictions, strikes, public emergencies, or other unforeseen events.</p>
+          <p class="text-gray-300 text-sm leading-relaxed">In such situations, Floral India shall not be held liable for any delay in delivery. Orders will be delivered at the earliest possible opportunity once normal operations resume. Such delays shall not qualify for cancellation, refund, or compensation, as they arise from circumstances beyond our control.</p>
+        </div>
+      </div>
+
+      <div id="section-9" class="legal-card p-8 md:p-10 fade-up clause-section">
+        <h2 class="font-legal text-3xl mb-6 text-[#c5a059]">9. Corporate & Concierge Orders</h2>
+        <p class="text-gray-300 font-light leading-relaxed">Floral India works with corporate organizations, financial institutions, concierge services, and business partners. Corporate customers are responsible for ensuring that recipient information and delivery instructions provided are accurate.</p>
+      </div>
+
+      <div id="section-10" class="legal-card p-8 md:p-10 fade-up clause-section">
+        <h2 class="font-legal text-3xl mb-6 text-[#c5a059]">10. Cancellations & Modifications</h2>
+        <p class="text-gray-300 font-light leading-relaxed mb-4">Because flowers and gifts are prepared specifically for each order:</p>
+        <ul class="list-none space-y-2 text-gray-300 font-light ml-4 mb-4">
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-[#c5a059] rounded-full block"></span>Cancellation requests may not be accepted once order preparation has begun.</li>
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-[#c5a059] rounded-full block"></span>Same-day and express delivery orders generally cannot be cancelled.</li>
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-[#c5a059] rounded-full block"></span>Changes to delivery address, recipient details, or products are subject to availability.</li>
+        </ul>
+        <p class="text-gray-300 font-light leading-relaxed">Please contact our customer support team at the earliest for any modifications.</p>
+      </div>
+
+      <div id="section-11" class="legal-card p-8 md:p-10 fade-up clause-section">
+        <h2 class="font-legal text-3xl mb-6 text-[#c5a059]">11. Intellectual Property</h2>
+        <p class="text-gray-300 font-light leading-relaxed mb-4">All content on the Floral India website, including but not limited to logos, photographs, product images, graphics, text, videos, designs, layouts, and website content is the exclusive property of Floral India or its licensors and is protected under applicable intellectual property laws.</p>
+        <p class="text-gray-300 font-light leading-relaxed">No content may be copied, reproduced, modified, distributed, or used without prior written permission.</p>
+      </div>
+
+      <div id="section-12" class="legal-card p-8 md:p-10 fade-up clause-section">
+        <h2 class="font-legal text-3xl mb-6 text-[#c5a059]">12. Website Usage</h2>
+        <p class="text-gray-300 font-light leading-relaxed mb-4">You agree not to:</p>
+        <ul class="list-none space-y-2 text-gray-300 font-light ml-4 mb-4">
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-[#c5a059] rounded-full block"></span>Use the website for unlawful purposes.</li>
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-[#c5a059] rounded-full block"></span>Attempt unauthorized access to our systems.</li>
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-[#c5a059] rounded-full block"></span>Upload malicious software or harmful code.</li>
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-[#c5a059] rounded-full block"></span>Interfere with website functionality.</li>
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-[#c5a059] rounded-full block"></span>Copy or scrape website content without permission.</li>
+        </ul>
+        <p class="text-gray-300 font-light leading-relaxed italic">Violation of these terms may result in legal action.</p>
+      </div>
+
+      <div id="section-13" class="legal-card p-8 md:p-10 fade-up clause-section">
+        <h2 class="font-legal text-3xl mb-6 text-[#c5a059]">13. Third-Party Services</h2>
+        <p class="text-gray-300 font-light leading-relaxed">Our website may contain links to third-party websites, payment gateways, or external service providers. Floral India is not responsible for the content, privacy practices, or services provided by third-party platforms.</p>
+      </div>
+
+      <div id="section-14" class="legal-card p-8 md:p-10 fade-up clause-section">
+        <h2 class="font-legal text-3xl mb-6 text-[#c5a059]">14. Limitation of Liability</h2>
+        <p class="text-gray-300 font-light leading-relaxed mb-4">To the fullest extent permitted by law, Floral India shall not be liable for any indirect, incidental, consequential, special, or punitive damages arising from website interruptions, delivery delays beyond our control, product substitutions, technical issues, loss of profits, loss of business opportunities, or errors caused by incorrect customer information.</p>
+        <p class="text-gray-300 font-light leading-relaxed">Our maximum liability for any claim shall not exceed the total amount paid for the specific order giving rise to the claim.</p>
+      </div>
+
+      <div id="section-15" class="legal-card p-8 md:p-10 fade-up clause-section">
+        <h2 class="font-legal text-3xl mb-6 text-[#c5a059]">15. Force Majeure & Unforeseen Circumstances</h2>
+        <p class="text-gray-300 font-light leading-relaxed mb-3">While Floral India strives to ensure timely delivery of every order, delays may occasionally occur due to circumstances beyond our reasonable control, including severe weather conditions, heavy rainfall, floods, storms, natural disasters, traffic disruptions, government restrictions, strikes, public emergencies, or other unforeseen events.</p>
+        <p class="text-gray-300 font-light leading-relaxed">In such situations, Floral India shall not be held liable for any delay in delivery. Orders will be delivered at the earliest possible opportunity once normal operations resume. Such delays shall not qualify for cancellation, refund, or compensation, as they arise from circumstances beyond our control.</p>
+      </div>
+
+      <div id="section-16" class="legal-card p-8 md:p-10 fade-up clause-section">
+        <h2 class="font-legal text-3xl mb-6 text-[#c5a059]">16. Promotional Offers</h2>
+        <p class="text-gray-300 font-light leading-relaxed">Promotional offers, discount codes, festive campaigns, and gift vouchers are subject to their individual terms and may be modified or withdrawn without prior notice. Offers cannot be combined unless specifically stated.</p>
+      </div>
+
+      <div id="section-17" class="legal-card p-8 md:p-10 fade-up clause-section">
+        <h2 class="font-legal text-3xl mb-6 text-[#c5a059]">17. Changes to These Terms</h2>
+        <p class="text-gray-300 font-light leading-relaxed">Floral India reserves the right to modify these Terms & Conditions at any time. Updated versions will be published on this website and become effective immediately upon posting.</p>
+      </div>
+
+      <div id="section-18" class="legal-card p-8 md:p-10 fade-up clause-section">
+        <h2 class="font-legal text-3xl mb-6 text-[#c5a059]">18. Governing Law</h2>
+        <p class="text-gray-300 font-light leading-relaxed mb-4">These Terms & Conditions shall be governed by and interpreted in accordance with the laws of India.</p>
+        <p class="text-gray-300 font-light leading-relaxed">Any dispute arising out of or relating to these Terms & Conditions shall first be resolved through good-faith discussions between the parties. If the dispute cannot be resolved amicably, it shall be subject to the exclusive jurisdiction of the competent courts in Delhi, India, unless otherwise required by applicable law.</p>
+      </div>
+
+      <div id="section-19" class="legal-card p-8 md:p-10 fade-up clause-section">
+        <h2 class="font-legal text-3xl mb-6 text-[#c5a059]">19. Contact Us</h2>
+        <p class="text-gray-300 font-light leading-relaxed mb-4">If you have any questions regarding these Terms & Conditions, please contact us:</p>
+        <ul class="list-none space-y-2 text-[#c5a059] font-medium ml-4 mb-4">
+          <li>Floral India</li>
+          <li>Email: hello@floralindia.com</li>
+          <li>Website: www.floralindia.com</li>
+        </ul>
+        <p class="text-gray-300 font-light leading-relaxed">Our customer support team will be happy to assist you.</p>
+      </div>
+
+    </main>
+  </section>
+
+  <!-- FOOTER CTA -->
+  <section class="mt-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="bg-gradient-to-r from-[rgba(197,160,89,0.1)] to-[rgba(197,160,89,0.05)] border border-[#c5a059]/20 p-10 md:p-16 text-center">
+        <h2 class="font-legal text-3xl md:text-4xl text-[#c5a059] mb-4">Have questions about our policies?</h2>
+        <p class="text-gray-300 font-light mb-8">We're here to help make everything clear.</p>
+        <a href="/pages/contact" class="inline-block bg-transparent border border-[#c5a059] text-[#c5a059] px-8 py-3 tracking-widest text-sm uppercase font-semibold hover:bg-[#c5a059] hover:text-[#0d1521] transition-all duration-300">Contact Us</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Scroll Fade-Up Animation
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+    
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // ScrollSpy for Sidebar Navigation
+    const sections = document.querySelectorAll('.clause-section');
+    const navLinks = document.querySelectorAll('.sidebar-link');
+    const mobileSelect = document.getElementById('mobileNav');
+
+    const spyObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id');
+          // Update Sidebar
+          navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${id}`) {
+              link.classList.add('active');
+            }
+          });
+          // Update Mobile Select
+          if(mobileSelect.value !== id) {
+            mobileSelect.value = id;
+          }
+        }
+      });
+    }, { rootMargin: "-20% 0px -70% 0px" });
+
+    sections.forEach(section => spyObserver.observe(section));
+
+    // Handle Mobile Select Change
+    mobileSelect.addEventListener('change', (e) => {
+      const targetId = e.target.value;
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        // Scroll to element with an offset for the sticky header
+        const offset = 100;
+        const bodyRect = document.body.getBoundingClientRect().top;
+        const elementRect = targetElement.getBoundingClientRect().top;
+        const elementPosition = elementRect - bodyRect;
+        const offsetPosition = elementPosition - offset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    });
+
+    // Handle Sidebar Clicks (smooth scroll with offset)
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href').substring(1);
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          const offset = 100;
+          const bodyRect = document.body.getBoundingClientRect().top;
+          const elementRect = targetElement.getBoundingClientRect().top;
+          const elementPosition = elementRect - bodyRect;
+          const offsetPosition = elementPosition - offset;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Terms and Conditions",
+  "settings": []
+}
+{% endschema %}

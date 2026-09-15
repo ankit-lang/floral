@@ -1,0 +1,429 @@
+{% comment %}
+  Product Variant Tabs
+  Detects product type and renders the correct tab set:
+  - Floral/Arrangement: Small / Medium / Large (with +30% / +50% pricing)
+  - Cake: 0.5 kg / 1 kg / 2 kg (switches Shopify variants)
+{% endcomment %}
+
+{% liquid
+  assign product_type_lower = product.type | downcase
+  assign product_title_lower = product.title | downcase
+  assign product_tags_lower = product.tags | join: ',' | downcase
+  assign is_cake = false
+  assign is_floral = false
+  assign is_hamper = false
+  assign is_balloon = false
+  assign is_plant = false
+  assign is_combo = false
+
+  if product_type_lower contains 'hamper' or product_title_lower contains 'hamper' or product_tags_lower contains 'hamper'
+    assign is_hamper = true
+  else
+    for collection in product.collections
+      assign col_title = collection.title | downcase
+      assign col_handle = collection.handle | downcase
+      if col_title contains 'hamper' or col_handle contains 'hamper'
+        assign is_hamper = true
+        break
+      endif
+    endfor
+  endif
+
+  if product_type_lower contains 'balloon' or product_title_lower contains 'balloon' or product_tags_lower contains 'balloon'
+    assign is_balloon = true
+  else
+    for collection in product.collections
+      assign col_title = collection.title | downcase
+      assign col_handle = collection.handle | downcase
+      if col_title contains 'balloon' or col_handle contains 'balloon'
+        assign is_balloon = true
+        break
+      endif
+    endfor
+  endif
+
+  if product_type_lower contains 'plant' or product_title_lower contains 'plant' or product_tags_lower contains 'plant'
+    assign is_plant = true
+  else
+    for collection in product.collections
+      assign col_title = collection.title | downcase
+      assign col_handle = collection.handle | downcase
+      if col_title contains 'plant' or col_handle contains 'plant'
+        assign is_plant = true
+        break
+      endif
+    endfor
+  endif
+
+  if product_type_lower contains 'combo' or product_title_lower contains 'combo' or product_tags_lower contains 'combo'
+    assign is_combo = true
+  else
+    for collection in product.collections
+      assign col_title = collection.title | downcase
+      assign col_handle = collection.handle | downcase
+      if col_title contains 'combo' or col_handle contains 'combo'
+        assign is_combo = true
+        break
+      endif
+    endfor
+  endif
+
+  if product_type_lower contains 'cake' or product_title_lower contains 'cake' or product_tags_lower contains 'cake'
+    assign is_cake = true
+  else
+    for collection in product.collections
+      assign col_title = collection.title | downcase
+      assign col_handle = collection.handle | downcase
+      if col_title contains 'cake' or col_handle contains 'cake'
+        assign is_cake = true
+        break
+      endif
+    endfor
+  endif
+
+  assign is_chocolate = false
+  if product_type_lower contains 'chocolate' or product_title_lower contains 'chocolate' or product_tags_lower contains 'chocolate' or product_title_lower contains 'choco'
+    assign is_chocolate = true
+  else
+    for collection in product.collections
+      assign col_title = collection.title | downcase
+      assign col_handle = collection.handle | downcase
+      if col_title contains 'chocolate' or col_handle contains 'chocolate' or col_title contains 'choco' or col_handle contains 'choco'
+        assign is_chocolate = true
+        break
+      endif
+    endfor
+  endif
+
+  assign is_floral = true
+
+  assign is_idol = false
+  if product_title_lower contains 'idol' or product_tags_lower contains 'idol' or product_title_lower contains 'statue' or product_tags_lower contains 'diwali idol'
+    assign is_idol = true
+  else
+    for collection in product.collections
+      assign col_title = collection.title | downcase
+      assign col_handle = collection.handle | downcase
+      if col_title contains 'idol' or col_handle contains 'idol' or col_handle contains 'diwali-idol'
+        assign is_idol = true
+        break
+      endif
+    endfor
+  endif
+
+  assign base_price = product.selected_or_first_available_variant.price
+
+  if is_idol
+    assign img_standard = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/idols.png?v=1788258448'
+    assign img_premium = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/idolm.png?v=1788258450'
+    assign img_grand = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/idoll.png?v=1788258450'
+    assign box_aspect = 'h-[75px] md:h-[85px]'
+    assign img_fit = 'object-contain'
+    assign box_active_class = 'border-2 border-primary bg-transparent'
+    assign box_inactive_class = 'border-2 border-transparent bg-transparent'
+  elsif is_cake
+    assign img_standard = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/cakes.png?v=1785395639'
+    assign img_premium = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/cakem.png?v=1785395639'
+    assign img_grand = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/cakel.png?v=1785395639'
+    assign box_aspect = 'h-[75px] md:h-[85px]'
+    assign img_fit = 'object-contain'
+    assign box_active_class = 'border-2 border-primary bg-transparent'
+    assign box_inactive_class = 'border-2 border-transparent bg-transparent'
+  elsif is_chocolate
+    assign img_standard = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/hampers.png?v=1785394470'
+    assign img_premium = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/hamperm.png?v=1785390046'
+    assign img_grand = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/hamper3.png?v=1785390046'
+    assign box_aspect = 'h-[75px] md:h-[85px]'
+    assign img_fit = 'object-contain'
+    assign box_active_class = 'border-2 border-primary bg-transparent'
+    assign box_inactive_class = 'border-2 border-transparent bg-transparent'
+  elsif is_hamper
+    assign img_standard = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/hampers.png?v=1785394470'
+    assign img_premium = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/hamperm.png?v=1785390046'
+    assign img_grand = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/hamper3.png?v=1785390046'
+    assign box_aspect = 'h-[75px] md:h-[85px]'
+    assign img_fit = 'object-contain'
+    assign box_active_class = 'border-2 border-primary bg-transparent'
+    assign box_inactive_class = 'border-2 border-transparent bg-transparent'
+  elsif is_balloon
+    assign img_standard = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/bals.png?v=1785395323'
+    assign img_premium = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/balm.png?v=1785395323'
+    assign img_grand = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/ball.png?v=1785395323'
+    assign box_aspect = 'h-[75px] md:h-[85px]'
+    assign img_fit = 'object-contain'
+    assign box_active_class = 'border-2 border-primary bg-transparent'
+    assign box_inactive_class = 'border-2 border-transparent bg-transparent'
+  elsif is_plant
+    assign img_standard = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/plants.png?v=1785754266'
+    assign img_premium = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/plantm.png?v=1785754267'
+    assign img_grand = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/plantl.png?v=1785754266'
+    assign box_aspect = 'h-[75px] md:h-[85px]'
+    assign img_fit = 'object-contain'
+    assign box_active_class = 'border-2 border-primary bg-transparent'
+    assign box_inactive_class = 'border-2 border-transparent bg-transparent'
+  elsif is_combo
+    assign img_standard = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/combos.png?v=1785754452'
+    assign img_premium = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/combom.png?v=1785754452'
+    assign img_grand = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/combol.png?v=1785754452'
+    assign box_aspect = 'h-[75px] md:h-[85px]'
+    assign img_fit = 'object-contain'
+    assign box_active_class = 'border-2 border-primary bg-transparent'
+    assign box_inactive_class = 'border-2 border-transparent bg-transparent'
+  else
+    assign img_standard = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/flowers.png?v=1785755042'
+    assign img_premium = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/flowerm.png?v=1785755042'
+    assign img_grand = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/flowerl.png?v=1785755042'
+    assign box_aspect = 'h-[75px] md:h-[85px]'
+    assign img_fit = 'object-contain'
+    assign box_active_class = 'border-2 border-primary bg-transparent'
+    assign box_inactive_class = 'border-2 border-transparent bg-transparent'
+  endif
+%}
+
+{% if is_floral %}
+  <!-- ========== FLORAL / HAMPER SIZE TABS ========== -->
+  <div class="variant-tabs-container mb-6">
+    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Choose Size</label>
+    
+    {% assign small_variant = product.variants[0] %}
+    {% assign medium_variant = product.variants[1] %}
+    {% assign large_variant = product.variants[2] %}
+
+    <div class="flex gap-2" id="size-tabs">
+      <button type="button"
+        class="size-tab hamper-tab active flex-1 flex flex-col items-center group text-center transition-all cursor-pointer"
+        data-size="small" data-variant-id="{{ small_variant.id }}" data-price="{{ small_variant.price }}">
+        <div class="size-box-inner relative w-fit max-w-full mx-auto {{ box_aspect }} rounded-xl overflow-hidden {{ box_active_class }} transition-all flex items-center justify-center">
+          <img src="{{ img_standard }}" class="h-full w-auto max-w-full {{ img_fit }} group-hover:scale-105 transition-transform duration-500" alt="Standard Size">
+        </div>
+        <div class="mt-2 flex flex-col items-center">
+          <span class="block text-[11px] md:text-xs font-bold font-serif uppercase tracking-widest text-gray-800">
+            {% if is_cake %}1/2 kg{% else %}Standard{% endif %}
+          </span>
+          <span class="block text-[10px] md:text-[11px] text-gray-600 font-semibold mt-0.5" data-base-price="{{ small_variant.price }}">{{ small_variant.price | money }}</span>
+        </div>
+      </button>
+      <button type="button"
+        class="size-tab hamper-tab flex-1 flex flex-col items-center group text-center transition-all cursor-pointer"
+        data-size="medium" data-variant-id="{{ medium_variant.id }}" data-price="{{ medium_variant.price }}">
+        <div class="relative w-full">
+          {% unless is_cake %}
+            <div class="absolute -top-2 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+              <span class="bg-white text-gray-900 border border-gray-200 font-bold tracking-wider px-1 py-0.5 rounded-sm uppercase whitespace-nowrap shadow-sm leading-none" style="font-size: 7px;">
+                1.3x Extra
+              </span>
+            </div>
+          {% endunless %}
+          <div class="size-box-inner relative w-fit max-w-full mx-auto {{ box_aspect }} rounded-xl overflow-hidden {{ box_inactive_class }} transition-all flex items-center justify-center">
+            <img src="{{ img_premium }}" class="h-full w-auto max-w-full {{ img_fit }} group-hover:scale-105 transition-transform duration-500" alt="Premium Size">
+          </div>
+        </div>
+        <div class="mt-2 flex flex-col items-center">
+          <span class="block text-[11px] md:text-xs font-bold font-serif uppercase tracking-widest text-gray-800">
+            {% if is_cake %}1 kg{% else %}Premium{% endif %}
+          </span>
+          {% if medium_variant %}
+            <span class="block text-[10px] md:text-[11px] text-gray-600 font-semibold mt-0.5" data-base-price="{{ medium_variant.price }}">{{ medium_variant.price | money }}</span>
+          {% else %}
+            <span class="block text-[10px] md:text-[11px] text-gray-400 font-medium mt-0.5 opacity-60">Unavailable</span>
+          {% endif %}
+        </div>
+      </button>
+      <button type="button"
+        class="size-tab hamper-tab flex-1 flex flex-col items-center group text-center transition-all cursor-pointer"
+        data-size="large" data-variant-id="{{ large_variant.id }}" data-price="{{ large_variant.price }}">
+        <div class="relative w-full">
+          {% unless is_cake %}
+            <div class="absolute -top-2 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+              <span class="bg-white text-gray-900 border border-gray-200 font-bold tracking-wider px-1 py-0.5 rounded-sm uppercase whitespace-nowrap shadow-sm leading-none" style="font-size: 7px;">
+                1.5x Extra
+              </span>
+            </div>
+          {% endunless %}
+          <div class="size-box-inner relative w-fit max-w-full mx-auto {{ box_aspect }} rounded-xl overflow-hidden {{ box_inactive_class }} transition-all flex items-center justify-center">
+            <img src="{{ img_grand }}" class="h-full w-auto max-w-full {{ img_fit }} group-hover:scale-105 transition-transform duration-500" alt="Grand Size">
+          </div>
+        </div>
+        <div class="mt-2 flex flex-col items-center">
+          <span class="block text-[11px] md:text-xs font-bold font-serif uppercase tracking-widest text-gray-800">
+            {% if is_cake %}2 kg{% else %}Grand{% endif %}
+          </span>
+          {% if large_variant %}
+            <span class="block text-[10px] md:text-[11px] text-gray-600 font-semibold mt-0.5" data-base-price="{{ large_variant.price }}">{{ large_variant.price | money }}</span>
+          {% else %}
+            <span class="block text-[10px] md:text-[11px] text-gray-400 font-medium mt-0.5 opacity-60">Unavailable</span>
+          {% endif %}
+        </div>
+      </button>
+    </div>
+
+
+
+    <!-- Hidden inputs for cart -->
+    <input type="hidden" name="properties[Size]" id="selected-size" value="{% if is_cake %}1/2 kg{% else %}Standard{% endif %}">
+  </div>
+
+  <script>
+    (function() {
+      const isCakeProduct = {% if is_cake %}true{% else %}false{% endif %};
+      const basePrice = {{ base_price }};
+      const sizeTabs = document.querySelectorAll('#size-tabs .size-tab');
+      const sizeInput = document.getElementById('selected-size');
+      const variantIdInput = document.querySelector('input[name="id"]');
+      const priceEl = document.getElementById('product-display-price');
+
+      sizeTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          const isHamperTab = this.classList.contains('hamper-tab');
+
+          // Update active state
+          sizeTabs.forEach(t => {
+            const box = t.querySelector('.size-box-inner');
+            t.classList.remove('active');
+            if (box) {
+              box.classList.remove('border-primary', 'bg-primary/10');
+              if (t.classList.contains('hamper-tab')) {
+                box.classList.add('border-transparent');
+              } else {
+                box.classList.add('border-gray-200', 'bg-white');
+              }
+            }
+          });
+
+          this.classList.add('active');
+          const activeBox = this.querySelector('.size-box-inner');
+          if (activeBox) {
+            activeBox.classList.add('border-primary');
+            if (isHamperTab) {
+              activeBox.classList.remove('border-transparent');
+            } else {
+              activeBox.classList.add('bg-primary/10');
+              activeBox.classList.remove('border-gray-200', 'bg-white');
+            }
+          }
+
+          const size = this.dataset.size;
+          const variantId = this.dataset.variantId;
+          const newPrice = parseInt(this.dataset.price || 0);
+          
+          if (!variantId) return; // if no variant exists, do nothing
+
+          // Update hidden inputs
+          if (isCakeProduct) {
+            sizeInput.value = size === 'small' ? '1/2 kg' : (size === 'medium' ? '1 kg' : '2 kg');
+          } else {
+            sizeInput.value = size.charAt(0).toUpperCase() + size.slice(1);
+          }
+          if (variantIdInput) {
+            variantIdInput.value = variantId;
+          }
+          
+          // Update displayed price on page
+          if (priceEl && newPrice > 0) {
+            priceEl.dataset.basePrice = newPrice;
+            if (window.FloralCurrencyManager) {
+              window.FloralCurrencyManager.updateDOM();
+            } else {
+              priceEl.textContent = '₹' + (newPrice / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            }
+          }
+
+          // Dispatch event for surcharge logic
+          document.dispatchEvent(new CustomEvent('variantPriceChanged', {
+            detail: { price: newPrice, size: size }
+          }));
+        });
+      });
+    })();
+  </script>
+
+{% elsif is_cake %}
+  <!-- ========== CAKE WEIGHT TABS ========== -->
+  <div class="variant-tabs-container mb-6">
+    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">
+      Choose Weight
+      <span class="text-secondary cursor-pointer hover:underline ml-1">(Click here to view Size chart)</span>
+    </label>
+    <div class="flex gap-2" id="weight-tabs">
+      {% for variant in product.variants %}
+        {% assign variant_title_lower = variant.title | downcase %}
+        {% assign is_weight_variant = false %}
+        {% if variant_title_lower contains 'kg' or variant_title_lower contains '0.5' or variant_title_lower contains '1 kg' or variant_title_lower contains '2 kg' %}
+          {% assign is_weight_variant = true %}
+        {% endif %}
+
+        {% if is_weight_variant %}
+          <button type="button"
+            class="weight-tab flex-1 py-4 px-3 rounded-xl border-2 text-center transition-all hover:shadow-md {% if forloop.first %}active border-primary bg-primary/10{% else %}border-gray-200 bg-white{% endif %}"
+            data-variant-id="{{ variant.id }}"
+            data-variant-price="{{ variant.price }}"
+            {% unless variant.available %}disabled{% endunless %}>
+            <div class="flex flex-col items-center gap-1">
+              <!-- Cake icon -->
+              <svg class="w-8 h-8 {% if forloop.first %}text-primary{% else %}text-gray-400{% endif %}" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path d="M2 18a1 1 0 001 1h18a1 1 0 001-1v-2a3 3 0 00-3-3H5a3 3 0 00-3 3v2zM5 13V9a3 3 0 013-3h8a3 3 0 013 3v4"/>
+                <path d="M12 6V3"/>
+              </svg>
+              <span class="text-xs font-bold {% if forloop.first %}text-primary{% else %}text-gray-600{% endif %}">{{ variant.title }}</span>
+              <span class="text-[10px] text-gray-400" data-base-price="{{ variant.price }}">{{ variant.price | money }}</span>
+            </div>
+          </button>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const weightTabs = document.querySelectorAll('#weight-tabs .weight-tab');
+      const variantIdInput = document.querySelector('input[name="id"]');
+      const priceEl = document.getElementById('product-display-price');
+
+      weightTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          if (this.disabled) return;
+
+          // Update active state
+          weightTabs.forEach(t => {
+            t.classList.remove('active', 'border-primary', 'bg-primary/10');
+            t.classList.add('border-gray-200', 'bg-white');
+            t.querySelector('svg').classList.remove('text-primary');
+            t.querySelector('svg').classList.add('text-gray-400');
+            const label = t.querySelector('.text-xs');
+            if (label) { label.classList.remove('text-primary'); label.classList.add('text-gray-600'); }
+          });
+          this.classList.add('active', 'border-primary', 'bg-primary/10');
+          this.classList.remove('border-gray-200', 'bg-white');
+          this.querySelector('svg').classList.add('text-primary');
+          this.querySelector('svg').classList.remove('text-gray-400');
+          const label = this.querySelector('.text-xs');
+          if (label) { label.classList.add('text-primary'); label.classList.remove('text-gray-600'); }
+
+          // Switch Shopify variant
+          const variantId = this.dataset.variantId;
+          const variantPrice = parseInt(this.dataset.variantPrice);
+
+          if (variantIdInput) {
+            variantIdInput.value = variantId;
+          }
+
+          // Update displayed price
+          if (priceEl) {
+            priceEl.dataset.basePrice = variantPrice;
+            if (window.FloralCurrencyManager) {
+              window.FloralCurrencyManager.updateDOM();
+            } else {
+              priceEl.textContent = '₹' + (variantPrice / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            }
+          }
+
+          // Dispatch event for surcharge logic
+          document.dispatchEvent(new CustomEvent('variantPriceChanged', {
+            detail: { price: variantPrice }
+          }));
+        });
+      });
+    })();
+  </script>
+
+{% endif %}

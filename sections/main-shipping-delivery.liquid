@@ -1,0 +1,63 @@
+<div class="max-w-4xl mx-auto px-4 py-12 md:py-16">
+  <div class="text-center mb-12">
+    <h1 class="text-3xl md:text-5xl font-serif font-bold text-primary mb-4">{{ page.title | default: 'Shipping & Delivery Policy' }}</h1>
+    <div class="w-16 h-1 bg-secondary mx-auto rounded-full mb-6"></div>
+    <p class="text-gray-600 max-w-2xl mx-auto">
+      This page details logistics, tracking, delivery charges, and location constraints.
+    </p>
+  </div>
+
+  <div class="space-y-8 text-gray-700 leading-relaxed text-sm md:text-base">
+    
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 space-y-6">
+      
+      <div>
+        <h2 class="text-xl font-bold text-gray-900 mb-2">Standard Delivery Charges</h2>
+        <p>A standard delivery charge is levied for all orders under Rs. X.</p>
+      </div>
+
+      <div>
+        <h2 class="text-xl font-bold text-gray-900 mb-2">Premium & Fixed-Time Deliveries</h2>
+        <p>An additional fee is levied for fixed-time, early-morning, or same-day delivery orders. <strong class="text-amber-600 bg-amber-50 px-2 py-1 rounded">Please note: Fixed-time deliveries include a 30-minute buffer window.</strong></p>
+      </div>
+
+      <div class="bg-gradient-to-r from-pink-50 to-red-50 p-5 rounded-xl border border-pink-100">
+        <h2 class="text-xl font-bold text-secondary mb-2">Express 90-Minute Delivery</h2>
+        <p class="mb-3">For last-minute orders, our Express Service routes your order to a verified third-party vendor. After a strict quality check, it is dispatched immediately.</p>
+        <ul class="list-disc list-inside space-y-1 mb-3">
+          <li><strong>Mandatory Requirements:</strong> Valid recipient phone number and landmark.</li>
+        </ul>
+        <p class="font-medium text-gray-900"><strong>Our Guarantee:</strong> If an Express 90-minute delivery is delayed, the fixed delivery charge will be completely waived.</p>
+      </div>
+
+      <div>
+        <h2 class="text-xl font-bold text-gray-900 mb-2">Address Verification & Recipient Availability</h2>
+        <p>We urge senders to confirm the address and availability with the recipient beforehand. Changes in delivery address or the non-availability of the recipient upon arrival do not validate a refund or order rescheduling. Recipients will be notified via SMS, Email, or phone based on the contact details provided.</p>
+      </div>
+
+      <div>
+        <h2 class="text-xl font-bold text-gray-900 mb-2">Location Restrictions</h2>
+        <p>We guarantee deliveries to residential properties, hospitals, and designated business addresses. No guarantees of delivery can be given for unverified public places.</p>
+      </div>
+
+      <div>
+        <h2 class="text-xl font-bold text-gray-900 mb-2">Order Tracking</h2>
+        <p>A temporary lack of digital updates on your tracking link can occur due to technical or unforeseen logistical delays. Order tracking status will be updated as soon as possible.</p>
+      </div>
+
+      <div>
+        <h2 class="text-xl font-bold text-gray-900 mb-2">Delay Due to Unforeseen Circumstances</h2>
+        <p class="mb-3">While Floral India strives to ensure timely delivery of every order, delays may occasionally occur due to circumstances beyond our reasonable control, including severe weather conditions, heavy rainfall, floods, storms, natural disasters, traffic disruptions, government restrictions, strikes, public emergencies, or other unforeseen events.</p>
+        <p>In such situations, Floral India shall not be held liable for any delay in delivery. Orders will be delivered at the earliest possible opportunity once normal operations resume. Such delays shall not qualify for cancellation, refund, or compensation, as they arise from circumstances beyond our control.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Shipping & Delivery",
+  "settings": []
+}
+{% endschema %}

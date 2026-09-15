@@ -1,0 +1,1861 @@
+<div id="pincode-modal-overlay" class="fixed inset-0 bg-black/50 z-[1000] hidden items-center justify-center backdrop-blur-xs opacity-0 transition-opacity duration-300">
+  <div class="bg-white rounded-3xl shadow-2xl p-4 sm:p-5 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-300 relative text-gray-800 custom-scroll" id="pincode-modal-content">
+    
+    <!-- Close Button -->
+    <button type="button" id="close-pincode-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 p-1.5 rounded-full transition-colors z-10" title="Close">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </button>
+
+    <!-- Header Section -->
+    <div class="mb-4 pr-8">
+      <div class="flex items-center gap-2 mb-1">
+        <svg class="w-6 h-6 text-gray-800 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        <h2 class="text-[17px] font-bold text-gray-900 tracking-tight">Let's Personalize Your Experience!</h2>
+      </div>
+      <p class="text-gray-600 text-[13px] leading-tight">Find the perfect gifts for you or your loved ones - it's like magic!</p>
+    </div>
+
+    <!-- Mode Switcher Custom Dropdown -->
+    <div class="relative mb-4 z-20">
+      <button type="button" id="delivery-mode-dropdown-btn" class="w-full flex items-center justify-between px-3 py-3 border border-gray-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all">
+        <div class="flex items-center gap-2" id="delivery-mode-selected">
+          <span class="text-lg leading-none">🇮🇳</span>
+          <span class="font-bold text-gray-900 text-[15px]">India</span>
+        </div>
+        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+      </button>
+
+      <!-- Dropdown Menu -->
+      <div id="delivery-mode-menu" class="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg hidden overflow-hidden z-30">
+        <button type="button" id="tab-india-mode" class="w-full flex items-center gap-2 px-4 py-3 hover:bg-gray-50 text-left border-b border-gray-100 transition-colors">
+          <span class="text-lg leading-none">🇮🇳</span>
+          <span class="font-bold text-gray-900 text-[15px]">India</span>
+        </button>
+        <button type="button" id="tab-intl-mode" class="w-full flex items-center gap-2 px-4 py-3 hover:bg-gray-50 text-left transition-colors">
+          <span class="text-lg leading-none">🌐</span>
+          <span class="font-bold text-gray-900 text-[15px]">International</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TAB 1: INDIA DELIVERY CONTENT               -->
+    <!-- ============================================ -->
+    <div id="modal-india-section" class="space-y-3">
+      <!-- Pincode Search Input & Auto-Suggestions -->
+      <div class="relative">
+        <form id="pincode-form" onsubmit="return false;">
+          <input type="text" id="pincode-input" name="pincode" autocomplete="off" placeholder="Enter pincode, locality, etc" class="w-full h-12 px-4 rounded-xl border border-gray-300 focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-300 text-[15px] font-normal text-gray-900 placeholder:text-gray-500 transition-all">
+        </form>
+
+        <!-- Pincode/City Auto-Suggestions Box -->
+        <div id="pincode-suggestions" class="mt-1.5 border border-gray-200 rounded-xl overflow-hidden divide-y divide-gray-100 shadow-sm max-h-36 overflow-y-auto hidden bg-white">
+          <!-- Dynamically populated -->
+        </div>
+
+        <p id="pincode-error" class="text-red-500 text-xs mt-1 hidden text-left pl-1">Please enter a valid 6-digit pincode.</p>
+      </div>
+
+      <!-- Locality Selection Container -->
+      <div id="locality-container" class="hidden space-y-2 mt-2 p-3 bg-gray-50 rounded-2xl border border-gray-200">
+        <div class="flex items-center justify-between px-1">
+          <label class="text-[11px] font-bold text-gray-800 uppercase tracking-wider flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-primary shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            Select Locality / Area:
+          </label>
+          <span id="locality-badge" class="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full"></span>
+        </div>
+
+        <div class="relative">
+          <svg class="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" id="locality-search-input" placeholder="Search locality (e.g. New Friends Colony, Jasola...)" class="w-full h-8 pl-8 pr-3 rounded-lg border border-gray-300 bg-white text-xs font-medium text-gray-800 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 placeholder:text-gray-400">
+        </div>
+
+        <div id="locality-list" class="max-h-36 overflow-y-auto rounded-xl border border-gray-200 bg-white divide-y divide-gray-100 shadow-2xs custom-scroll">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Confirm India Location Button -->
+      <button type="button" id="confirm-pincode-btn" disabled class="w-full bg-gray-300 text-white font-bold h-12 rounded-xl text-[15px] mt-2 transition-all duration-200 cursor-not-allowed">
+        Confirm
+      </button>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TAB 2: INTERNATIONAL DELIVERY CONTENT       -->
+    <!-- ============================================ -->
+    <div id="modal-intl-section" class="hidden space-y-3">
+      <!-- Country Selection Custom Dropdown -->
+      <div class="relative z-10">
+        <div class="flex items-center justify-between mb-1.5">
+          <label class="text-xs font-bold text-gray-700">Select Destination Country:</label>
+        </div>
+        
+        <button type="button" id="intl-country-dropdown-btn" class="w-full flex items-center justify-between px-4 py-3 border border-gray-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all">
+          <div class="flex items-center gap-3" id="intl-country-selected">
+            <span class="text-xl leading-none">🇺🇸</span>
+            <span class="font-bold text-gray-900 text-[14px]">USA</span>
+          </div>
+          <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div id="intl-country-menu" class="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg hidden overflow-hidden flex-col z-20">
+          <div class="p-2 border-b border-gray-100 bg-gray-50/50">
+            <div class="relative">
+              <svg class="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="intl-country-search" placeholder="Search country (USA, UK, UAE...)" class="w-full h-9 pl-8 pr-3 rounded-lg border border-gray-300 text-xs font-medium text-gray-800 focus:outline-none focus:border-amber-500">
+            </div>
+          </div>
+          <div id="intl-country-list" class="max-h-48 overflow-y-auto divide-y divide-gray-100 bg-white custom-scroll">
+          <!-- Argentina -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="AR" data-name="Argentina" data-currency="ARS">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇦🇷</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Argentina</div>
+                <div class="text-[10px] text-gray-400">Buenos Aires, Córdoba, Rosario, Mendoza</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">ARS $</span>
+              <input type="radio" name="intl_country_radio" value="Argentina" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Australia -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="AU" data-name="Australia" data-currency="AUD">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇦🇺</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Australia</div>
+                <div class="text-[10px] text-gray-400">Sydney, Melbourne, Brisbane (e.g. 2000)</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">AUD $</span>
+              <input type="radio" name="intl_country_radio" value="Australia" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Austria -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="AT" data-name="Austria" data-currency="EUR">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇦🇹</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Austria</div>
+                <div class="text-[10px] text-gray-400">Vienna, Salzburg, Innsbruck, Graz</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">EUR €</span>
+              <input type="radio" name="intl_country_radio" value="Austria" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Bahrain -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="BH" data-name="Bahrain" data-currency="BHD">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇧🇭</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Bahrain</div>
+                <div class="text-[10px] text-gray-400">Manama, Seef, Amwaj Islands</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">BHD</span>
+              <input type="radio" name="intl_country_radio" value="Bahrain" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Belgium -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="BE" data-name="Belgium" data-currency="EUR">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇧🇪</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Belgium</div>
+                <div class="text-[10px] text-gray-400">Brussels, Antwerp, Ghent, Bruges</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">EUR €</span>
+              <input type="radio" name="intl_country_radio" value="Belgium" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Brazil -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="BR" data-name="Brazil" data-currency="BRL">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇧🇷</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Brazil</div>
+                <div class="text-[10px] text-gray-400">São Paulo, Rio de Janeiro, Brasília, Salvador</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">BRL R$</span>
+              <input type="radio" name="intl_country_radio" value="Brazil" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Bulgaria -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="BG" data-name="Bulgaria" data-currency="BGN">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇧🇬</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Bulgaria</div>
+                <div class="text-[10px] text-gray-400">Sofia, Plovdiv, Varna, Burgas</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">BGN lv</span>
+              <input type="radio" name="intl_country_radio" value="Bulgaria" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Canada -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="CA" data-name="Canada" data-currency="CAD">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇨🇦</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Canada</div>
+                <div class="text-[10px] text-gray-400">Toronto, Vancouver, Montreal, Calgary (e.g. M5V)</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">CAD $</span>
+              <input type="radio" name="intl_country_radio" value="Canada" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- China -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="CN" data-name="China" data-currency="CNY">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇨🇳</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">China</div>
+                <div class="text-[10px] text-gray-400">Beijing, Shanghai, Guangzhou, Shenzhen</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">CNY ¥</span>
+              <input type="radio" name="intl_country_radio" value="China" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Denmark -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="DK" data-name="Denmark" data-currency="DKK">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇩🇰</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Denmark</div>
+                <div class="text-[10px] text-gray-400">Copenhagen, Aarhus, Odense, Aalborg</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">DKK kr</span>
+              <input type="radio" name="intl_country_radio" value="Denmark" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Egypt -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="EG" data-name="Egypt" data-currency="EGP">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇪🇬</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Egypt</div>
+                <div class="text-[10px] text-gray-400">Cairo, Alexandria, Giza, Sharm El Sheikh</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">EGP E£</span>
+              <input type="radio" name="intl_country_radio" value="Egypt" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Finland -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="FI" data-name="Finland" data-currency="EUR">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇫🇮</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Finland</div>
+                <div class="text-[10px] text-gray-400">Helsinki, Espoo, Tampere, Vantaa</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">EUR €</span>
+              <input type="radio" name="intl_country_radio" value="Finland" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- France -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="FR" data-name="France" data-currency="EUR">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇫🇷</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">France</div>
+                <div class="text-[10px] text-gray-400">Paris, Lyon, Marseille, Nice (e.g. 75001)</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">EUR €</span>
+              <input type="radio" name="intl_country_radio" value="France" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Germany -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="DE" data-name="Germany" data-currency="EUR">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇩🇪</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Germany</div>
+                <div class="text-[10px] text-gray-400">Berlin, Munich, Frankfurt (e.g. 10115)</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">EUR €</span>
+              <input type="radio" name="intl_country_radio" value="Germany" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Greece -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="GR" data-name="Greece" data-currency="EUR">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇬🇷</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Greece</div>
+                <div class="text-[10px] text-gray-400">Athens, Thessaloniki, Patras, Heraklion</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">EUR €</span>
+              <input type="radio" name="intl_country_radio" value="Greece" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Hong Kong -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="HK" data-name="Hong Kong" data-currency="HKD">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇭🇰</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Hong Kong</div>
+                <div class="text-[10px] text-gray-400">Central, Tsim Sha Tsui, Causeway Bay</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">HKD $</span>
+              <input type="radio" name="intl_country_radio" value="Hong Kong" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Indonesia -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="ID" data-name="Indonesia" data-currency="IDR">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇮🇩</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Indonesia</div>
+                <div class="text-[10px] text-gray-400">Jakarta, Bali, Surabaya, Bandung</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">IDR Rp</span>
+              <input type="radio" name="intl_country_radio" value="Indonesia" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Ireland -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="IE" data-name="Ireland" data-currency="EUR">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇮🇪</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Ireland</div>
+                <div class="text-[10px] text-gray-400">Dublin, Cork, Galway, Limerick</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">EUR €</span>
+              <input type="radio" name="intl_country_radio" value="Ireland" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Italy -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="IT" data-name="Italy" data-currency="EUR">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇮🇹</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Italy</div>
+                <div class="text-[10px] text-gray-400">Rome, Milan, Florence, Venice</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">EUR €</span>
+              <input type="radio" name="intl_country_radio" value="Italy" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Japan -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="JP" data-name="Japan" data-currency="JPY">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇯🇵</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Japan</div>
+                <div class="text-[10px] text-gray-400">Tokyo, Osaka, Kyoto, Yokohama</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">JPY ¥</span>
+              <input type="radio" name="intl_country_radio" value="Japan" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Jordan -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="JO" data-name="Jordan" data-currency="JOD">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇯🇴</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Jordan</div>
+                <div class="text-[10px] text-gray-400">Amman, Aqaba, Zarqa, Irbid</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">JOD</span>
+              <input type="radio" name="intl_country_radio" value="Jordan" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Kuwait -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="KW" data-name="Kuwait" data-currency="KWD">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇰🇼</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Kuwait</div>
+                <div class="text-[10px] text-gray-400">Kuwait City, Salmiya, Hawally</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">KWD</span>
+              <input type="radio" name="intl_country_radio" value="Kuwait" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Malaysia -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="MY" data-name="Malaysia" data-currency="MYR">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇲🇾</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Malaysia</div>
+                <div class="text-[10px] text-gray-400">Kuala Lumpur, Penang, Johor Bahru</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">MYR</span>
+              <input type="radio" name="intl_country_radio" value="Malaysia" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Morocco -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="MA" data-name="Morocco" data-currency="MAD">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇲🇦</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Morocco</div>
+                <div class="text-[10px] text-gray-400">Casablanca, Marrakech, Rabat, Tangier</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">MAD</span>
+              <input type="radio" name="intl_country_radio" value="Morocco" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Nepal -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="NP" data-name="Nepal" data-currency="NPR">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇳🇵</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Nepal</div>
+                <div class="text-[10px] text-gray-400">Kathmandu, Pokhara, Lalitpur</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">NPR Rs</span>
+              <input type="radio" name="intl_country_radio" value="Nepal" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Netherlands -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="NL" data-name="Netherlands" data-currency="EUR">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇳🇱</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Netherlands</div>
+                <div class="text-[10px] text-gray-400">Amsterdam, Rotterdam, Utrecht</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">EUR €</span>
+              <input type="radio" name="intl_country_radio" value="Netherlands" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- New Zealand -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="NZ" data-name="New Zealand" data-currency="NZD">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇳🇿</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">New Zealand</div>
+                <div class="text-[10px] text-gray-400">Auckland, Wellington, Christchurch</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">NZD $</span>
+              <input type="radio" name="intl_country_radio" value="New Zealand" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Oman -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="OM" data-name="Oman" data-currency="OMR">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇴🇲</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Oman</div>
+                <div class="text-[10px] text-gray-400">Muscat, Salalah, Sohar, Qurum</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">OMR</span>
+              <input type="radio" name="intl_country_radio" value="Oman" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Philippines -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="PH" data-name="Philippines" data-currency="PHP">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇵🇭</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Philippines</div>
+                <div class="text-[10px] text-gray-400">Manila, Makati, Quezon City, Cebu</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">PHP ₱</span>
+              <input type="radio" name="intl_country_radio" value="Philippines" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Poland -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="PL" data-name="Poland" data-currency="PLN">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇵🇱</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Poland</div>
+                <div class="text-[10px] text-gray-400">Warsaw, Kraków, Wrocław, Gdańsk</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">PLN zł</span>
+              <input type="radio" name="intl_country_radio" value="Poland" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Portugal -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="PT" data-name="Portugal" data-currency="EUR">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇵🇹</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Portugal</div>
+                <div class="text-[10px] text-gray-400">Lisbon, Porto, Sintra, Faro</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">EUR €</span>
+              <input type="radio" name="intl_country_radio" value="Portugal" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Qatar -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="QA" data-name="Qatar" data-currency="QAR">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇶🇦</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Qatar</div>
+                <div class="text-[10px] text-gray-400">Doha, West Bay, Pearl-Qatar</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">QAR</span>
+              <input type="radio" name="intl_country_radio" value="Qatar" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Saudi Arabia -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="SA" data-name="Saudi Arabia" data-currency="SAR">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇸🇦</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Saudi Arabia</div>
+                <div class="text-[10px] text-gray-400">Riyadh, Jeddah, Dammam, Mecca</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">SAR</span>
+              <input type="radio" name="intl_country_radio" value="Saudi Arabia" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Singapore -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="SG" data-name="Singapore" data-currency="SGD">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇸🇬</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Singapore</div>
+                <div class="text-[10px] text-gray-400">Marina Bay, Orchard (e.g. 018956)</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">SGD $</span>
+              <input type="radio" name="intl_country_radio" value="Singapore" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- South Africa -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="ZA" data-name="South Africa" data-currency="ZAR">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇿🇦</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">South Africa</div>
+                <div class="text-[10px] text-gray-400">Johannesburg, Cape Town, Durban</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">ZAR</span>
+              <input type="radio" name="intl_country_radio" value="South Africa" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Spain -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="ES" data-name="Spain" data-currency="EUR">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇪🇸</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Spain</div>
+                <div class="text-[10px] text-gray-400">Madrid, Barcelona, Valencia, Seville</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">EUR €</span>
+              <input type="radio" name="intl_country_radio" value="Spain" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Sri Lanka -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="LK" data-name="Sri Lanka" data-currency="LKR">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇱🇰</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Sri Lanka</div>
+                <div class="text-[10px] text-gray-400">Colombo, Kandy, Galle, Negombo</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">LKR Rs</span>
+              <input type="radio" name="intl_country_radio" value="Sri Lanka" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Sweden -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="SE" data-name="Sweden" data-currency="SEK">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇸🇪</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Sweden</div>
+                <div class="text-[10px] text-gray-400">Stockholm, Gothenburg, Malmö</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">SEK kr</span>
+              <input type="radio" name="intl_country_radio" value="Sweden" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Switzerland -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="CH" data-name="Switzerland" data-currency="CHF">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇨🇭</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Switzerland</div>
+                <div class="text-[10px] text-gray-400">Zurich, Geneva, Basel, Bern</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">CHF</span>
+              <input type="radio" name="intl_country_radio" value="Switzerland" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- Thailand -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="TH" data-name="Thailand" data-currency="THB">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇹🇭</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">Thailand</div>
+                <div class="text-[10px] text-gray-400">Bangkok, Phuket, Chiang Mai, Pattaya</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">THB ฿</span>
+              <input type="radio" name="intl_country_radio" value="Thailand" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- UAE -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="AE" data-name="UAE" data-currency="AED">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇦🇪</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">UAE (United Arab Emirates)</div>
+                <div class="text-[10px] text-gray-400">Dubai, Abu Dhabi & Emirates</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">AED</span>
+              <input type="radio" name="intl_country_radio" value="UAE" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- UK -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="GB" data-name="UK" data-currency="GBP">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇬🇧</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">UK (United Kingdom)</div>
+                <div class="text-[10px] text-gray-400">Great Britain (e.g. SW1A, EC1A, M1)</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">GBP £</span>
+              <input type="radio" name="intl_country_radio" value="UK" class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+
+          <!-- USA -->
+          <label class="intl-country-opt flex items-center justify-between p-3 hover:bg-amber-50/50 cursor-pointer transition-colors" data-code="US" data-name="USA" data-currency="USD">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🇺🇸</span>
+              <div>
+                <div class="text-xs font-bold text-gray-900">USA</div>
+                <div class="text-[10px] text-gray-400">United States (e.g. 90210, 10001, 07001)</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">USD $</span>
+              <input type="radio" name="intl_country_radio" value="USA" checked class="w-4 h-4 accent-amber-600 cursor-pointer">
+            </div>
+          </label>
+        </div>
+        </div>
+      </div>
+
+      <!-- International Zip Code / Locality Input -->
+      <div class="space-y-1.5 pt-1">
+        <div class="flex items-center justify-between text-xs font-bold text-gray-700">
+          <label for="intl-zip-input">Enter Postal Code or Location:</label>
+          <span class="text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-md" id="intl-country-code-badge">USA 🇺🇸</span>
+        </div>
+        <div class="relative">
+          <input type="text" id="intl-zip-input" placeholder="Enter Zip Code (e.g. 90210) or Location (e.g. London)..." class="w-full h-10 px-4 rounded-xl border border-gray-300 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 text-xs font-semibold text-gray-900 placeholder:text-gray-400 transition-all">
+        </div>
+        <p id="intl-zip-error" class="text-amber-800 text-[11px] font-semibold mt-1 hidden pl-1"></p>
+      </div>
+
+      <!-- International Locality / Area Selection Container -->
+      <div id="intl-locality-container" class="space-y-1.5 mt-1.5 p-2.5 bg-amber-50/60 rounded-2xl border border-amber-200">
+        <div class="flex items-center justify-between px-1">
+          <label class="text-[11px] font-bold text-amber-900 uppercase tracking-wider flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-amber-700 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            Select Locality / Area:
+          </label>
+          <span id="intl-locality-badge" class="text-[9px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full"></span>
+        </div>
+
+        <div class="relative">
+          <svg class="w-3.5 h-3.5 text-amber-500 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" id="intl-locality-search-input" placeholder="Search locality / area name..." class="w-full h-8 pl-8 pr-3 rounded-lg border border-amber-300 bg-white text-xs font-medium text-gray-800 focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500/20 placeholder:text-gray-400">
+        </div>
+
+        <div id="intl-locality-list" class="max-h-28 overflow-y-auto rounded-xl border border-amber-200 bg-white divide-y divide-gray-100 shadow-2xs custom-scroll">
+          <!-- Dynamically Populated via Postal API / Locality DB -->
+        </div>
+      </div>
+
+      <!-- Confirm International Delivery Button -->
+      <button type="button" id="confirm-intl-btn" class="w-full bg-gradient-to-r from-amber-600 to-pink-600 hover:from-amber-700 hover:to-pink-700 text-white font-bold h-10 rounded-xl text-xs transition-all duration-200 cursor-pointer shadow-md flex items-center justify-center gap-2">
+        <span>Confirm International Location (<span id="selected-intl-name-btn">USA</span>)</span>
+        <span>→</span>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+window.openPincodeModal = function(requestedMode) {
+  const modal = document.getElementById('pincode-modal-overlay');
+  const modalContent = document.getElementById('pincode-modal-content');
+  if (!modal || !modalContent) return;
+  
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+  setTimeout(() => {
+    modal.classList.remove('opacity-0');
+    modalContent.classList.remove('scale-95');
+  }, 30);
+
+  if (requestedMode && window.switchDeliveryModalTab) {
+    window.switchDeliveryModalTab(requestedMode);
+  }
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+  const modal = document.getElementById('pincode-modal-overlay');
+  const modalContent = document.getElementById('pincode-modal-content');
+  const tabIndiaBtn = document.getElementById('tab-india-mode');
+  const tabIntlBtn = document.getElementById('tab-intl-mode');
+  const indiaSection = document.getElementById('modal-india-section');
+  const intlSection = document.getElementById('modal-intl-section');
+  const confirmPincodeBtn = document.getElementById('confirm-pincode-btn');
+  const confirmIntlBtn = document.getElementById('confirm-intl-btn');
+  const selectedIntlBtnText = document.getElementById('selected-intl-name-btn');
+  const closeBtn = document.getElementById('close-pincode-modal');
+
+  // Cookie helpers
+  function setCookie(name, value, days = 365) {
+    let expires = "";
+    if (days) {
+      let date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (encodeURIComponent(value) || "") + expires + "; path=/; SameSite=Lax";
+  }
+
+  function getCookie(name) {
+    let nameEQ = name + "=";
+    let ca = document.cookie.split(';');
+    for(let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) == 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+    }
+    return null;
+  }
+
+  // Global Tab Switcher
+  window.switchDeliveryModalTab = function(mode) {
+    const dropdownSelected = document.getElementById('delivery-mode-selected');
+    if (mode === 'international') {
+      if(dropdownSelected) dropdownSelected.innerHTML = '<span class="text-lg leading-none">🌐</span><span class="font-bold text-gray-900 text-[15px]">International</span>';
+      indiaSection.classList.add('hidden');
+      intlSection.classList.remove('hidden');
+    } else {
+      if(dropdownSelected) dropdownSelected.innerHTML = '<span class="text-lg leading-none">🇮🇳</span><span class="font-bold text-gray-900 text-[15px]">India</span>';
+      intlSection.classList.add('hidden');
+      indiaSection.classList.remove('hidden');
+    }
+  };
+
+  const dropdownBtn = document.getElementById('delivery-mode-dropdown-btn');
+  const menu = document.getElementById('delivery-mode-menu');
+  
+  if (dropdownBtn && menu) {
+    dropdownBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menu.classList.toggle('hidden');
+    });
+    document.addEventListener('click', () => menu.classList.add('hidden'));
+  }
+
+  if (tabIndiaBtn) tabIndiaBtn.addEventListener('click', () => window.switchDeliveryModalTab('india'));
+  if (tabIntlBtn) tabIntlBtn.addEventListener('click', () => window.switchDeliveryModalTab('international'));
+
+  function hideModal() {
+    if (!modal || !modalContent) return;
+    modal.classList.add('opacity-0');
+    modalContent.classList.add('scale-95');
+    setTimeout(() => {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }, 300);
+  }
+
+  if (closeBtn) closeBtn.addEventListener('click', hideModal);
+  if (modal) {
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) hideModal();
+    });
+  }
+
+  // State Updates for Header & Page
+  function syncDeliveryStateUI() {
+    const currentMode = getCookie('delivery_mode') || localStorage.getItem('delivery_mode') || 'india';
+    const currentCountry = getCookie('user_country') || localStorage.getItem('user_country') || 'India';
+    const currentZip = getCookie('user_intl_zip') || localStorage.getItem('user_intl_zip') || '';
+    const currentLocality = getCookie('user_intl_locality') || localStorage.getItem('user_intl_locality') || '';
+    const userPin = getCookie('user_pincode') || localStorage.getItem('user_pincode');
+    const city = userPin ? (getCookie('user_city') || localStorage.getItem('user_city') || 'Delhi') : 'Select Pincode';
+
+    const indiaBtn = document.getElementById('header-india-delivery-btn');
+    const intlBtn = document.getElementById('header-intl-delivery-btn');
+    const indiaBtnMob = document.getElementById('header-india-delivery-btn-mobile');
+    const intlBtnMob = document.getElementById('header-intl-delivery-btn-mobile');
+
+    if (currentMode === 'international') {
+      // 1. Remove Indian Pincode & City text when International mode is selected
+      document.querySelectorAll('.header-city-display').forEach(el => {
+        el.textContent = '';
+        el.classList.add('hidden');
+      });
+
+      // 2. Display International Location text
+      document.querySelectorAll('.header-intl-country-display').forEach(el => {
+        el.classList.remove('hidden');
+        if (currentLocality) {
+          const shortLoc = currentLocality.split(',')[0].trim();
+          el.textContent = `${shortLoc}, ${currentCountry}`;
+        } else if (currentZip) {
+          el.textContent = `${currentCountry} (${currentZip})`;
+        } else {
+          el.textContent = currentCountry;
+        }
+      });
+
+      // Active styling: Highlight International, Mute India
+      if (intlBtn) {
+        intlBtn.className = "flex items-center justify-between gap-1.5 bg-gradient-to-r from-amber-100 to-pink-100 border-2 border-amber-500 px-2.5 py-1 rounded-lg transition-all cursor-pointer text-left group shadow-sm w-full";
+      }
+      if (intlBtnMob) {
+        intlBtnMob.className = "flex-1 flex items-center justify-between gap-1 bg-gradient-to-r from-amber-100 to-pink-100 border-2 border-amber-500 px-2 py-1 rounded-lg text-left shadow-2xs group cursor-pointer min-w-0";
+      }
+      if (indiaBtn) {
+        indiaBtn.className = "flex items-center justify-between gap-1.5 bg-gray-50/70 hover:bg-gray-100 border border-gray-200 opacity-75 px-2.5 py-1 rounded-lg transition-all cursor-pointer text-left group w-full";
+      }
+      if (indiaBtnMob) {
+        indiaBtnMob.className = "flex-1 flex items-center justify-between gap-1 bg-white border border-gray-200 opacity-75 px-2 py-1 rounded-lg text-left shadow-2xs group cursor-pointer min-w-0";
+      }
+
+    } else { // India Mode Active
+      // 1. Display Indian Pincode & City text
+      document.querySelectorAll('.header-city-display').forEach(el => {
+        el.classList.remove('hidden');
+        el.textContent = city;
+      });
+
+      // 2. Remove International Location text when India mode is selected
+      document.querySelectorAll('.header-intl-country-display').forEach(el => {
+        el.textContent = '';
+        el.classList.add('hidden');
+      });
+
+      // Active styling: Highlight India, Mute International
+      if (indiaBtn) {
+        indiaBtn.className = "flex items-center justify-between gap-1.5 bg-emerald-50 border-2 border-emerald-600 px-2.5 py-1 rounded-lg transition-all cursor-pointer text-left group shadow-sm w-full";
+      }
+      if (indiaBtnMob) {
+        indiaBtnMob.className = "flex-1 flex items-center justify-between gap-1 bg-emerald-50 border-2 border-emerald-600 px-2 py-1 rounded-lg text-left shadow-2xs group cursor-pointer min-w-0";
+      }
+      if (intlBtn) {
+        intlBtn.className = "flex items-center justify-between gap-1.5 bg-gray-50/70 hover:bg-gray-100 border border-gray-200 opacity-75 px-2.5 py-1 rounded-lg transition-all cursor-pointer text-left group w-full";
+      }
+      if (intlBtnMob) {
+        intlBtnMob.className = "flex-1 flex items-center justify-between gap-1 bg-white border border-gray-200 opacity-75 px-2 py-1 rounded-lg text-left shadow-2xs group cursor-pointer min-w-0";
+      }
+    }
+
+    const banner = document.getElementById('intl-active-banner');
+    const bannerCountry = document.getElementById('intl-banner-country-name');
+    if (banner) {
+      if (currentMode === 'international') {
+        banner.classList.remove('hidden');
+        if (bannerCountry) {
+          if (currentLocality) {
+            bannerCountry.textContent = `${currentLocality}, ${currentCountry} ${currentZip ? '(' + currentZip + ')' : ''}`;
+          } else if (currentZip) {
+            bannerCountry.textContent = `${currentCountry} (PIN: ${currentZip})`;
+          } else {
+            bannerCountry.textContent = currentCountry;
+          }
+        }
+      } else {
+        banner.classList.add('hidden');
+      }
+    }
+
+    const currentCode = getCookie('user_country_code') || localStorage.getItem('user_country_code') || '';
+
+    // Emit global event for products/categories
+    document.dispatchEvent(new CustomEvent('deliveryModeChanged', { 
+      detail: { 
+        mode: currentMode, 
+        country: currentCountry,
+        countryCode: currentCode,
+        zip: currentZip,
+        locality: currentLocality,
+        city: city
+      } 
+    }));
+  }
+
+  /* ===== EXTENSIVE INTERNATIONAL LOCALITY & PINCODE DATABASE ===== */
+  const intlPincodeDatabase = [
+    // Argentina
+    { country: 'Argentina', countryCode: 'AR', pincode: '', city: 'Argentina', localities: ['Buenos Aires (Palermo)', 'Buenos Aires (Recoleta)', 'Córdoba Central', 'Rosario', 'Mendoza'] },
+
+    // Australia
+    { country: 'Australia', countryCode: 'AU', pincode: '2000', city: 'Sydney', localities: ['Sydney CBD', 'Circular Quay', 'Darling Harbour', 'The Rocks', 'Barangaroo'] },
+    { country: 'Australia', countryCode: 'AU', pincode: '3000', city: 'Melbourne', localities: ['Melbourne CBD', 'Southbank', 'Docklands', 'East Melbourne'] },
+    { country: 'Australia', countryCode: 'AU', pincode: '', city: 'Australia', localities: ['Sydney CBD', 'Melbourne CBD', 'Brisbane City', 'Perth Central', 'Adelaide'] },
+
+    // Austria
+    { country: 'Austria', countryCode: 'AT', pincode: '', city: 'Austria', localities: ['Vienna Inner City', 'Vienna Leopoldstadt', 'Salzburg Altstadt', 'Innsbruck', 'Graz'] },
+
+    // Bahrain
+    { country: 'Bahrain', countryCode: 'BH', pincode: '', city: 'Bahrain', localities: ['Manama (Juffair)', 'Seef District', 'Amwaj Islands', 'Riffa', 'Muharraq'] },
+
+    // Belgium
+    { country: 'Belgium', countryCode: 'BE', pincode: '', city: 'Belgium', localities: ['Brussels City Centre', 'Antwerp Central', 'Ghent Old Town', 'Bruges Center', 'Leuven'] },
+
+    // Brazil
+    { country: 'Brazil', countryCode: 'BR', pincode: '', city: 'Brazil', localities: ['São Paulo (Paulista)', 'Rio de Janeiro (Copacabana)', 'Rio de Janeiro (Ipanema)', 'Brasília Center', 'Salvador'] },
+
+    // Bulgaria
+    { country: 'Bulgaria', countryCode: 'BG', pincode: '', city: 'Bulgaria', localities: ['Sofia Center', 'Plovdiv Old Town', 'Varna Sea Garden Area', 'Burgas'] },
+
+    // Canada
+    { country: 'Canada', countryCode: 'CA', pincode: 'M5V', city: 'Toronto', localities: ['CN Tower Area', 'Entertainment District', 'Downtown Toronto', 'Fashion District', 'Waterfront'] },
+    { country: 'Canada', countryCode: 'CA', pincode: 'V6B', city: 'Vancouver', localities: ['Gastown', 'Yaletown', 'Downtown Vancouver', 'Coal Harbour'] },
+    { country: 'Canada', countryCode: 'CA', pincode: '', city: 'Canada', localities: ['Downtown Toronto', 'Vancouver Central', 'Montreal Old Town', 'Calgary City Centre', 'Ottawa', 'Edmonton'] },
+
+    // China
+    { country: 'China', countryCode: 'CN', pincode: '', city: 'China', localities: ['Shanghai (The Bund)', 'Beijing (Chaoyang)', 'Guangzhou Central', 'Shenzhen (Futian)'] },
+
+    // Denmark
+    { country: 'Denmark', countryCode: 'DK', pincode: '', city: 'Denmark', localities: ['Copenhagen Indre By', 'Copenhagen Nørrebro', 'Aarhus Centre', 'Odense'] },
+
+    // Egypt
+    { country: 'Egypt', countryCode: 'EG', pincode: '', city: 'Egypt', localities: ['Cairo (Zamalek)', 'Cairo (Maadi)', 'New Cairo', 'Alexandria Corniche', 'Giza'] },
+
+    // Finland
+    { country: 'Finland', countryCode: 'FI', pincode: '', city: 'Finland', localities: ['Helsinki Kamppi', 'Helsinki Kluuvi', 'Espoo', 'Tampere Central'] },
+
+    // France
+    { country: 'France', countryCode: 'FR', pincode: '75001', city: 'Paris', localities: ['Louvre District', 'Palais-Royal', 'Les Halles', 'Châtelet'] },
+    { country: 'France', countryCode: 'FR', pincode: '75008', city: 'Paris', localities: ['Champs-Élysées', 'Madeleine', 'Faubourg-du-Roule'] },
+    { country: 'France', countryCode: 'FR', pincode: '', city: 'France', localities: ['Paris City Center', 'Lyon Presqu\'île', 'Marseille Vieux-Port', 'Nice Promenade des Anglais', 'Bordeaux'] },
+
+    // Germany
+    { country: 'Germany', countryCode: 'DE', pincode: '10115', city: 'Berlin', localities: ['Berlin Mitte', 'Alexanderplatz', 'Museum Island', 'Rosenthaler Platz'] },
+    { country: 'Germany', countryCode: 'DE', pincode: '80331', city: 'Munich', localities: ['Altstadt-Lehel', 'Marienplatz', 'Maxvorstadt', 'Schwabing'] },
+    { country: 'Germany', countryCode: 'DE', pincode: '', city: 'Germany', localities: ['Berlin Mitte', 'Munich Altstadt', 'Frankfurt Financial District', 'Hamburg Harbour', 'Cologne Center', 'Stuttgart'] },
+
+    // Greece
+    { country: 'Greece', countryCode: 'GR', pincode: '', city: 'Greece', localities: ['Athens Syntagma', 'Athens Plaka', 'Thessaloniki Center', 'Heraklion'] },
+
+    // Hong Kong
+    { country: 'Hong Kong', countryCode: 'HK', pincode: '', city: 'Hong Kong', localities: ['Central District', 'Tsim Sha Tsui', 'Causeway Bay', 'Mong Kok', 'Wan Chai'] },
+
+    // Indonesia
+    { country: 'Indonesia', countryCode: 'ID', pincode: '', city: 'Indonesia', localities: ['Jakarta Central (SCBD)', 'South Jakarta', 'Bali (Seminyak)', 'Bali (Ubud)', 'Surabaya'] },
+
+    // Ireland
+    { country: 'Ireland', countryCode: 'IE', pincode: '', city: 'Ireland', localities: ['Dublin City Centre', 'Dublin Docklands', 'Cork City Centre', 'Galway'] },
+
+    // Italy
+    { country: 'Italy', countryCode: 'IT', pincode: '', city: 'Italy', localities: ['Rome Historic Center', 'Milan Fashion District', 'Florence City Center', 'Venice San Marco', 'Naples'] },
+
+    // Japan
+    { country: 'Japan', countryCode: 'JP', pincode: '', city: 'Japan', localities: ['Tokyo (Shinjuku)', 'Tokyo (Shibuya)', 'Tokyo (Ginza)', 'Osaka (Umeda)', 'Kyoto Station Area', 'Yokohama'] },
+
+    // Jordan
+    { country: 'Jordan', countryCode: 'JO', pincode: '', city: 'Jordan', localities: ['Amman (Abdoun)', 'Amman (Sweifieh)', 'Amman (Jabal Amman)', 'Aqaba'] },
+
+    // Kuwait
+    { country: 'Kuwait', countryCode: 'KW', pincode: '', city: 'Kuwait', localities: ['Kuwait City (Sharq)', 'Salmiya', 'Hawally', 'Fahaheel', 'Al Ahmadi'] },
+
+    // Malaysia
+    { country: 'Malaysia', countryCode: 'MY', pincode: '', city: 'Malaysia', localities: ['Kuala Lumpur (KLCC)', 'Bukit Bintang', 'Bangsar', 'Penang (George Town)', 'Johor Bahru'] },
+
+    // Morocco
+    { country: 'Morocco', countryCode: 'MA', pincode: '', city: 'Morocco', localities: ['Casablanca Finance City', 'Marrakech Medina', 'Rabat Agdal', 'Tangier'] },
+
+    // Nepal
+    { country: 'Nepal', countryCode: 'NP', pincode: '', city: 'Nepal', localities: ['Kathmandu (Thamel)', 'Kathmandu (Durbar Marg)', 'Lalitpur (Patan)', 'Pokhara Lakeside'] },
+
+    // Netherlands
+    { country: 'Netherlands', countryCode: 'NL', pincode: '', city: 'Netherlands', localities: ['Amsterdam Centrum', 'Amsterdam Zuid', 'Rotterdam Center', 'The Hague', 'Utrecht'] },
+
+    // New Zealand
+    { country: 'New Zealand', countryCode: 'NZ', pincode: '', city: 'New Zealand', localities: ['Auckland CBD', 'Ponsonby', 'Wellington Central', 'Christchurch City Centre', 'Queenstown', 'Hamilton'] },
+
+    // Oman
+    { country: 'Oman', countryCode: 'OM', pincode: '', city: 'Oman', localities: ['Muscat (Ruwi)', 'Al Qurum', 'Salalah', 'Sohar', 'Al Khuwair', 'Muttrah'] },
+
+    // Philippines
+    { country: 'Philippines', countryCode: 'PH', pincode: '', city: 'Philippines', localities: ['Makati CBD', 'Bonifacio Global City (BGC)', 'Manila Ermita', 'Quezon City', 'Cebu City'] },
+
+    // Poland
+    { country: 'Poland', countryCode: 'PL', pincode: '', city: 'Poland', localities: ['Warsaw Centre', 'Warsaw Mokotów', 'Kraków Old Town', 'Wrocław Main Square', 'Gdańsk'] },
+
+    // Portugal
+    { country: 'Portugal', countryCode: 'PT', pincode: '', city: 'Portugal', localities: ['Lisbon Baixa', 'Lisbon Chiado', 'Porto Ribeira', 'Sintra', 'Faro'] },
+
+    // Qatar
+    { country: 'Qatar', countryCode: 'QA', pincode: '', city: 'Qatar', localities: ['Doha (West Bay)', 'The Pearl-Qatar', 'Lusail City', 'Al Sadd', 'Al Rayyan', 'Katara Cultural Village'] },
+
+    // Saudi Arabia
+    { country: 'Saudi Arabia', countryCode: 'SA', pincode: '', city: 'Saudi Arabia', localities: ['Riyadh (Al Olaya)', 'Riyadh (Al Malqa)', 'Jeddah (Al Hamra)', 'Jeddah (Corniche)', 'Dammam', 'Mecca', 'Medina', 'Al Khobar'] },
+
+    // Singapore
+    { country: 'Singapore', countryCode: 'SG', pincode: '018956', city: 'Singapore', localities: ['Marina Bay Sands Area', 'Downtown Core', 'Raffles Place', 'Orchard Road', 'Sentosa'] },
+    { country: 'Singapore', countryCode: 'SG', pincode: '', city: 'Singapore', localities: ['Marina Bay', 'Orchard Road', 'Downtown Core', 'Raffles Place', 'Sentosa Island', 'Novena', 'Jurong East'] },
+
+    // South Africa
+    { country: 'South Africa', countryCode: 'ZA', pincode: '', city: 'South Africa', localities: ['Johannesburg (Sandton)', 'Cape Town (V&A Waterfront)', 'Durban Seafront', 'Pretoria'] },
+
+    // Spain
+    { country: 'Spain', countryCode: 'ES', pincode: '', city: 'Spain', localities: ['Madrid Centro', 'Barcelona Eixample', 'Valencia Old Town', 'Seville', 'Malaga'] },
+
+    // Sri Lanka
+    { country: 'Sri Lanka', countryCode: 'LK', pincode: '', city: 'Sri Lanka', localities: ['Colombo 01 (Fort)', 'Colombo 03 (Colpetty)', 'Colombo 07 (Cinnamon Gardens)', 'Kandy', 'Galle'] },
+
+    // Sweden
+    { country: 'Sweden', countryCode: 'SE', pincode: '', city: 'Sweden', localities: ['Stockholm Norrmalm', 'Stockholm Södermalm', 'Gothenburg City Centre', 'Malmö Centre'] },
+
+    // Switzerland
+    { country: 'Switzerland', countryCode: 'CH', pincode: '', city: 'Switzerland', localities: ['Zurich City Center', 'Geneva Lakefront', 'Basel Old Town', 'Bern', 'Lausanne'] },
+
+    // Thailand
+    { country: 'Thailand', countryCode: 'TH', pincode: '', city: 'Thailand', localities: ['Bangkok (Sukhumvit)', 'Bangkok (Silom)', 'Phuket (Patong)', 'Chiang Mai Old City', 'Pattaya'] },
+
+    // UAE
+    { country: 'UAE', countryCode: 'AE', pincode: '00000', city: 'Dubai', localities: ['Downtown Dubai', 'Dubai Marina', 'Palm Jumeirah', 'Business Bay', 'Jumeirah Beach Residence (JBR)', 'Deira', 'Bur Dubai', 'Jumeirah Lakes Towers (JLT)', 'Dubai Hills Estate', 'Al Barsha'] },
+    { country: 'UAE', countryCode: 'AE', pincode: '00001', city: 'Abu Dhabi', localities: ['Corniche', 'Yas Island', 'Saadiyat Island', 'Al Reem Island', 'Khalifa City', 'Al Maryah Island'] },
+    { country: 'UAE', countryCode: 'AE', pincode: '', city: 'United Arab Emirates', localities: ['Downtown Dubai', 'Dubai Marina', 'Palm Jumeirah', 'Abu Dhabi Corniche', 'Sharjah City Center', 'Ajman Marina'] },
+
+    // UK
+    { country: 'UK', countryCode: 'GB', pincode: 'SW1A', city: 'London', localities: ['Buckingham Palace Area', 'Westminster', 'St James\'s', 'Victoria', 'Belgravia'] },
+    { country: 'UK', countryCode: 'GB', pincode: 'EC1A', city: 'London', localities: ['City of London', 'Barbican', 'Farringdon', 'Smithfield Market'] },
+    { country: 'UK', countryCode: 'GB', pincode: 'M1', city: 'Manchester', localities: ['Piccadilly', 'Northern Quarter', 'Ancoats', 'City Centre'] },
+    { country: 'UK', countryCode: 'GB', pincode: '', city: 'United Kingdom', localities: ['Central London', 'Greater London', 'Manchester', 'Birmingham', 'Edinburgh', 'Glasgow', 'Bristol', 'Leeds', 'Liverpool'] },
+
+    // USA
+    { country: 'USA', countryCode: 'US', pincode: '07001', city: 'Avenel, New Jersey', localities: ['Avenel Area', 'Woodbridge Township', 'Middlesex County Zone', 'Rahway Border Area', 'Avenel Center'] },
+    { country: 'USA', countryCode: 'US', pincode: '90210', city: 'Beverly Hills, California', localities: ['Beverly Hills', 'Rodeo Drive', 'Sunset Boulevard', 'Trousdale Estates', 'Canon Drive'] },
+    { country: 'USA', countryCode: 'US', pincode: '10001', city: 'New York, NY', localities: ['Manhattan', 'Chelsea', 'Hudson Yards', 'Penn Station Area', 'Herald Square'] },
+    { country: 'USA', countryCode: 'US', pincode: '33139', city: 'Miami, Florida', localities: ['South Beach', 'Lincoln Road', 'Ocean Drive', 'Star Island', 'Venetian Islands'] },
+    { country: 'USA', countryCode: 'US', pincode: '60611', city: 'Chicago, Illinois', localities: ['Magnificent Mile', 'Streeterville', 'Gold Coast', 'Navy Pier Area'] },
+    { country: 'USA', countryCode: 'US', pincode: '', city: 'United States', localities: ['New York City', 'Los Angeles', 'Chicago', 'Miami', 'Houston', 'San Francisco', 'Seattle', 'Boston', 'Dallas', 'Atlanta'] }
+  ];
+
+  let selectedIntlCountry = 'USA';
+  let selectedIntlCurrency = 'USD';
+  let selectedIntlCode = 'US';
+  let selectedIntlLocality = '';
+
+  const intlSearchInput = document.getElementById('intl-country-search');
+  const intlZipInput = document.getElementById('intl-zip-input');
+  const intlCountryCodeBadge = document.getElementById('intl-country-code-badge');
+  const intlLocalityContainer = document.getElementById('intl-locality-container');
+  const intlLocalityBadge = document.getElementById('intl-locality-badge');
+  const intlLocalitySearchInput = document.getElementById('intl-locality-search-input');
+  const intlLocalityList = document.getElementById('intl-locality-list');
+  const intlZipError = document.getElementById('intl-zip-error');
+
+  let activeIntlLocalities = [];
+
+  function getLocalitiesForIntl(country, zip) {
+    const cleanZip = (zip || '').trim().toUpperCase();
+    
+    // 1. Check exact PIN match in static DB
+    let match = intlPincodeDatabase.find(item => item.country === country && item.pincode && item.pincode.toUpperCase() === cleanZip);
+    if (match && match.localities && match.localities.length > 0) return match.localities;
+
+    // 2. Check country fallback in static DB
+    let countryFallback = intlPincodeDatabase.find(item => item.country === country && (!item.pincode || item.pincode === '') && item.localities);
+    let baseLocs = (countryFallback && countryFallback.localities) ? countryFallback.localities : ['City Center', 'Business District', 'Metropolitan Area', 'Suburbs'];
+
+    if (cleanZip.length > 0) {
+      const isNumber = !isNaN(cleanZip) && cleanZip.trim() !== '';
+      if (isNumber) {
+        return [
+          `Central Area (${cleanZip})`,
+          `Downtown District (${cleanZip})`
+        ].concat(baseLocs);
+      }
+    }
+    
+    return baseLocs;
+  }
+
+  function fetchIntlPostalCode(countryCode, zip) {
+    const cleanZip = (zip || '').trim();
+    if (intlZipError) intlZipError.classList.add('hidden');
+
+    if (!cleanZip) {
+      const defLocs = getLocalitiesForIntl(selectedIntlCountry, '');
+      activeIntlLocalities = defLocs;
+      if (intlLocalityBadge) intlLocalityBadge.textContent = `${defLocs.length} Localities Found`;
+      filterAndDrawIntlLocalities('');
+      return;
+    }
+
+    const hasDigit = /\d/.test(cleanZip);
+    const isNumber = !isNaN(cleanZip) && cleanZip.trim() !== '';
+    let apiCountry = (countryCode || 'US').toLowerCase();
+    if (apiCountry === 'uk') apiCountry = 'gb';
+
+    let apiZip = cleanZip.replace(/\s+/g, '');
+    let isZipLike = false;
+
+    if (apiCountry === 'us') {
+      isZipLike = isNumber && cleanZip.length === 5;
+    } else if (apiCountry === 'gb') {
+      if (hasDigit && apiZip.length <= 4 && !cleanZip.includes(',')) {
+        isZipLike = true;
+        apiZip = apiZip.substring(0, 4);
+      }
+    } else if (apiCountry === 'ca') {
+      if (hasDigit && apiZip.length <= 3 && !cleanZip.includes(',')) {
+        isZipLike = true;
+        apiZip = apiZip.substring(0, 3);
+      }
+    } else {
+      isZipLike = isNumber;
+    }
+
+    if (isZipLike) {
+      // Search via Zippopotam for zip codes
+      fetch(`https://api.zippopotam.us/${apiCountry}/${encodeURIComponent(apiZip)}`)
+        .then(res => {
+          if (!res.ok) throw new Error('Zip not found');
+          return res.json();
+        })
+        .then(data => {
+          if (data && data.places && data.places.length > 0) {
+            if (intlZipError) intlZipError.classList.add('hidden');
+            const realLocs = data.places.map(p => {
+              const placeName = p['place name'] || '';
+              const state = p['state abbreviation'] || p['state'] || '';
+              return state ? `${placeName}, ${state}` : placeName;
+            });
+            activeIntlLocalities = Array.from(new Set(realLocs));
+            if (intlLocalityBadge) intlLocalityBadge.textContent = `${activeIntlLocalities.length} Verified Localities Found`;
+            filterAndDrawIntlLocalities('');
+            if (activeIntlLocalities.length > 0) {
+              selectedIntlLocality = activeIntlLocalities[0];
+              if (selectedIntlBtnText) selectedIntlBtnText.textContent = `${selectedIntlLocality}, ${selectedIntlCountry}`;
+            }
+          } else {
+            showIntlFallback(cleanZip);
+          }
+        })
+        .catch(() => {
+          showIntlFallback(cleanZip);
+        });
+    } else {
+      // Search via Photon API (ElasticSearch prefix autocomplete optimized)
+      fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(cleanZip)}&limit=15&lang=en`)
+        .then(res => {
+          if (!res.ok) throw new Error('Photon API error');
+          return res.json();
+        })
+        .then(data => {
+          let realLocs = [];
+          if (data && data.features && data.features.length > 0) {
+            data.features.forEach(feat => {
+              const p = feat.properties || {};
+              const cc = (p.countrycode || '').toLowerCase();
+              const isUkMatch = (apiCountry === 'gb' || apiCountry === 'uk') && (cc === 'gb' || cc === 'uk');
+              const isUsMatch = (apiCountry === 'us') && (cc === 'us');
+              const isCountryMatch = !apiCountry || cc === apiCountry || isUkMatch || isUsMatch;
+
+              if (cc && !isCountryMatch) return;
+
+              const name = p.name || p.city || p.locality || p.district;
+              const state = p.state || '';
+              if (name) {
+                const locStr = (state && name !== state) ? `${name}, ${state}` : name;
+                if (!realLocs.includes(locStr)) {
+                  realLocs.push(locStr);
+                }
+              }
+            });
+          }
+
+          if (realLocs.length > 0) {
+            if (intlZipError) intlZipError.classList.add('hidden');
+            activeIntlLocalities = realLocs;
+            if (intlLocalityBadge) intlLocalityBadge.textContent = `${activeIntlLocalities.length} Verified Localities Found`;
+            filterAndDrawIntlLocalities('');
+
+            if (activeIntlLocalities.length > 0) {
+              selectedIntlLocality = activeIntlLocalities[0];
+              if (selectedIntlBtnText) selectedIntlBtnText.textContent = `${selectedIntlLocality}, ${selectedIntlCountry}`;
+            }
+          } else {
+            // Fallback to Nominatim if Photon yields no matches for country
+            return fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cleanZip)}&countrycodes=${apiCountry}&format=json&addressdetails=1&limit=10`)
+              .then(res => res.json())
+              .then(nomData => {
+                if (nomData && nomData.length > 0) {
+                  if (intlZipError) intlZipError.classList.add('hidden');
+                  const nomLocs = nomData.map(item => {
+                    const addr = item.address || {};
+                    const name = addr.city || addr.town || addr.village || addr.suburb || addr.hamlet || addr.county || item.name;
+                    const state = addr.state || '';
+                    return state && name !== state ? `${name}, ${state}` : name;
+                  }).filter(Boolean);
+
+                  activeIntlLocalities = Array.from(new Set(nomLocs));
+                  if (intlLocalityBadge) intlLocalityBadge.textContent = `${activeIntlLocalities.length} Verified Localities Found`;
+                  filterAndDrawIntlLocalities('');
+                } else {
+                  showIntlFallback(cleanZip);
+                }
+              })
+              .catch(() => showIntlFallback(cleanZip));
+          }
+        })
+        .catch(() => {
+          showIntlFallback(cleanZip);
+        });
+    }
+  }
+
+  function showIntlFallback(cleanZip) {
+    const isNumber = !isNaN(cleanZip) && cleanZip.trim() !== '';
+    
+    if (intlZipError) {
+      if (selectedIntlCode === 'US' && isNumber && cleanZip.length !== 5) {
+        intlZipError.textContent = `Note: US ZIP codes are 5 digits (e.g. 90210). Showing available areas:`;
+        intlZipError.classList.remove('hidden');
+      } else {
+        intlZipError.textContent = ``;
+        intlZipError.classList.add('hidden');
+      }
+    }
+
+    const fallbackLocs = getLocalitiesForIntl(selectedIntlCountry, cleanZip);
+    activeIntlLocalities = fallbackLocs;
+    if (intlLocalityBadge) intlLocalityBadge.textContent = `${fallbackLocs.length} Localities Found`;
+    
+    if (!isNumber && cleanZip.length > 0) {
+       filterAndDrawIntlLocalities(cleanZip);
+    } else {
+       filterAndDrawIntlLocalities('');
+    }
+  }
+
+  function renderIntlLocalityList(country, zip, query) {
+    fetchIntlPostalCode(selectedIntlCode, zip);
+  }
+
+  function filterAndDrawIntlLocalities(query) {
+    const q = (query || '').toLowerCase().trim();
+    let filtered = activeIntlLocalities.filter(loc => loc.toLowerCase().includes(q));
+
+    let html = '';
+
+    if (filtered.length > 0) {
+      html += filtered.map((locName) => {
+        const isSelected = selectedIntlLocality === locName;
+
+        return `
+          <div class="intl-locality-item px-3.5 py-2 hover:bg-amber-100/50 cursor-pointer flex items-center justify-between text-xs transition-colors ${isSelected ? 'bg-amber-100 font-bold text-amber-900 border-l-4 border-amber-600' : 'text-gray-800'}"
+            data-locality="${locName}">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full ${isSelected ? 'bg-amber-600' : 'bg-gray-300'} shrink-0"></span>
+              <span class="font-semibold text-gray-900">${locName}</span>
+            </div>
+            <span class="text-[10px] text-amber-800 font-medium">${selectedIntlCountry}</span>
+          </div>
+        `;
+      }).join('');
+    } else {
+      html += `
+        <div class="px-3.5 py-4 text-center text-xs text-gray-500 italic">
+          No localities found. Try a different search.
+        </div>
+      `;
+    }
+
+    intlLocalityList.innerHTML = html;
+    if (intlLocalityBadge) intlLocalityBadge.textContent = `${filtered.length} Localities Found`;
+
+    intlLocalityList.querySelectorAll('.intl-locality-item').forEach(item => {
+      item.addEventListener('click', function() {
+        intlLocalityList.querySelectorAll('.intl-locality-item').forEach(i => {
+          i.classList.remove('bg-amber-100', 'font-bold', 'text-amber-900', 'border-l-4', 'border-amber-600');
+          i.classList.add('text-gray-800');
+        });
+
+        this.classList.add('bg-amber-100', 'font-bold', 'text-amber-900', 'border-l-4', 'border-amber-600');
+
+        selectedIntlLocality = this.dataset.locality;
+        if (selectedIntlBtnText) selectedIntlBtnText.textContent = `${selectedIntlLocality}, ${selectedIntlCountry}`;
+      });
+    });
+  }
+
+  if (intlLocalitySearchInput) {
+    intlLocalitySearchInput.addEventListener('input', function() {
+      filterAndDrawIntlLocalities(this.value);
+    });
+  }
+
+  let intlZipDebounce = null;
+  if (intlZipInput) {
+    intlZipInput.addEventListener('input', function() {
+      clearTimeout(intlZipDebounce);
+      const val = this.value;
+      const q = val.trim().toLowerCase();
+      if (!q || activeIntlLocalities.some(loc => loc.toLowerCase().includes(q))) {
+        filterAndDrawIntlLocalities(val);
+      }
+      intlZipDebounce = setTimeout(() => {
+        fetchIntlPostalCode(selectedIntlCode, val);
+      }, 250);
+    });
+  }
+
+  if (intlSearchInput) {
+    intlSearchInput.addEventListener('input', function() {
+      const q = this.value.toLowerCase().trim();
+      document.querySelectorAll('.intl-country-opt').forEach(opt => {
+        const name = opt.dataset.name.toLowerCase();
+        if (name.includes(q)) {
+          opt.style.display = 'flex';
+        } else {
+          opt.style.display = 'none';
+        }
+      });
+    });
+  }
+
+  const intlCountryDropdownBtn = document.getElementById('intl-country-dropdown-btn');
+  const intlCountryMenu = document.getElementById('intl-country-menu');
+  if (intlCountryDropdownBtn && intlCountryMenu) {
+    intlCountryDropdownBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      intlCountryMenu.classList.toggle('hidden');
+    });
+    document.addEventListener('click', (e) => {
+      if (!intlCountryDropdownBtn.contains(e.target) && !intlCountryMenu.contains(e.target)) {
+        intlCountryMenu.classList.add('hidden');
+      }
+    });
+  }
+
+  document.querySelectorAll('.intl-country-opt').forEach(opt => {
+    opt.addEventListener('click', function() {
+      document.querySelectorAll('input[name="intl_country_radio"]').forEach(r => r.checked = false);
+      const radio = this.querySelector('input[type="radio"]');
+      if (radio) radio.checked = true;
+
+      selectedIntlCountry = this.dataset.name;
+      selectedIntlCurrency = this.dataset.currency;
+      selectedIntlCode = this.dataset.code;
+      selectedIntlLocality = '';
+
+      const flag = this.querySelector('.text-xl').textContent;
+      const selectedDiv = document.getElementById('intl-country-selected');
+      if (selectedDiv) {
+        selectedDiv.innerHTML = `<span class="text-xl leading-none">${flag}</span><span class="font-bold text-gray-900 text-[14px]">${selectedIntlCountry}</span>`;
+      }
+      
+      if (intlCountryMenu) intlCountryMenu.classList.add('hidden');
+
+      if (selectedIntlBtnText) selectedIntlBtnText.textContent = selectedIntlCountry;
+      if (intlCountryCodeBadge) intlCountryCodeBadge.textContent = `${selectedIntlCountry} ${selectedIntlCode}`;
+
+      fetchIntlPostalCode(selectedIntlCode, intlZipInput ? intlZipInput.value : '');
+    });
+  });
+
+  // Initial call for default selected country (USA)
+  fetchIntlPostalCode('US', '');
+
+  if (confirmIntlBtn) {
+    confirmIntlBtn.addEventListener('click', function() {
+      const zipVal = intlZipInput ? intlZipInput.value.trim() : '';
+
+      // Basic validation for USA (must be exactly 5 digits if provided)
+      if (selectedIntlCode === 'US' && zipVal && !/^\d{5}$/.test(zipVal)) {
+        alert('Please provide a valid 5-digit US ZIP code.');
+        return;
+      }
+
+      const oldMode = localStorage.getItem('delivery_mode') || 'india';
+      const isModeChange = (oldMode !== 'international');
+
+      const finalizeIntl = function() {
+        setCookie('delivery_mode', 'international', 365);
+        setCookie('user_country', selectedIntlCountry, 365);
+        setCookie('user_country_code', selectedIntlCode, 365);
+        setCookie('user_intl_zip', zipVal, 365);
+        setCookie('user_intl_locality', selectedIntlLocality, 365);
+        
+        localStorage.setItem('delivery_mode', 'international');
+        localStorage.setItem('user_country', selectedIntlCountry);
+        localStorage.setItem('user_country_code', selectedIntlCode);
+        localStorage.setItem('user_intl_zip', zipVal);
+        localStorage.setItem('user_intl_locality', selectedIntlLocality);
+
+        if (window.FloralCurrencyManager) {
+          window.FloralCurrencyManager.setCurrencyByCountry(selectedIntlCode || selectedIntlCountry);
+        }
+
+        syncDeliveryStateUI();
+        hideModal();
+        if (isModeChange || window.location.pathname.includes('/cart')) window.location.reload();
+      };
+
+      if (isModeChange) {
+        fetch('/cart/clear.js', { method: 'POST' })
+          .then(() => finalizeIntl())
+          .catch(() => finalizeIntl());
+      } else {
+        finalizeIntl();
+      }
+    });
+  }
+
+  /* ===== INDIA PINCODE LOGIC ===== */
+  const input = document.getElementById('pincode-input');
+  const suggestionsBox = document.getElementById('pincode-suggestions');
+  const localityContainer = document.getElementById('locality-container');
+  const localityBadge = document.getElementById('locality-badge');
+  const localitySearchInput = document.getElementById('locality-search-input');
+  const localityList = document.getElementById('locality-list');
+  const errorMsg = document.getElementById('pincode-error');
+
+  const pincodeDatabase = [
+    { pincode: '110025', city: 'Delhi', state: 'Delhi', localities: ['New Friends Colony', 'Jasola', 'Okhla', 'Jamia Nagar', 'Holy Family Hospital Area', 'Sukhdev Vihar', 'Masigarh'] },
+    { pincode: '110044', city: 'Delhi', state: 'Delhi', localities: ['Badarpur', 'Molarband', 'Jaitpur', 'Tughlakabad Extension', 'Sarita Vihar', 'Ali Village'] },
+    { pincode: '110001', city: 'Delhi', state: 'Delhi', localities: ['Connaught Place', 'Barakhamba Road', 'Janpath', 'Parliament Street', 'Bengali Market'] },
+    { pincode: '226001', city: 'Lucknow', state: 'Uttar Pradesh', localities: ['Hazratganj', 'Lalbagh', 'Raj Bhavan', 'Vidhan Sabha Marg', 'Kaiserbagh'] },
+    { pincode: '226010', city: 'Lucknow', state: 'Uttar Pradesh', localities: ['Gomti Nagar', 'Patrakar Puram', 'Vipul Khand', 'Vijay Khand', 'Viraj Khand'] },
+    { pincode: '400001', city: 'Mumbai', state: 'Maharashtra', localities: ['Fort', 'Colaba', 'Marine Drive', 'Nariman Point', 'Ballard Estate'] },
+    { pincode: '560001', city: 'Bengaluru', state: 'Karnataka', localities: ['MG Road', 'Brigade Road', 'Commercial Street', 'Cubbon Park', 'Residency Road'] },
+    { pincode: '600001', city: 'Chennai', state: 'Tamil Nadu', localities: ['Parry\'s Corner', 'George Town', 'Broadway', 'Beach Road'] },
+    { pincode: '700001', city: 'Kolkata', state: 'West Bengal', localities: ['BBD Bagh', 'Esplanade', 'Dalhousie Square', 'Strand Road'] },
+    { pincode: '500001', city: 'Hyderabad', state: 'Telangana', localities: ['Abids', 'Nampally', 'Koti', 'Mozamjahi Market'] }
+  ];
+
+  let selectedLocation = null;
+
+  function setConfirmPincodeActive(active) {
+    if (active) {
+      confirmPincodeBtn.disabled = false;
+      confirmPincodeBtn.className = "w-full bg-primary text-white font-bold h-12 rounded-xl text-sm transition-all duration-200 cursor-pointer shadow-md hover:bg-primary-600";
+    } else {
+      confirmPincodeBtn.disabled = true;
+      confirmPincodeBtn.className = "w-full bg-gray-300 text-white font-bold h-12 rounded-xl text-sm transition-all duration-200 cursor-not-allowed";
+    }
+  }
+
+  function cleanCityName(rawCity, state) {
+    if (!rawCity) return state || 'India';
+    let c = rawCity.trim();
+    if (c.toLowerCase().includes('delhi')) return 'Delhi';
+    return c;
+  }
+
+  function renderLocalityList(localities, pincode, city, state) {
+    if (!localities || localities.length === 0) {
+      localityContainer.classList.add('hidden');
+      return;
+    }
+
+    localityBadge.textContent = `${localities.length} Localities Found`;
+    localitySearchInput.value = '';
+    localityContainer.classList.remove('hidden');
+
+    filterAndDrawLocalities(localities, pincode, city, state, '');
+  }
+
+  function filterAndDrawLocalities(localities, pincode, city, state, query) {
+    const q = (query || '').toLowerCase().trim();
+    const filtered = localities.filter(loc => loc.toLowerCase().includes(q));
+
+    if (filtered.length === 0) {
+      localityList.innerHTML = `<div class="p-3 text-center text-xs text-gray-500">No locality matching "${query}"</div>`;
+      return;
+    }
+
+    const cleanedCity = cleanCityName(city, state);
+
+    localityList.innerHTML = filtered.map((locName) => {
+      const isSelected = selectedLocation && selectedLocation.locality === locName;
+      const fullLoc = `${pincode}, ${locName}, ${cleanedCity}`;
+
+      return `
+        <div class="locality-item px-3.5 py-2.5 hover:bg-primary/5 cursor-pointer flex items-center justify-between text-xs transition-colors ${isSelected ? 'bg-primary/10 font-bold text-primary border-l-4 border-primary' : 'text-gray-800'}"
+          data-pincode="${pincode}"
+          data-locality="${locName}"
+          data-city="${cleanedCity}"
+          data-state="${state}"
+          data-full="${fullLoc}">
+          <div class="flex items-center gap-2.5">
+            <span class="w-2.5 h-2.5 rounded-full ${isSelected ? 'bg-primary' : 'bg-gray-300'} shrink-0"></span>
+            <span class="font-semibold text-gray-900">${locName}</span>
+          </div>
+          <span class="text-[11px] text-gray-400 font-normal">${pincode}, ${cleanedCity}</span>
+        </div>
+      `;
+    }).join('');
+
+    localityList.querySelectorAll('.locality-item').forEach(item => {
+      item.addEventListener('click', function() {
+        localityList.querySelectorAll('.locality-item').forEach(i => {
+          i.classList.remove('bg-primary/10', 'font-bold', 'text-primary', 'border-l-4', 'border-primary');
+          i.classList.add('text-gray-800');
+        });
+
+        this.classList.add('bg-primary/10', 'font-bold', 'text-primary', 'border-l-4', 'border-primary');
+
+        const locName = this.dataset.locality;
+        const mainCity = this.dataset.city;
+        const code = this.dataset.pincode;
+        const state = this.dataset.state || '';
+
+        selectedLocation = {
+          pincode: code,
+          locality: locName,
+          city: `${locName}, ${mainCity}`,
+          location: `${code}, ${locName}, ${mainCity}`,
+          state: state
+        };
+
+        setConfirmPincodeActive(true);
+      });
+    });
+  }
+
+  function lookupPincode(code) {
+    if (code.length !== 6 || isNaN(code)) return;
+
+    fetch(`https://api.postalpincode.in/pincode/${code}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data[0] && data[0].Status === 'Success' && data[0].PostOffice && data[0].PostOffice.length > 0) {
+          const offices = data[0].PostOffice;
+          const firstPO = offices[0];
+          const rawCity = firstPO.District || firstPO.Block || firstPO.State;
+          const state = firstPO.State;
+          const city = cleanCityName(rawCity, state);
+
+          const localities = Array.from(new Set(offices.map(po => po.Name).filter(Boolean)));
+
+          suggestionsBox.classList.add('hidden');
+          errorMsg.classList.add('hidden');
+
+          renderLocalityList(localities, code, city, state);
+
+          selectedLocation = {
+            pincode: code,
+            locality: localities[0],
+            city: `${localities[0]}, ${city}`,
+            location: `${code}, ${localities[0]}, ${city}`,
+            state: state
+          };
+          setConfirmPincodeActive(true);
+        } else {
+          selectedLocation = null;
+          localityContainer.classList.add('hidden');
+          suggestionsBox.classList.add('hidden');
+          errorMsg.textContent = "Sorry, pincode not found or not deliverable.";
+          errorMsg.classList.remove('hidden');
+          setConfirmPincodeActive(false);
+        }
+      })
+      .catch(() => {
+        const dbMatch = pincodeDatabase.find(item => item.pincode === code);
+        if (dbMatch) {
+          renderLocalityList(dbMatch.localities, code, dbMatch.city, dbMatch.state);
+          selectedLocation = {
+            pincode: code,
+            locality: dbMatch.localities[0],
+            city: `${dbMatch.localities[0]}, ${dbMatch.city}`,
+            location: `${code}, ${dbMatch.localities[0]}, ${dbMatch.city}`,
+            state: dbMatch.state
+          };
+          setConfirmPincodeActive(true);
+        } else {
+          selectedLocation = null;
+          localityContainer.classList.add('hidden');
+          suggestionsBox.classList.add('hidden');
+          errorMsg.textContent = "Invalid pincode or network issue.";
+          errorMsg.classList.remove('hidden');
+          setConfirmPincodeActive(false);
+        }
+      });
+  }
+
+  function lookupLocality(query) {
+    fetch(`https://api.postalpincode.in/postoffice/${query}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data[0] && data[0].Status === 'Success' && data[0].PostOffice && data[0].PostOffice.length > 0) {
+          
+          suggestionsBox.innerHTML = data[0].PostOffice.map(po => {
+            const locName = po.Name;
+            const mainCity = cleanCityName(po.District || po.Block || po.State, po.State);
+            const state = po.State;
+            const code = po.Pincode;
+            
+            return `
+              <div class="suggestion-item px-3.5 py-2.5 hover:bg-gray-50 cursor-pointer flex items-center gap-3 transition-colors text-gray-800"
+                data-pincode="${code}"
+                data-locality="${locName}"
+                data-city="${mainCity}"
+                data-state="${state}">
+                <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <div>
+                  <div class="text-xs font-semibold">${locName}</div>
+                  <div class="text-[10px] text-gray-500">${mainCity}, ${state}, India - ${code}</div>
+                </div>
+              </div>
+            `;
+          }).join('');
+          
+          suggestionsBox.classList.remove('hidden');
+          
+          suggestionsBox.querySelectorAll('.suggestion-item').forEach(item => {
+            item.addEventListener('click', function() {
+              const locName = this.dataset.locality;
+              const mainCity = this.dataset.city;
+              const code = this.dataset.pincode;
+              const state = this.dataset.state || '';
+
+              selectedLocation = {
+                pincode: code,
+                locality: locName,
+                city: `${locName}, ${mainCity}`,
+                location: `${code}, ${locName}, ${mainCity}`,
+                state: state
+              };
+
+              input.value = `${locName}, ${mainCity} - ${code}`;
+              suggestionsBox.classList.add('hidden');
+              localityContainer.classList.add('hidden');
+              errorMsg.classList.add('hidden');
+              setConfirmPincodeActive(true);
+            });
+          });
+          
+        } else {
+          suggestionsBox.classList.add('hidden');
+        }
+      })
+      .catch(() => {
+        suggestionsBox.classList.add('hidden');
+      });
+  }
+
+  let inputDebounce = null;
+  if (input) {
+    input.addEventListener('input', function() {
+      const val = this.value.trim();
+      errorMsg.classList.add('hidden');
+      clearTimeout(inputDebounce);
+      
+      if (!val) {
+        suggestionsBox.classList.add('hidden');
+        suggestionsBox.innerHTML = '';
+        selectedLocation = null;
+        localityContainer.classList.add('hidden');
+        setConfirmPincodeActive(false);
+        return;
+      }
+      
+      inputDebounce = setTimeout(() => {
+        if (!isNaN(val) && val.length === 6) {
+          suggestionsBox.classList.add('hidden');
+          lookupPincode(val);
+        } else if (isNaN(val) && val.length >= 3) {
+          localityContainer.classList.add('hidden');
+          lookupLocality(val);
+        } else {
+          suggestionsBox.classList.add('hidden');
+          selectedLocation = null;
+          localityContainer.classList.add('hidden');
+          setConfirmPincodeActive(false);
+        }
+      }, 400);
+    });
+  }
+
+  if (confirmPincodeBtn) {
+    confirmPincodeBtn.addEventListener('click', function() {
+      if (!selectedLocation) {
+        errorMsg.classList.remove('hidden');
+        return;
+      }
+
+      const oldMode = localStorage.getItem('delivery_mode') || 'india';
+      const isModeChange = (oldMode !== 'india');
+
+      const finalizeIndia = function() {
+        setCookie('delivery_mode', 'india', 365);
+        setCookie('user_pincode', selectedLocation.pincode, 365);
+        setCookie('user_location', selectedLocation.location, 365);
+        setCookie('user_city', selectedLocation.city, 365);
+        if (selectedLocation.state) setCookie('user_state', selectedLocation.state, 365);
+
+        localStorage.setItem('delivery_mode', 'india');
+        localStorage.setItem('user_pincode', selectedLocation.pincode);
+        localStorage.setItem('user_location', selectedLocation.location);
+        localStorage.setItem('user_city', selectedLocation.city);
+        if (selectedLocation.state) localStorage.setItem('user_state', selectedLocation.state);
+
+        if (window.FloralCurrencyManager) {
+          window.FloralCurrencyManager.setCurrency('INR', false);
+        }
+
+        syncDeliveryStateUI();
+        hideModal();
+        if (isModeChange || window.location.pathname.includes('/cart')) window.location.reload();
+      };
+
+      if (isModeChange) {
+        fetch('/cart/clear.js', { method: 'POST' })
+          .then(() => finalizeIndia())
+          .catch(() => finalizeIndia());
+      } else {
+        finalizeIndia();
+      }
+    });
+  }
+
+  // Initial Sync on Page Load
+  syncDeliveryStateUI();
+
+  // Auto-open location modal for new customers who haven't saved a pincode or country yet
+  const hasSavedPincode = localStorage.getItem('user_pincode') || getCookie('user_pincode');
+  const hasSavedCountry = localStorage.getItem('user_country') || getCookie('user_country');
+  const hasSavedMode    = localStorage.getItem('delivery_mode') || getCookie('delivery_mode');
+  const hasSelectedLocation = hasSavedPincode || hasSavedCountry || (hasSavedMode === 'international');
+
+  if (!hasSelectedLocation) {
+    setTimeout(function() {
+      if (window.openPincodeModal) {
+        window.openPincodeModal('india');
+      }
+    }, 600);
+  }
+});
+</script>

@@ -1,0 +1,77 @@
+<!-- Hero Banner Grid -->
+<section class="max-w-7xl mx-auto px-4 pt-6 pb-4">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 h-auto md:h-[420px]" style="animation: headerIn 0.8s ease forwards;">
+
+    <!-- Large Main Banner -->
+    <a href="{{ section.settings.link_1 | default: '#' }}" class="md:col-span-2 relative rounded-2xl overflow-hidden group block h-[280px] md:h-full">
+      <div class="absolute inset-0 bg-gradient-to-br from-blush via-white to-champagne"></div>
+      {% if section.settings.image_1 != blank %}
+        <img src="{{ section.settings.image_1 | img_url: 'master' }}" alt="Hero Banner" class="absolute inset-0 w-full h-full object-cover">
+      {% else %}
+        <img src="{{ 'hero-banner.png' | asset_url }}" alt="Premium Gifts" class="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-60">
+      {% endif %}
+      <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+      <div class="absolute bottom-0 left-0 p-4 md:p-10">
+        <span class="inline-block bg-secondary text-white text-[10px] md:text-xs font-bold px-2.5 md:px-3 py-0.5 md:py-1 rounded-full mb-2 md:mb-3 uppercase tracking-wider">{{ section.settings.badge_1 | default: 'Bestseller' }}</span>
+        <h2 class="text-xl md:text-4xl font-serif font-bold text-white leading-tight mb-1 md:mb-2">{{ section.settings.title_1 | default: 'Make Every Celebration Magical' }}</h2>
+        <p class="text-white/80 text-xs md:text-base mb-2 md:mb-4 line-clamp-2">{{ section.settings.subtitle_1 | default: 'Premium flowers, cakes & gifts delivered same-day' }}</p>
+        <span class="inline-flex items-center gap-1.5 md:gap-2 bg-white text-primary px-3.5 md:px-5 py-2 md:py-2.5 rounded-full font-semibold text-xs md:text-sm group-hover:bg-primary group-hover:text-white transition-colors duration-300 shadow-lg whitespace-nowrap">
+          Shop Now
+          <svg class="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:translate-x-1 transition-transform shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+        </span>
+      </div>
+    </a>
+
+    <!-- Right Column: Two Stacked Banners -->
+    <div class="grid grid-rows-2 gap-4 h-[380px] md:h-full">
+      <a href="{{ section.settings.link_2 | default: '#' }}" class="relative rounded-2xl overflow-hidden group block h-full">
+        <div class="absolute inset-0 bg-gradient-to-br from-sage to-emerald-50"></div>
+        {% if section.settings.image_2 != blank %}
+          <img src="{{ section.settings.image_2 | img_url: '600x400' }}" alt="Banner 2" class="absolute inset-0 w-full h-full object-cover">
+        {% else %}
+          <img src="{{ 'hero-banner.png' | asset_url }}" alt="Cakes" class="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-50">
+        {% endif %}
+        <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+        <div class="absolute bottom-0 left-0 p-5">
+          <h3 class="text-lg font-serif font-bold text-white mb-1">{{ section.settings.title_2 | default: 'Gourmet Cakes' }}</h3>
+          <span class="text-white/80 text-xs font-medium group-hover:text-white transition-colors">Explore →</span>
+        </div>
+      </a>
+
+      <a href="{{ section.settings.link_3 | default: '#' }}" class="relative rounded-2xl overflow-hidden group block h-full">
+        <div class="absolute inset-0 bg-gradient-to-br from-champagne to-amber-50"></div>
+        {% if section.settings.image_3 != blank %}
+          <img src="{{ section.settings.image_3 | img_url: '600x400' }}" alt="Banner 3" class="absolute inset-0 w-full h-full object-cover">
+        {% else %}
+          <img src="{{ 'hero-banner.png' | asset_url }}" alt="Birthday" class="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-50">
+        {% endif %}
+        <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+        <div class="absolute bottom-0 left-0 p-5">
+          <h3 class="text-lg font-serif font-bold text-white mb-1">{{ section.settings.title_3 | default: 'Birthday Specials' }}</h3>
+          <span class="text-white/80 text-xs font-medium group-hover:text-white transition-colors">Shop →</span>
+        </div>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero Banner Grid",
+  "settings": [
+    { "type": "image_picker", "id": "image_1", "label": "Main Banner Image" },
+    { "type": "text", "id": "badge_1", "label": "Badge Text", "default": "Bestseller" },
+    { "type": "text", "id": "title_1", "label": "Main Heading", "default": "Make Every Celebration Magical" },
+    { "type": "text", "id": "subtitle_1", "label": "Subheading", "default": "Premium flowers, cakes & gifts delivered same-day" },
+    { "type": "url", "id": "link_1", "label": "Main Banner Link" },
+    { "type": "image_picker", "id": "image_2", "label": "Top Right Image" },
+    { "type": "text", "id": "title_2", "label": "Top Right Title", "default": "Gourmet Cakes" },
+    { "type": "url", "id": "link_2", "label": "Top Right Link" },
+    { "type": "image_picker", "id": "image_3", "label": "Bottom Right Image" },
+    { "type": "text", "id": "title_3", "label": "Bottom Right Title", "default": "Birthday Specials" },
+    { "type": "url", "id": "link_3", "label": "Bottom Right Link" }
+  ],
+  "presets": [{ "name": "Hero Banner Grid" }]
+}
+{% endschema %}

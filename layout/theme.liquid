@@ -1,0 +1,409 @@
+<!doctype html>
+<html class="no-js overflow-x-hidden" lang="{{ request.locale.iso_code }}" style="scroll-behavior: smooth;">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#0e7040">
+    <link rel="icon" type="image/png" href="https://cdn.shopify.com/s/files/1/0748/1766/7150/files/logopink.png?v=1784187803">
+    <link rel="canonical" href="{{ canonical_url }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <title>
+      {{ page_title }}
+      {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+      {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+    </title>
+
+    {% if page_description %}
+      <meta name="description" content="{{ page_description | escape }}">
+    {% endif %}
+
+    {{ content_for_header }}
+
+    <!-- Pre-compiled Tailwind CSS (replaces the heavy CDN runtime for 10x faster load) -->
+    <link rel="stylesheet" href="{{ 'tailwind-compiled.css' | asset_url }}" />
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; }
+      body {
+        font-family: 'Inter', system-ui, sans-serif;
+        margin: 0; padding: 0;
+        background-color: #ffffff;
+        color: #1f2937;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+
+      /* ===== SCROLL ANIMATION ENGINE ===== */
+      .anim-fade { opacity:1; transition: opacity 0.6s ease, transform 0.6s ease; }
+      .anim-up { opacity:1; transition: opacity 0.6s ease, transform 0.6s ease; }
+      .anim-left { opacity:1; transition: opacity 0.6s ease, transform 0.6s ease; }
+      .anim-right { opacity:1; transition: opacity 0.6s ease, transform 0.6s ease; }
+      .anim-scale { opacity:1; transition: opacity 0.6s ease, transform 0.6s ease; }
+      .is-visible { opacity:1 !important; transform:translateY(0) translateX(0) scale(1) !important; }
+
+      .stagger-1 { transition-delay: 80ms; }
+      .stagger-2 { transition-delay: 160ms; }
+      .stagger-3 { transition-delay: 240ms; }
+      .stagger-4 { transition-delay: 320ms; }
+      .stagger-5 { transition-delay: 400ms; }
+      .stagger-6 { transition-delay: 480ms; }
+
+      /* ===== MAGIC UI CARD GLOW ===== */
+      .magic-glow {
+        position: relative;
+        border-radius: 1rem;
+        overflow: hidden;
+        transition: transform 0.35s cubic-bezier(.4,0,.2,1), box-shadow 0.35s cubic-bezier(.4,0,.2,1);
+      }
+      .magic-glow:hover {
+        transform: scale(1.03);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08), 0 0 0 1px rgba(209,92,126,0.15);
+      }
+      .magic-glow::after {
+        content: '';
+        position: absolute; inset: 0;
+        border-radius: 1rem;
+        background: radial-gradient(600px circle at var(--mouse-x,50%) var(--mouse-y,50%), rgba(209,92,126,0.08), transparent 60%);
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.4s;
+      }
+      .magic-glow:hover::after { opacity:1; }
+
+      /* ===== SCROLLBAR HIDE ===== */
+      .hide-scrollbar::-webkit-scrollbar { display:none; }
+      .hide-scrollbar { -ms-overflow-style:none; scrollbar-width:none; }
+
+      /* ===== MARQUEE ===== */
+      @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+      .marquee-track { animation: marquee 30s linear infinite; }
+      .marquee-track:hover { animation-play-state: paused; }
+    </style>
+    <!-- Flits Rewards Page Custom Banner Replacer -->
+    <style>
+      [class*="flits"] img:not([src*="logopink"]),
+      [data-page-id] img:not([src*="logopink"]),
+      .flits-banner-img,
+      div[class*="reward"] img:not([src*="logopink"]),
+      img[src*="olive"],
+      img[src*="unsplash"],
+      img[src*="dummy"] {
+        content: url('https://cdn.shopify.com/s/files/1/0748/1766/7150/files/give-floral-banner-only-pattern-beautiful-user-friendy.png') !important;
+        object-fit: cover !important;
+        max-height: 260px !important;
+        width: 100% !important;
+        border-radius: 1rem !important;
+      }
+    </style>
+    <script>
+      (function() {
+        function replaceFlitsBanner() {
+          const imgs = document.querySelectorAll('img');
+          imgs.forEach(img => {
+            if (img.src && !img.src.includes('logopink') && !img.src.includes('give-floral-banner')) {
+              const isFlits = img.closest('[class*="flits"]') || img.closest('[data-page-id]') || img.closest('[class*="reward"]') || img.src.includes('olive') || img.src.includes('flits') || img.src.includes('unsplash') || img.src.includes('dummy');
+              if (isFlits || (location.pathname.includes('/account') && (img.width > 200 || img.naturalWidth > 200))) {
+                img.src = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/give-floral-banner-only-pattern-beautiful-user-friendy.png';
+                if (img.srcset) img.srcset = '';
+                img.style.objectFit = 'cover';
+                img.style.maxHeight = '260px';
+                img.style.borderRadius = '1rem';
+              }
+            }
+          });
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', replaceFlitsBanner);
+        } else {
+          replaceFlitsBanner();
+        }
+        setInterval(replaceFlitsBanner, 2500);
+
+        function injectAccountQuickNav() {
+          if (document.getElementById('account-quick-nav')) return;
+          if (location.pathname.includes('/account') || location.href.includes('account/orders')) {
+            const nav = document.createElement('div');
+            nav.id = 'account-quick-nav';
+            nav.style.cssText = 'position:fixed;top:14px;right:16px;z-index:99999;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border:1px solid rgba(0,0,0,0.1);padding:7px 14px;border-radius:999px;box-shadow:0 10px 25px rgba(0,0,0,0.12);font-family:system-ui,sans-serif;';
+            nav.innerHTML = `
+              <a href="/" style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#0e7040;text-decoration:none;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <span>Home</span>
+              </a>
+              <span style="color:#e5e7eb;font-weight:300;">|</span>
+              <a href="/cart" style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#d15c7e;text-decoration:none;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                <span>Cart</span>
+              </a>
+            `;
+            document.body.appendChild(nav);
+          }
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', injectAccountQuickNav);
+        } else {
+        }
+        setInterval(injectAccountQuickNav, 3000);
+      })();
+    </script>
+
+    <!-- FORCEFUL LOCATION FILTERING CSS SYSTEM -->
+    <style id="forceful-location-filter-style">
+      /* WHEN USA MODE IS ACTIVE: SHOW ONLY DATA-IS-USA="true" PRODUCTS! HIDE ALL OTHERS FORCEFULLY! */
+      html.usa-mode-active .product-card:not([data-is-usa="true"]),
+      body.usa-mode-active .product-card:not([data-is-usa="true"]),
+      html.usa-mode-active .grid__item:has(.product-card:not([data-is-usa="true"])),
+      body.usa-mode-active .grid__item:has(.product-card:not([data-is-usa="true"])),
+      html.usa-mode-active li:has(.product-card:not([data-is-usa="true"])),
+      body.usa-mode-active li:has(.product-card:not([data-is-usa="true"])),
+      html.usa-mode-active .swiper-slide:has(.product-card:not([data-is-usa="true"])),
+      body.usa-mode-active .swiper-slide:has(.product-card:not([data-is-usa="true"])),
+      html.usa-mode-active .anim-scale:has(.product-card:not([data-is-usa="true"])),
+      body.usa-mode-active .anim-scale:has(.product-card:not([data-is-usa="true"])),
+      html.usa-mode-active .product-grid > *:has(.product-card:not([data-is-usa="true"])),
+      body.usa-mode-active .product-grid > *:has(.product-card:not([data-is-usa="true"])) {
+        display: none !important;
+      }
+
+      /* WHEN USA MODE IS NOT ACTIVE: HIDE USA PRODUCTS FROM OTHER CATALOGS */
+      html:not(.usa-mode-active) .product-card[data-is-usa="true"],
+      body:not(.usa-mode-active) .product-card[data-is-usa="true"],
+      html:not(.usa-mode-active) .grid__item:has(.product-card[data-is-usa="true"]),
+      body:not(.usa-mode-active) .grid__item:has(.product-card[data-is-usa="true"]),
+      html:not(.usa-mode-active) li:has(.product-card[data-is-usa="true"]),
+      body:not(.usa-mode-active) li:has(.product-card[data-is-usa="true"]),
+      html:not(.usa-mode-active) .swiper-slide:has(.product-card[data-is-usa="true"]),
+      body:not(.usa-mode-active) .swiper-slide:has(.product-card[data-is-usa="true"]),
+      html:not(.usa-mode-active) .anim-scale:has(.product-card[data-is-usa="true"]),
+      body:not(.usa-mode-active) .anim-scale:has(.product-card[data-is-usa="true"]),
+      html:not(.usa-mode-active) .product-grid > *:has(.product-card[data-is-usa="true"]),
+      body:not(.usa-mode-active) .product-grid > *:has(.product-card[data-is-usa="true"]) {
+        display: none !important;
+      }
+
+      /* WHEN LONDON / UK MODE IS ACTIVE: SHOW ONLY DATA-IS-LONDON="true" PRODUCTS! HIDE ALL OTHERS FORCEFULLY! */
+      html.london-mode-active .product-card:not([data-is-london="true"]),
+      body.london-mode-active .product-card:not([data-is-london="true"]),
+      html.london-mode-active .grid__item:has(.product-card:not([data-is-london="true"])),
+      body.london-mode-active .grid__item:has(.product-card:not([data-is-london="true"])),
+      html.london-mode-active li:has(.product-card:not([data-is-london="true"])),
+      body.london-mode-active li:has(.product-card:not([data-is-london="true"])),
+      html.london-mode-active .swiper-slide:has(.product-card:not([data-is-london="true"])),
+      body.london-mode-active .swiper-slide:has(.product-card:not([data-is-london="true"])),
+      html.london-mode-active .anim-scale:has(.product-card:not([data-is-london="true"])),
+      body.london-mode-active .anim-scale:has(.product-card:not([data-is-london="true"])),
+      html.london-mode-active .product-grid > *:has(.product-card:not([data-is-london="true"])),
+      body.london-mode-active .product-grid > *:has(.product-card:not([data-is-london="true"])) {
+        display: none !important;
+      }
+
+      /* WHEN LONDON MODE IS NOT ACTIVE: HIDE LONDON PRODUCTS FROM OTHER CATALOGS */
+      html:not(.london-mode-active) .product-card[data-is-london="true"],
+      body:not(.london-mode-active) .product-card[data-is-london="true"],
+      html:not(.london-mode-active) .grid__item:has(.product-card[data-is-london="true"]),
+      body:not(.london-mode-active) .grid__item:has(.product-card[data-is-london="true"]),
+      html:not(.london-mode-active) li:has(.product-card[data-is-london="true"]),
+      body:not(.london-mode-active) li:has(.product-card[data-is-london="true"]),
+      html:not(.london-mode-active) .swiper-slide:has(.product-card[data-is-london="true"]),
+      body:not(.london-mode-active) .swiper-slide:has(.product-card[data-is-london="true"]),
+      html:not(.london-mode-active) .anim-scale:has(.product-card[data-is-london="true"]),
+      body:not(.london-mode-active) .anim-scale:has(.product-card[data-is-london="true"]),
+      html:not(.london-mode-active) .product-grid > *:has(.product-card[data-is-london="true"]),
+      body:not(.london-mode-active) .product-grid > *:has(.product-card[data-is-london="true"]) {
+        display: none !important;
+      }
+
+      /* STANDARD INTERNATIONAL MODE: HIDE NON-DELIVERABLE ITEMS */
+      html.intl-mode-active:not(.london-mode-active):not(.usa-mode-active) .product-card[data-intl-eligible="false"],
+      body.intl-mode-active:not(.london-mode-active):not(.usa-mode-active) .product-card[data-intl-eligible="false"],
+      html.intl-mode-active:not(.london-mode-active):not(.usa-mode-active) .grid__item:has(.product-card[data-intl-eligible="false"]),
+      body.intl-mode-active:not(.london-mode-active):not(.usa-mode-active) .grid__item:has(.product-card[data-intl-eligible="false"]),
+      html.intl-mode-active:not(.london-mode-active):not(.usa-mode-active) li:has(.product-card[data-intl-eligible="false"]),
+      body.intl-mode-active:not(.london-mode-active):not(.usa-mode-active) li:has(.product-card[data-intl-eligible="false"]),
+      html.intl-mode-active:not(.london-mode-active):not(.usa-mode-active) .anim-scale:has(.product-card[data-intl-eligible="false"]),
+      body.intl-mode-active:not(.london-mode-active):not(.usa-mode-active) .anim-scale:has(.product-card[data-intl-eligible="false"]),
+      html.intl-mode-active:not(.london-mode-active):not(.usa-mode-active) .product-grid > *:has(.product-card[data-intl-eligible="false"]),
+      body.intl-mode-active:not(.london-mode-active):not(.usa-mode-active) .product-grid > *:has(.product-card[data-intl-eligible="false"]) {
+        display: none !important;
+      }
+    </style>
+
+    <script>
+      (function() {
+        function checkLocationActive() {
+          function getCookie(n) {
+            var v = "; " + document.cookie;
+            var p = v.split("; " + n + "=");
+            if (p.length === 2) return p.pop().split(";").shift();
+            return "";
+          }
+          var mode = localStorage.getItem('delivery_mode') || getCookie('delivery_mode') || 'india';
+          var country = (localStorage.getItem('user_country') || getCookie('user_country') || '').toLowerCase();
+          var code = (localStorage.getItem('user_country_code') || getCookie('user_country_code') || '').toLowerCase();
+          var loc = (localStorage.getItem('user_intl_locality') || getCookie('user_intl_locality') || '').toLowerCase();
+
+          var isIntl = mode === 'international';
+          var isLondon = isIntl && (
+            country.indexOf('london') !== -1 ||
+            country.indexOf('united kingdom') !== -1 ||
+            country.indexOf('britain') !== -1 ||
+            country === 'uk' ||
+            code === 'gb' ||
+            code === 'uk' ||
+            loc.indexOf('london') !== -1 ||
+            loc.indexOf('uk') !== -1 ||
+            loc.indexOf('england') !== -1
+          );
+
+          var isUsa = isIntl && (
+            country.indexOf('usa') !== -1 ||
+            country.indexOf('united states') !== -1 ||
+            country.indexOf('america') !== -1 ||
+            country === 'us' ||
+            code === 'us' ||
+            code === 'usa' ||
+            loc.indexOf('usa') !== -1 ||
+            loc.indexOf('united states') !== -1
+          );
+
+          if (isIntl) {
+            document.documentElement.classList.add('intl-mode-active');
+            if (document.body) document.body.classList.add('intl-mode-active');
+          } else {
+            document.documentElement.classList.remove('intl-mode-active');
+            if (document.body) document.body.classList.remove('intl-mode-active');
+          }
+
+          if (isLondon) {
+            document.documentElement.classList.add('london-mode-active');
+            if (document.body) document.body.classList.add('london-mode-active');
+          } else {
+            document.documentElement.classList.remove('london-mode-active');
+            if (document.body) document.body.classList.remove('london-mode-active');
+          }
+
+          if (isUsa) {
+            document.documentElement.classList.add('usa-mode-active');
+            if (document.body) document.body.classList.add('usa-mode-active');
+          } else {
+            document.documentElement.classList.remove('usa-mode-active');
+            if (document.body) document.body.classList.remove('usa-mode-active');
+          }
+        }
+        checkLocationActive();
+        document.addEventListener('DOMContentLoaded', checkLocationActive);
+        document.addEventListener('deliveryModeChanged', checkLocationActive);
+
+        // Intercept search form submissions to append location tags for server-side filtering
+        document.addEventListener('submit', function(e) {
+          if (e.target && e.target.matches && e.target.matches('form[action*="/search"]')) {
+            var input = e.target.querySelector('input[name="q"]');
+            if (input && input.value) {
+              var val = input.value.replace(/ AND tag:(usa|london|international)/gi, '');
+              
+              if (document.documentElement.classList.contains('usa-mode-active')) {
+                input.value = val + ' AND tag:usa';
+              } else if (document.documentElement.classList.contains('london-mode-active')) {
+                input.value = val + ' AND tag:london';
+              } else {
+                input.value = val;
+              }
+            }
+          }
+        });
+        window.addEventListener('pincodeUpdated', checkLocationActive);
+      })();
+    </script>
+  </head>
+
+  <body class="font-sans text-gray-900 antialiased flex flex-col min-h-screen overflow-x-hidden">
+    <!-- Inline styled preloader to show instantly before Tailwind loads -->
+    <div id="page-preloader" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;background-color:#ffffff;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.5s ease-in-out;">
+      <img src="{{ 'sunflower.gif' | asset_url }}" alt="Loading..." style="width:6rem;height:6rem;object-fit:contain;" />
+    </div>
+    <script>
+      (function() {
+        const hidePreloader = function() {
+          const preloader = document.getElementById('page-preloader');
+          if (preloader && preloader.style.display !== 'none') {
+            preloader.style.opacity = '0';
+            setTimeout(() => preloader.style.display = 'none', 500);
+          }
+        };
+
+        // Hide as soon as the DOM is ready (much faster than full window load)
+        document.addEventListener('DOMContentLoaded', hidePreloader);
+        
+        // Failsafe: force hide after 800ms regardless of loading state
+        setTimeout(hidePreloader, 800);
+        
+        // Keep window.onload just in case DOMContentLoaded fired before the script executed
+        window.addEventListener('load', hidePreloader);
+      })();
+    </script>
+    {% section 'header' %}
+
+    <!-- Early delivery state sync: updates header location display immediately after header renders -->
+    <script>
+      (function() {
+        function gc(n) {
+          var m = document.cookie.match('(^|;)\\s*' + n + '\\s*=\\s*([^;]+)');
+          return m ? decodeURIComponent(m.pop()) : '';
+        }
+        var mode = gc('delivery_mode') || localStorage.getItem('delivery_mode') || 'india';
+        var country = gc('user_country') || localStorage.getItem('user_country') || 'India';
+        var zip = gc('user_intl_zip') || localStorage.getItem('user_intl_zip') || '';
+        var locality = gc('user_intl_locality') || localStorage.getItem('user_intl_locality') || '';
+        var pin = gc('user_pincode') || localStorage.getItem('user_pincode');
+        var city = pin ? (gc('user_city') || localStorage.getItem('user_city') || 'Delhi') : 'Select Pincode';
+
+        if (mode === 'international') {
+          document.querySelectorAll('.header-city-display').forEach(function(el) { el.textContent = ''; el.classList.add('hidden'); });
+          document.querySelectorAll('.header-intl-country-display').forEach(function(el) {
+            el.classList.remove('hidden');
+            if (locality) {
+              el.textContent = locality.split(',')[0].trim() + ', ' + country;
+            } else if (zip) {
+              el.textContent = country + ' (' + zip + ')';
+            } else {
+              el.textContent = country;
+            }
+          });
+        } else {
+          document.querySelectorAll('.header-city-display').forEach(function(el) { el.classList.remove('hidden'); el.textContent = city; });
+          document.querySelectorAll('.header-intl-country-display').forEach(function(el) { el.textContent = ''; el.classList.add('hidden'); });
+        }
+      })();
+    </script>
+    {% section 'category-circles' %}
+
+    <main id="MainContent" role="main" tabindex="-1" class="flex-grow">
+      {{ content_for_layout }}
+    </main>
+
+    {% section 'footer' %}
+
+    <script src="{{ 'animations.js' | asset_url }}" defer></script>
+    <script src="{{ 'cart-expiry.js' | asset_url }}" defer></script>
+    <script src="{{ 'floral-currency.js' | asset_url }}" defer></script>
+    <script src="{{ 'festival-icon-auto.js' | asset_url }}" defer></script>
+    <script src="{{ 'animation-observer.js' | asset_url }}" defer></script>
+
+    <!-- WhatsApp Floating Widget -->
+    <a href="https://wa.me/919811400051" target="_blank" rel="noopener noreferrer" 
+       class="fixed bottom-6 right-6 z-[90] w-14 h-14 bg-[#25D366] text-white rounded-full shadow-lg shadow-[#25D366]/30 flex items-center justify-center hover:scale-110 hover:-translate-y-1 transition-all duration-300"
+       title="Chat with us on WhatsApp">
+      <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12.031 0C5.405 0 .018 5.385.018 12.012c0 2.115.553 4.181 1.6 6.002L.012 24l6.136-1.611a11.972 11.972 0 005.883 1.53h.005c6.626 0 12.015-5.385 12.015-12.013C24.05 5.282 18.658 0 12.031 0zm0 21.933h-.005a9.988 9.988 0 01-5.086-1.385l-.365-.217-3.784.992.998-3.69-.237-.377a9.948 9.948 0 01-1.516-5.244c0-5.523 4.494-10.016 10.019-10.016 5.527 0 10.021 4.493 10.021 10.017-.001 5.523-4.495 10.015-10.02 10.015zm5.503-7.518c-.302-.151-1.786-.883-2.063-.984-.277-.101-.479-.151-.681.151-.201.302-.781.984-.958 1.186-.176.201-.353.226-.655.075-1.503-.755-2.612-1.39-3.64-3.176-.176-.302.176-.277.625-1.151.075-.151.038-.277-.019-.378-.057-.101-.681-1.637-.933-2.242-.245-.589-.494-.509-.681-.519h-.579c-.201 0-.528.075-.805.378-.277.302-1.057 1.034-1.057 2.518s1.082 2.919 1.233 3.121c.151.201 2.128 3.248 5.155 4.555.72.311 1.28.497 1.718.636.721.23 1.378.197 1.896.119.582-.088 1.786-.73 2.038-1.434.252-.704.252-1.308.176-1.434-.076-.126-.277-.201-.58-.352z"/>
+      </svg>
+    </a>
+    {% render 'login-modal' %}
+    {% render 'pincode-popup' %}
+    {% render 'ai-shopping-assistant' %}
+  </body>
+</html>

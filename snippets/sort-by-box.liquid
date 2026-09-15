@@ -1,0 +1,117 @@
+{%- comment -%}
+  Sort By Box Snippet
+  Supports options: Recommended (default), Latest, Price - Low to High, Price - High to Low
+  Usage: {% render 'sort-by-box', target_grid_id: 'product-grid' %}
+{%- endcomment -%}
+
+{%- assign current_sort = collection.sort_by | default: collection.default_sort_by | default: 'manual' -%}
+
+<div class="sort-by-container inline-flex items-center">
+  <div class="relative bg-white border border-gray-300 hover:border-gray-400 rounded-lg px-3 py-2 flex items-center gap-2 shadow-sm transition-all duration-200 focus-within:ring-2 focus-within:ring-primary/20">
+    <!-- Filter/Sliders Icon -->
+    <svg class="w-4 h-4 text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+    </svg>
+    <span class="text-xs md:text-sm font-medium text-gray-700 whitespace-nowrap">Sort By :</span>
+    <select 
+      class="sort-by-select text-xs md:text-sm font-semibold text-gray-900 bg-transparent border-none focus:outline-none focus:ring-0 cursor-pointer pr-1"
+      data-grid-target="{{ target_grid_id | default: 'product-grid' }}"
+      aria-label="Sort By Options"
+    >
+      <option value="manual" {% if current_sort == 'manual' or current_sort == 'featured' or current_sort == 'best-selling' or current_sort == blank %}selected{% endif %}>Recommended</option>
+      <option value="created-descending" {% if current_sort == 'created-descending' or current_sort == 'latest' %}selected{% endif %}>Latest</option>
+      <option value="price-ascending" {% if current_sort == 'price-ascending' or current_sort == 'price-low-to-high' %}selected{% endif %}>Price - Low to High</option>
+      <option value="price-descending" {% if current_sort == 'price-descending' or current_sort == 'price-high-to-low' %}selected{% endif %}>Price - High to Low</option>
+    </select>
+  </div>
+</div>
+
+<script>
+  (function() {
+    function sortGrid(selectEl) {
+      if (!selectEl) return;
+      const sortVal = selectEl.value;
+      const targetId = selectEl.dataset.gridTarget || 'product-grid';
+
+      // Locate grid container by ID or class or relative parent
+      let grid = document.getElementById(targetId);
+      if (!grid) {
+        grid = document.querySelector('.' + targetId);
+      }
+      if (!grid) {
+        grid = selectEl.closest('section, div.collection-page, div.max-w-7xl')?.querySelector('.product-grid, .grid, .tier-product-grid');
+      }
+      if (!grid) return;
+
+      const children = Array.from(grid.children);
+      if (children.length === 0) return;
+
+      function getCardPrice(card) {
+        if (!card) return 0;
+        if (card.dataset && card.dataset.price && parseFloat(card.dataset.price) > 0) {
+          return parseFloat(card.dataset.price);
+        }
+        const text = card.innerText || card.textContent || '';
+        const match = text.match(/(?:₹|Rs\.?|\$)\s*([\d,]+(?:\.\d+)?)/i) || text.match(/([\d,]+(?:\.\d+)?)/);
+        if (match) {
+          return parseFloat(match[1].replace(/,/g, '')) || 0;
+        }
+        return 0;
+      }
+
+      children.sort((a, b) => {
+        const cardA = a.classList.contains('product-card') ? a : (a.querySelector('.product-card') || a);
+        const cardB = b.classList.contains('product-card') ? b : (b.querySelector('.product-card') || b);
+
+        const priceA = getCardPrice(cardA);
+        const priceB = getCardPrice(cardB);
+
+        const createdA = parseFloat((cardA && cardA.dataset.created) || '0');
+        const createdB = parseFloat((cardB && cardB.dataset.created) || '0');
+
+        const posA = parseInt((cardA && cardA.dataset.position) || '0', 10);
+        const posB = parseInt((cardB && cardB.dataset.position) || '0', 10);
+
+        if (sortVal === 'price-ascending' || sortVal === 'price-low-to-high') {
+          return priceA - priceB;
+        } else if (sortVal === 'price-descending' || sortVal === 'price-high-to-low') {
+          return priceB - priceA;
+        } else if (sortVal === 'created-descending' || sortVal === 'latest') {
+          return createdB - createdA;
+        } else {
+          return posA - posB;
+        }
+      });
+
+      // Re-append sorted nodes smoothly
+      children.forEach(child => grid.appendChild(child));
+
+      // Sync URL parameter if on collection/search pages
+      if (window.location.pathname.includes('/collections/') || window.location.pathname.includes('/search')) {
+        const url = new URL(window.location.href);
+        if (url.searchParams.get('sort_by') !== sortVal) {
+          url.searchParams.set('sort_by', sortVal);
+          window.history.replaceState({}, '', url.toString());
+        }
+      }
+    }
+
+    // Attach global listener for sort-by-select changes
+    if (!window.__sortByListenerBound) {
+      window.__sortByListenerBound = true;
+      document.addEventListener('change', function(e) {
+        if (e.target && e.target.classList.contains('sort-by-select')) {
+          sortGrid(e.target);
+        }
+      });
+
+      document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.sort-by-select').forEach(sel => {
+          if (sel.value && sel.value !== 'manual') {
+            sortGrid(sel);
+          }
+        });
+      });
+    }
+  })();
+</script>

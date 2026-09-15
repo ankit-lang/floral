@@ -1,0 +1,232 @@
+<style>
+  .collections-page {
+    background-color: #faf9f6;
+    min-height: 100vh;
+    padding-bottom: 6rem;
+  }
+  
+  .collections-header {
+    padding: 4rem 1rem 2rem;
+    text-align: center;
+    background: linear-gradient(to bottom, #ffffff, #faf9f6);
+  }
+  
+  /* Text Animation */
+  .animated-title {
+    font-size: clamp(3rem, 8vw, 5rem);
+    font-family: serif;
+    color: #111827;
+    margin-bottom: 1rem;
+    display: inline-block;
+    overflow: hidden;
+  }
+  
+  .animated-word {
+    display: inline-block;
+    transform: translateY(100%);
+    opacity: 0;
+    animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  
+  .animated-word:nth-child(1) { animation-delay: 0.1s; }
+  .animated-word:nth-child(2) { animation-delay: 0.2s; }
+  .animated-word:nth-child(3) { animation-delay: 0.3s; }
+  
+  @keyframes slideUpFade {
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  .collections-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+  
+  .collection-card {
+    position: relative;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    aspect-ratio: 4/5;
+    background-color: #eee;
+    box-shadow: 0 10px 40px -15px rgba(0,0,0,0.15);
+    display: block;
+    text-decoration: none;
+    transform: translateZ(0); /* Hardware acceleration */
+  }
+
+  /* Advanced Editorial 'Bento' Grid Layout for Large Screens */
+  @media (min-width: 1024px) {
+    .collections-grid {
+      grid-template-columns: repeat(3, 1fr);
+      grid-auto-rows: 350px;
+      gap: 2rem;
+    }
+    
+    .collection-card {
+      aspect-ratio: auto;
+      height: 100%;
+    }
+
+    /* 5-item Interlocking Pattern */
+    .collections-grid .collection-card:nth-child(5n + 1) {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+    .collections-grid .collection-card:nth-child(5n + 2) {
+      grid-column: span 1;
+      grid-row: span 1;
+    }
+    .collections-grid .collection-card:nth-child(5n + 3) {
+      grid-column: span 1;
+      grid-row: span 1;
+    }
+    .collections-grid .collection-card:nth-child(5n + 4) {
+      grid-column: span 1;
+      grid-row: span 1;
+    }
+    .collections-grid .collection-card:nth-child(5n + 5) {
+      grid-column: span 2;
+      grid-row: span 1;
+    }
+  }
+  
+  .collection-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  
+  .collection-card:hover img {
+    transform: scale(1.08);
+  }
+  
+  .collection-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 2.5rem;
+    color: white;
+    transition: background 0.5s ease;
+  }
+  
+  .collection-card:hover .collection-overlay {
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.1) 100%);
+  }
+  
+  .collection-title {
+    font-size: 2.5rem;
+    font-family: serif;
+    margin-bottom: 0.5rem;
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  
+  .collection-count {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  
+  /* Hover interactions only on supported devices */
+  @media (hover: hover) {
+    .collection-title {
+      transform: translateY(20px);
+    }
+    .collection-count {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .collection-card:hover .collection-title,
+    .collection-card:hover .collection-count {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  .arrow-icon {
+    transition: transform 0.3s ease;
+  }
+  
+  .collection-card:hover .arrow-icon {
+    transform: translateX(5px);
+  }
+</style>
+
+<div class="collections-page">
+  <header class="collections-header">
+    <h1 class="animated-title">
+      <span class="animated-word">Curated</span>
+      <span class="animated-word">Floral</span>
+      <span class="animated-word">Collections</span>
+    </h1>
+    <p class="text-gray-500 max-w-2xl mx-auto mt-4 anim-fade stagger-4 text-lg">Explore our hand-picked selections for every occasion and emotion.</p>
+    
+    <!-- Real-time Search Filter -->
+    <div class="max-w-md mx-auto mt-8 mb-4 px-4 anim-up stagger-5">
+      <input type="text" id="collection-search" placeholder="Search collections..." class="w-full px-6 py-4 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-600 shadow-sm text-center text-gray-700">
+    </div>
+  </header>
+
+  <div class="collections-grid">
+    {% for collection in collections %}
+      <a href="{{ collection.url }}" class="collection-card magic-glow anim-up stagger-{{ forloop.index | modulo: 4 | plus: 1 }}">
+        {% if collection.image %}
+          <img src="{{ collection.image | img_url: 'master' }}" alt="{{ collection.title | escape }}" loading="lazy">
+        {% elsif collection.products.first and collection.products.first.featured_image %}
+          <img src="{{ collection.products.first.featured_image | img_url: 'master' }}" alt="{{ collection.title | escape }}" loading="lazy">
+        {% else %}
+          {{ 'collection-1' | placeholder_svg_tag: 'w-full h-full object-cover text-gray-400 bg-gray-200' }}
+        {% endif %}
+        
+        <div class="collection-overlay">
+          <h2 class="collection-title">{{ collection.title }}</h2>
+          <div class="collection-count">
+            {{ collection.products_count }} Products
+            <svg class="w-5 h-5 arrow-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+          </div>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('collection-search');
+    const cards = document.querySelectorAll('.collection-card');
+    
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        cards.forEach(card => {
+          const title = card.querySelector('.collection-title').textContent.toLowerCase();
+          if (title.includes(query)) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "List Collections",
+  "settings": []
+}
+{% endschema %}

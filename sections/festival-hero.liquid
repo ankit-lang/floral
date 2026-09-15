@@ -1,0 +1,119 @@
+<!-- Festival of the Month: Hero + Hashtags + Filter Grid + Products -->
+<section class="max-w-7xl mx-auto px-4 py-8">
+
+  <!-- Hero Banner -->
+  <div class="relative rounded-3xl overflow-hidden h-[300px] md:h-[400px] mb-10 anim-fade" style="animation:headerIn 0.8s ease forwards;">
+    <div class="absolute inset-0 bg-gradient-to-br from-secondary/90 via-pink-400/80 to-amber-300/70"></div>
+    <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-6">
+      <span class="text-xs font-bold uppercase tracking-[4px] mb-3 bg-white/20 backdrop-blur-sm px-4 py-1.5 rounded-full">{{ section.settings.badge | default: ' Festival of the Month' }}</span>
+      <h1 class="text-4xl md:text-6xl font-serif font-bold mb-4 leading-tight">{{ section.settings.festival_name | default: 'Monsoon Magic' }}</h1>
+      <p class="text-lg text-white/80 max-w-xl">{{ section.settings.subtitle | default: 'Celebrate the season with curated floral arrangements & gifts' }}</p>
+    </div>
+  </div>
+
+  <!-- 3 Trending Hashtags -->
+  <div class="flex flex-wrap items-center justify-center gap-4 md:gap-6 mb-12 anim-up">
+    {%- assign hashtags = section.settings.hashtag_1 | default: '#MonsoonBlooms' -%}
+    {%- assign hashtag2 = section.settings.hashtag_2 | default: '#RainyDayGifts' -%}
+    {%- assign hashtag3 = section.settings.hashtag_3 | default: '#PetrichorLove' -%}
+    
+    <a href="/search?q={{ hashtags | url_encode }}" class="text-2xl md:text-3xl font-serif font-bold text-secondary hover:text-primary transition-colors underline decoration-secondary/30 underline-offset-4 hover:decoration-primary/50">{{ hashtags }}</a>
+    <a href="/search?q={{ hashtag2 | url_encode }}" class="text-2xl md:text-3xl font-serif font-bold text-primary hover:text-secondary transition-colors underline decoration-primary/30 underline-offset-4 hover:decoration-secondary/50">{{ hashtag2 }}</a>
+    <a href="/search?q={{ hashtag3 | url_encode }}" class="text-2xl md:text-3xl font-serif font-bold text-amber-600 hover:text-secondary transition-colors underline decoration-amber-300/50 underline-offset-4 hover:decoration-secondary/50">{{ hashtag3 }}</a>
+  </div>
+
+  <!-- Category Icon Filter Grid -->
+  <div class="mb-10 anim-up">
+    <div class="flex flex-wrap justify-center gap-4 md:gap-6" id="festival-filters-{{ section.id }}">
+      {%- assign filter_names = 'Bouquets,Cakes,Hampers' | split: ',' -%}
+      {%- assign filter_icons = ',,' | split: ',' -%}
+      {%- assign filter_colors = 'bg-pink-50 border-pink-200 text-pink-700,bg-amber-50 border-amber-200 text-amber-700,bg-violet-50 border-violet-200 text-violet-700' | split: ',' -%}
+      
+      {% for i in (0..2) %}
+        <button class="festival-filter-btn flex flex-col items-center gap-2 px-8 py-5 rounded-2xl border-2 {{ filter_colors[i] }} hover:shadow-lg hover:scale-[1.03] transition-all duration-300 cursor-pointer {% if forloop.first %}ring-2 ring-offset-2 ring-secondary{% endif %}" data-filter="{{ filter_names[i] | handleize }}">
+          <span class="text-3xl">{{ filter_icons[i] }}</span>
+          <span class="text-sm font-bold">{{ filter_names[i] }}</span>
+        </button>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Product Grids -->
+  {% for i in (0..2) %}
+    {%- assign filter_name = filter_names[i] -%}
+    {%- if i == 0 -%}
+      {%- assign display_col = collections[section.settings.collection_1] -%}
+    {%- elsif i == 1 -%}
+      {%- assign display_col = collections[section.settings.collection_2] -%}
+    {%- else -%}
+      {%- assign display_col = collections[section.settings.collection_3] -%}
+    {%- endif -%}
+    
+    {%- if display_col == blank or display_col.products.size == 0 -%}
+      {%- assign display_col = collections['all'] -%}
+    {%- endif -%}
+
+    <div class="festival-grid {% unless forloop.first %}hidden{% endunless %} anim-up" data-grid="{{ filter_name | handleize }}">
+      <h3 class="text-xl font-serif font-bold text-gray-900 mb-6 text-center">{{ filter_name }} for {{ section.settings.festival_name | default: 'Monsoon Magic' }}</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-10">
+        {% for product in display_col.products limit: 4 %}
+          <div class="magic-glow bg-white rounded-2xl flex flex-col h-full border border-gray-100 hover:shadow-xl transition-all duration-300 relative group overflow-hidden anim-scale stagger-{{ forloop.index }}">
+            <a href="{{ product.url }}" class="absolute inset-0 z-10"></a>
+            <div class="relative aspect-square w-full rounded-t-2xl overflow-hidden bg-gray-50 flex items-center justify-center">
+              {% if product.featured_image %}
+                <img src="{{ product.featured_image | img_url: '400x400', crop: 'center' }}" alt="{{ product.title | escape }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+              {% else %}
+                <span class="text-gray-400 text-sm">No Image</span>
+              {% endif %}
+            </div>
+            <div class="p-4 flex-grow flex flex-col">
+              <h4 class="text-sm font-semibold text-gray-800 mb-1 line-clamp-2 leading-snug">{{ product.title }}</h4>
+              <p class="text-base font-bold text-gray-900 mt-auto">{{ product.price | money }}</p>
+            </div>
+            <div class="px-4 pb-4">
+              <div class="w-full h-10 rounded-xl bg-primary/5 text-primary text-sm font-semibold flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors relative z-20 pointer-events-none">View Details</div>
+            </div>
+          </div>
+        {% else %}
+          <p class="text-gray-500 col-span-2 md:col-span-4 text-center">No products found. Please add products to your store.</p>
+        {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const section = document.getElementById('festival-filters-{{ section.id }}');
+    if(!section) return;
+    const btns = section.querySelectorAll('.festival-filter-btn');
+    const grids = section.closest('section').querySelectorAll('.festival-grid');
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        btns.forEach(b => b.classList.remove('ring-2','ring-offset-2','ring-secondary'));
+        btn.classList.add('ring-2','ring-offset-2','ring-secondary');
+        grids.forEach(g => g.classList.add('hidden'));
+        const target = section.closest('section').querySelector('[data-grid="'+btn.dataset.filter+'"]');
+        if(target) target.classList.remove('hidden');
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Festival Hero",
+  "settings": [
+    { "type": "text", "id": "badge", "label": "Badge Text", "default": " Festival of the Month" },
+    { "type": "text", "id": "festival_name", "label": "Festival Name", "default": "Monsoon Magic" },
+    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Celebrate the season with curated floral arrangements & gifts" },
+    { "type": "text", "id": "hashtag_1", "label": "Hashtag 1", "default": "#MonsoonBlooms" },
+    { "type": "text", "id": "hashtag_2", "label": "Hashtag 2", "default": "#RainyDayGifts" },
+    { "type": "text", "id": "hashtag_3", "label": "Hashtag 3", "default": "#PetrichorLove" },
+    { "type": "collection", "id": "collection_1", "label": "Bouquets Collection" },
+    { "type": "collection", "id": "collection_2", "label": "Cakes Collection" },
+    { "type": "collection", "id": "collection_3", "label": "Hampers Collection" }
+  ],
+  "presets": [{ "name": "Festival Hero" }]
+}
+{% endschema %}

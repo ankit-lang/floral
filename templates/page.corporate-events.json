@@ -1,0 +1,45 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "intro": {
+      "type": "corporate-intro-sidebar",
+      "settings": {}
+    },
+    "services": {
+      "type": "corporate-services",
+      "settings": {}
+    },
+    "detailed_services": {
+      "type": "corporate-detailed-services",
+      "settings": {}
+    },
+    "concierge": {
+      "type": "corporate-concierge",
+      "settings": {}
+    },
+    "models": {
+      "type": "gifting-models-pricing",
+      "settings": {}
+    },
+    "form": {
+      "type": "concierge-contact-form",
+      "settings": {}
+    }
+  },
+  "order": [
+    "intro",
+    "services",
+    "detailed_services",
+    "concierge",
+    "models",
+    "form"
+  ]
+}

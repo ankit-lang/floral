@@ -1,0 +1,52 @@
+<div class="w-full max-w-7xl mx-auto px-4 py-8 animate-on-scroll">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-bold text-gray-900">{{ section.settings.title | default: 'Shop by Category' }}</h2>
+    <a href="#" class="text-secondary font-medium hover:underline">View All</a>
+  </div>
+  
+  <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+    {% for i in (1..6) %}
+      {%- capture title -%}
+        {%- case i -%}
+          {%- when 1 -%}Roses
+          {%- when 2 -%}Lilies
+          {%- when 3 -%}Orchids
+          {%- when 4 -%}Mixed Bouquets
+          {%- when 5 -%}Carnations
+          {%- else -%}Luxury
+        {%- endcase -%}
+      {%- endcapture -%}
+      
+      <a href="#" class="group relative rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 block bg-white">
+        <!-- Magic UI Style subtle glowing border -->
+        <div class="absolute inset-0 bg-gradient-to-tr from-secondary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none"></div>
+        
+        <div class="aspect-w-1 aspect-h-1 w-full relative bg-gray-100 pb-[100%]">
+           <img src="{{ 'hero-banner.png' | asset_url }}" alt="{{ title }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+        </div>
+        <div class="p-3 text-center bg-white relative z-20">
+          <h3 class="text-sm font-semibold text-gray-800 group-hover:text-secondary transition-colors">{{ title | strip }}</h3>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Category Grid Cards",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Shop by Category"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Category Grid Cards"
+    }
+  ]
+}
+{% endschema %}

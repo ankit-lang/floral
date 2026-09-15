@@ -1,0 +1,494 @@
+{% style %}
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+  :root {
+    --color-emerald: #0b2c24;
+    --color-charcoal: #151a1e;
+    --color-ivory: #fdfbf7;
+    --color-gold: #c5a059;
+    --color-gold-light: #e6c888;
+    --color-gold-dark: #9e7f41;
+  }
+
+  .font-editorial { font-family: 'Playfair Display', serif; }
+  .font-modern { font-family: 'Inter', sans-serif; }
+
+  .bg-emerald-dark { background-color: var(--color-emerald); }
+  .bg-charcoal { background-color: var(--color-charcoal); }
+  .bg-ivory { background-color: var(--color-ivory); }
+  .text-gold { color: var(--color-gold); }
+  .text-ivory { color: var(--color-ivory); }
+  .border-gold { border-color: var(--color-gold); }
+
+  /* Hero Parallax */
+  .hero-parallax {
+    background-image: url('https://cdn.shopify.com/s/files/1/0748/1766/7150/files/cellImage_1632884507_241.jpg?v=1783505578'); /* Placeholder high-end floral */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    position: relative;
+  }
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(21,26,30,0.85) 0%, rgba(11,44,36,0.75) 100%);
+    mix-blend-mode: multiply;
+  }
+
+  /* Buttons */
+  .btn-gold-outline {
+    border: 1px solid var(--color-gold);
+    color: var(--color-gold);
+    transition: all 0.4s ease;
+    background: transparent;
+  }
+  .btn-gold-outline:hover {
+    background: var(--color-gold);
+    color: var(--color-charcoal);
+    box-shadow: 0 0 20px rgba(197, 160, 89, 0.4);
+  }
+  .btn-gold-solid {
+    background: linear-gradient(135deg, var(--color-gold-light), var(--color-gold), var(--color-gold-dark));
+    color: var(--color-charcoal);
+    transition: all 0.4s ease;
+  }
+  .btn-gold-solid:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(197, 160, 89, 0.3);
+  }
+
+  /* Marquee */
+  .marquee-container {
+    overflow: hidden;
+    white-space: nowrap;
+    display: flex;
+    position: relative;
+  }
+  .marquee-content {
+    display: flex;
+    animation: marquee-scroll 30s linear infinite;
+  }
+  @keyframes marquee-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Glass Cards */
+  .glass-card {
+    background: rgba(253, 251, 247, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(197, 160, 89, 0.2);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .glass-card:hover {
+    border-color: rgba(197, 160, 89, 0.6);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    background: rgba(253, 251, 247, 0.06);
+  }
+
+  /* Elevated Card */
+  .card-elevated {
+    transform: scale(1.05);
+    border-color: rgba(197, 160, 89, 0.5);
+    background: rgba(253, 251, 247, 0.05);
+    z-index: 10;
+  }
+  @media (max-width: 1024px) {
+    .card-elevated { transform: none; }
+  }
+
+  /* Timeline */
+  .timeline-line {
+    position: absolute;
+    left: 24px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(197, 160, 89, 0.3);
+  }
+  .timeline-step {
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: all 0.8s ease-out;
+  }
+  .timeline-step.in-view {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* Accordion */
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, opacity 0.3s ease-out, padding 0.4s ease-out;
+    opacity: 0;
+  }
+  .faq-item.active .faq-answer {
+    max-height: 200px;
+    opacity: 1;
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+  }
+  .faq-icon {
+    transition: transform 0.3s ease;
+    transform-origin: center;
+  }
+  .faq-item.active .faq-icon {
+    transform: rotate(45deg);
+    color: var(--color-gold);
+  }
+
+  /* Animations */
+  .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+  .fade-up.in-view { opacity: 1; transform: translateY(0); }
+{% endstyle %}
+
+<div class="bg-charcoal text-ivory font-modern min-h-screen overflow-hidden">
+
+  <!-- 1. HERO SECTION -->
+  <section class="hero-parallax h-[90vh] min-h-[600px] flex flex-col items-center justify-center text-center px-4">
+    <div class="hero-overlay z-0"></div>
+    
+    <div class="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
+      <span class="text-gold tracking-[0.2em] text-xs font-bold uppercase mb-6 fade-up in-view">The Bloom Experience</span>
+      
+      <h1 class="font-editorial text-5xl md:text-7xl lg:text-8xl leading-tight mb-8 fade-up in-view" style="transition-delay: 0.2s;">
+        Fresh Flowers.<br>
+        <span class="italic font-light text-gray-300">Every Week.</span><br>
+        Every Occasion.
+      </h1>
+      
+      <div class="w-16 h-px bg-gold mb-10 fade-up in-view" style="transition-delay: 0.4s;"></div>
+      
+      <a href="#plans" class="btn-gold-outline px-8 py-4 text-sm tracking-widest uppercase font-semibold rounded-none fade-up in-view" style="transition-delay: 0.6s;">
+        Subscribe Now
+      </a>
+    </div>
+  </section>
+
+  <!-- 2. WHY SUBSCRIBE (Split Screen) -->
+  <section class="py-24 md:py-32 px-4 max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+      
+      <!-- Left: Content -->
+      <div class="fade-up">
+        <h2 class="font-editorial text-4xl md:text-5xl mb-6">Why Choose a <br><span class="text-gold italic">Floral India</span> Subscription?</h2>
+        <p class="text-gray-400 font-light leading-relaxed mb-10 md:text-lg">
+          Fresh flowers have the power to uplift moods, enhance interiors, and create memorable experiences. With our subscription service, you never have to remember to order flowers again—we take care of everything.
+        </p>
+        
+        <ul class="space-y-6">
+          <li class="flex items-start gap-4">
+            <svg class="w-6 h-6 text-gold flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7"/></svg>
+            <div>
+              <h4 class="font-bold tracking-wide uppercase text-xs text-ivory mb-1">Premium Quality</h4>
+              <p class="text-sm text-gray-400">Fresh, seasonal flowers handpicked by expert florists.</p>
+            </div>
+          </li>
+          <li class="flex items-start gap-4">
+            <svg class="w-6 h-6 text-gold flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <div>
+              <h4 class="font-bold tracking-wide uppercase text-xs text-ivory mb-1">Total Flexibility</h4>
+              <p class="text-sm text-gray-400">Weekly, fortnightly or monthly delivery options. Pause or modify anytime.</p>
+            </div>
+          </li>
+          <li class="flex items-start gap-4">
+            <svg class="w-6 h-6 text-gold flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            <div>
+              <h4 class="font-bold tracking-wide uppercase text-xs text-ivory mb-1">Tailored Elegance</h4>
+              <p class="text-sm text-gray-400">Elegant arrangements designed for homes, offices, and personalized to your décor.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Right: Image -->
+      <div class="relative fade-up" style="transition-delay: 0.3s;">
+        <!-- Placeholder for Lifestyle image -->
+        <div class="aspect-[4/5] bg-emerald-dark rounded-sm overflow-hidden relative border border-gold/20">
+          <img src="https://cdn.shopify.com/s/files/1/0748/1766/7150/files/cellImage_1632884507_241.jpg?v=1783505578" alt="Elegant floral arrangement" class="w-full h-full object-cover opacity-80 mix-blend-luminosity">
+          <div class="absolute inset-0 border border-gold/40 m-4"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. PERFECT FOR (Marquee) -->
+  <section class="py-12 bg-emerald-dark border-y border-gold/20">
+    <div class="text-center mb-8">
+      <span class="text-gold tracking-[0.2em] text-[10px] font-bold uppercase">Perfect For</span>
+    </div>
+    <div class="marquee-container">
+      <div class="marquee-content gap-12 px-6 items-center">
+        <!-- We duplicate the items to make the infinite scroll seamless -->
+        {%- assign marquee_items = "Homes,Corporate Offices,Hotels & Hospitality,Restaurants & Cafés,Retail Stores,Reception Areas,Luxury Apartments,Clinics & Salons,Events & Showrooms" | split: "," -%}
+        
+        {% for i in (1..2) %}
+          {% for item in marquee_items %}
+            <span class="font-editorial text-3xl md:text-5xl italic text-ivory/60 whitespace-nowrap">{{ item }}</span>
+            <span class="text-gold opacity-50">✦</span>
+          {% endfor %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. SUBSCRIPTION PLANS -->
+  <section id="plans" class="py-24 md:py-32 px-4 max-w-7xl mx-auto relative">
+    
+    <!-- Background Glow -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
+
+    <div class="text-center mb-20 relative z-10 fade-up">
+      <h2 class="font-editorial text-4xl md:text-5xl mb-4">Choose Your <span class="text-gold italic">Subscription</span></h2>
+      <p class="text-gray-400 font-light">Flexible plans designed around your lifestyle.</p>
+    </div>
+
+    <!-- The 3 Cards -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center relative z-10 mb-12">
+      
+      <!-- Weekly -->
+      <div class="glass-card p-10 fade-up">
+        <h3 class="font-editorial text-3xl text-ivory mb-2">Weekly</h3>
+        <div class="h-px bg-gradient-to-r from-gold/50 to-transparent my-6"></div>
+        <p class="text-gray-400 text-sm font-light leading-relaxed mb-10 h-24">
+          Perfect for those who love fresh flowers all year round. Receive a newly designed arrangement every week featuring seasonal blooms.
+        </p>
+        <button class="w-full btn-gold-outline py-3 text-xs tracking-widest uppercase font-bold">Select Weekly</button>
+      </div>
+
+      <!-- Fortnightly (Elevated) -->
+      <div class="glass-card card-elevated p-12 relative fade-up" style="transition-delay: 0.2s;">
+        <!-- Badge -->
+        <div class="absolute top-0 right-8 transform -translate-y-1/2 bg-gold text-charcoal text-[10px] font-bold uppercase tracking-widest py-1.5 px-4">
+          Most Popular
+        </div>
+        <h3 class="font-editorial text-4xl text-gold mb-2">Fortnightly</h3>
+        <div class="h-px bg-gradient-to-r from-gold to-transparent my-6"></div>
+        <p class="text-gray-300 text-sm font-light leading-relaxed mb-10 h-24">
+          Enjoy beautiful floral arrangements delivered every two weeks. An ideal balance between lasting freshness and effortless convenience.
+        </p>
+        <button class="w-full btn-gold-solid py-4 text-xs tracking-widest uppercase font-bold">Select Fortnightly</button>
+      </div>
+
+      <!-- Monthly -->
+      <div class="glass-card p-10 fade-up" style="transition-delay: 0.4s;">
+        <h3 class="font-editorial text-3xl text-ivory mb-2">Monthly</h3>
+        <div class="h-px bg-gradient-to-r from-gold/50 to-transparent my-6"></div>
+        <p class="text-gray-400 text-sm font-light leading-relaxed mb-10 h-24">
+          A premium floral arrangement delivered once every month to refresh your home or workspace with the finest seasonal flowers.
+        </p>
+        <button class="w-full btn-gold-outline py-3 text-xs tracking-widest uppercase font-bold">Select Monthly</button>
+      </div>
+
+    </div>
+
+    <!-- Corporate Plan (Full Width) -->
+    <div class="glass-card p-10 md:p-14 relative z-10 fade-up">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div>
+          <span class="text-gold tracking-widest text-[10px] font-bold uppercase mb-4 block">For Business</span>
+          <h3 class="font-editorial text-3xl md:text-4xl text-ivory mb-4">Corporate <span class="italic text-gray-400">Subscription</span></h3>
+          <p class="text-gray-400 text-sm font-light leading-relaxed mb-8">
+            Create an unforgettable first impression with professionally designed floral arrangements for your office, reception, boardroom, hotel, showroom, restaurant, or retail space.
+          </p>
+          <button class="btn-gold-outline px-8 py-3 text-xs tracking-widest uppercase font-bold">Inquire Now</button>
+        </div>
+        
+        <div class="border-l border-gold/20 pl-8 md:pl-12">
+          <ul class="space-y-3">
+            <li class="flex items-center gap-3 text-sm text-gray-300"><span class="w-1.5 h-1.5 bg-gold rounded-full"></span> Reception flower arrangements</li>
+            <li class="flex items-center gap-3 text-sm text-gray-300"><span class="w-1.5 h-1.5 bg-gold rounded-full"></span> Boardroom centrepieces</li>
+            <li class="flex items-center gap-3 text-sm text-gray-300"><span class="w-1.5 h-1.5 bg-gold rounded-full"></span> Hotel lobby & Restaurant styling</li>
+            <li class="flex items-center gap-3 text-sm text-gray-300"><span class="w-1.5 h-1.5 bg-gold rounded-full"></span> Event floral refresh</li>
+            <li class="flex items-center gap-3 text-sm text-gray-300"><span class="w-1.5 h-1.5 bg-gold rounded-full"></span> Custom corporate plans</li>
+            <li class="flex items-center gap-3 text-sm text-gray-300"><span class="w-1.5 h-1.5 bg-gold rounded-full"></span> Dedicated account management</li>
+            <li class="flex items-center gap-3 text-sm text-gray-300"><span class="w-1.5 h-1.5 bg-gold rounded-full"></span> Flexible billing options</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. HOW IT WORKS (Timeline) -->
+  <section class="py-24 bg-emerald-dark border-t border-gold/10 relative overflow-hidden">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="text-center mb-20 fade-up">
+        <h2 class="font-editorial text-4xl md:text-5xl mb-4">How It <span class="text-gold italic">Works</span></h2>
+      </div>
+
+      <div class="relative pl-12 md:pl-20">
+        <!-- The Line -->
+        <div class="timeline-line"></div>
+
+        <!-- Step 1 -->
+        <div class="timeline-step mb-16 relative">
+          <div class="absolute -left-12 md:-left-20 top-1 w-6 h-6 rounded-full bg-charcoal border-2 border-gold z-10 flex items-center justify-center">
+            <div class="w-1.5 h-1.5 bg-gold rounded-full"></div>
+          </div>
+          <span class="text-gold/50 font-editorial text-4xl absolute -left-16 md:-left-24 top-0 -translate-x-full">01</span>
+          
+          <h3 class="font-editorial text-2xl text-ivory mb-2">Choose Your Plan</h3>
+          <p class="text-gray-400 font-light text-sm max-w-lg">Select a weekly, fortnightly or monthly flower subscription that perfectly fits your lifestyle and schedule.</p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="timeline-step mb-16 relative" style="transition-delay: 0.2s;">
+          <div class="absolute -left-12 md:-left-20 top-1 w-6 h-6 rounded-full bg-charcoal border-2 border-gold z-10 flex items-center justify-center">
+            <div class="w-1.5 h-1.5 bg-gold rounded-full"></div>
+          </div>
+          <span class="text-gold/50 font-editorial text-4xl absolute -left-16 md:-left-24 top-0 -translate-x-full">02</span>
+          
+          <h3 class="font-editorial text-2xl text-ivory mb-2">Tell Us Your Preferences</h3>
+          <p class="text-gray-400 font-light text-sm max-w-lg">Share your preferred colour palette, flower choices, vase requirements, and specific delivery schedule.</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="timeline-step mb-16 relative" style="transition-delay: 0.4s;">
+          <div class="absolute -left-12 md:-left-20 top-1 w-6 h-6 rounded-full bg-charcoal border-2 border-gold z-10 flex items-center justify-center">
+            <div class="w-1.5 h-1.5 bg-gold rounded-full"></div>
+          </div>
+          <span class="text-gold/50 font-editorial text-4xl absolute -left-16 md:-left-24 top-0 -translate-x-full">03</span>
+          
+          <h3 class="font-editorial text-2xl text-ivory mb-2">We Design & Deliver</h3>
+          <p class="text-gray-400 font-light text-sm max-w-lg">Our expert florists create fresh arrangements using premium seasonal blooms and deliver them directly to your doorstep.</p>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="timeline-step relative" style="transition-delay: 0.6s;">
+          <div class="absolute -left-12 md:-left-20 top-1 w-6 h-6 rounded-full bg-charcoal border-2 border-gold z-10 flex items-center justify-center">
+            <div class="w-1.5 h-1.5 bg-gold rounded-full"></div>
+          </div>
+          <span class="text-gold/50 font-editorial text-4xl absolute -left-16 md:-left-24 top-0 -translate-x-full">04</span>
+          
+          <h3 class="font-editorial text-2xl text-ivory mb-2">Enjoy Fresh Flowers</h3>
+          <p class="text-gray-400 font-light text-sm max-w-lg">Relax while we keep your space blooming with breathtaking fresh flowers throughout the year.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. FAQS (Accordion) -->
+  <section class="py-24 px-4 max-w-3xl mx-auto">
+    <div class="text-center mb-16 fade-up">
+      <h2 class="font-editorial text-4xl md:text-5xl mb-4">Subscription <span class="text-gold italic">FAQs</span></h2>
+    </div>
+
+    <div class="space-y-4">
+      <!-- FAQ 1 -->
+      <div class="faq-item fade-up border-b border-gray-800">
+        <button class="w-full py-6 flex justify-between items-center text-left focus:outline-none">
+          <span class="font-editorial text-xl text-ivory pr-8">Can I change my delivery schedule?</span>
+          <div class="faq-icon text-gold flex-shrink-0 ml-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          </div>
+        </button>
+        <div class="faq-answer text-gray-400 text-sm font-light">
+          <p>Yes. You can update your delivery frequency, pause your subscription, or resume it by contacting our customer support team.</p>
+        </div>
+      </div>
+      <!-- FAQ 2 -->
+      <div class="faq-item fade-up border-b border-gray-800">
+        <button class="w-full py-6 flex justify-between items-center text-left focus:outline-none">
+          <span class="font-editorial text-xl text-ivory pr-8">Can I choose specific flowers?</span>
+          <div class="faq-icon text-gold flex-shrink-0 ml-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          </div>
+        </button>
+        <div class="faq-answer text-gray-400 text-sm font-light">
+          <p>Absolutely. We'll do our best to accommodate your preferences based on seasonal availability.</p>
+        </div>
+      </div>
+      <!-- FAQ 3 -->
+      <div class="faq-item fade-up border-b border-gray-800">
+        <button class="w-full py-6 flex justify-between items-center text-left focus:outline-none">
+          <span class="font-editorial text-xl text-ivory pr-8">Do you offer flower subscriptions for businesses?</span>
+          <div class="faq-icon text-gold flex-shrink-0 ml-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          </div>
+        </button>
+        <div class="faq-answer text-gray-400 text-sm font-light">
+          <p>Yes. We provide customized flower subscription plans for offices, hotels, restaurants, retail stores, and corporate spaces.</p>
+        </div>
+      </div>
+      <!-- FAQ 4 -->
+      <div class="faq-item fade-up border-b border-gray-800">
+        <button class="w-full py-6 flex justify-between items-center text-left focus:outline-none">
+          <span class="font-editorial text-xl text-ivory pr-8">Are flowers delivered in a vase?</span>
+          <div class="faq-icon text-gold flex-shrink-0 ml-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          </div>
+        </button>
+        <div class="faq-answer text-gray-400 text-sm font-light">
+          <p>Vase options are available upon request and can be included as part of your subscription plan.</p>
+        </div>
+      </div>
+      <!-- FAQ 5 -->
+      <div class="faq-item fade-up border-b border-gray-800">
+        <button class="w-full py-6 flex justify-between items-center text-left focus:outline-none">
+          <span class="font-editorial text-xl text-ivory pr-8">Which cities do you cover?</span>
+          <div class="faq-icon text-gold flex-shrink-0 ml-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          </div>
+        </button>
+        <div class="faq-answer text-gray-400 text-sm font-light">
+          <p>Flower subscription services are available in selected cities, with coverage expanding regularly. Please contact us to confirm availability in your location.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. FINAL CTA -->
+  <section class="py-32 px-4 text-center relative overflow-hidden bg-emerald-dark border-t border-gold/20">
+    <!-- Glow -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[300px] bg-gold/10 rounded-[100%] blur-[100px] pointer-events-none z-0"></div>
+    
+    <div class="relative z-10 fade-up max-w-3xl mx-auto">
+      <h2 class="font-editorial text-5xl md:text-6xl text-ivory mb-6">Let Your Space <span class="text-gold italic">Bloom</span> Every Day</h2>
+      <p class="text-gray-400 font-light text-sm md:text-base leading-relaxed mb-10">
+        Experience the joy of fresh flowers without the hassle of reordering. Whether for your home or business, Floral India's Flower Subscription service brings timeless elegance and lasting impressions—one beautiful arrangement at a time.
+      </p>
+      <button class="btn-gold-solid px-10 py-5 text-sm tracking-[0.2em] uppercase font-bold rounded-none">Start Your Subscription</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // 1. Scroll Animations (Fade up & Timeline)
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          observer.unobserve(entry.target); // Run once
+        }
+      });
+    }, { threshold: 0.1, rootMargin: "0px 0px -100px 0px" });
+    
+    document.querySelectorAll('.fade-up, .timeline-step').forEach(el => observer.observe(el));
+
+    // 2. FAQ Accordion
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+      const btn = item.querySelector('button');
+      btn.addEventListener('click', () => {
+        const isActive = item.classList.contains('active');
+        // Close all
+        faqItems.forEach(i => i.classList.remove('active'));
+        // Open clicked if it wasn't open
+        if (!isActive) item.classList.add('active');
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Subscription Layout",
+  "settings": []
+}
+{% endschema %}

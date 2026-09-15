@@ -1,0 +1,1204 @@
+{% comment %}
+  Delivery Date & Time Picker
+  - Green pill tab design matching the Floral India wireframes
+  - Quick-select: Today / Tomorrow / Day After / Custom Calendar
+  - Flatpickr calendar restricted to 3 months max
+  - Countdown timer for same-day delivery cutoff
+  - Rules:
+      • 3-hour prep: Only show slots starting 3+ hrs from now (Today only)
+      • Midnight slot (10 PM – 12 AM): Requires 6 hrs advance → cutoff 4 PM
+      • 5 PM cutoff: No same-day delivery after 5 PM; auto-jump to Tomorrow
+{% endcomment %}
+
+{%- assign title_lc = product.title | downcase -%}
+{%- assign type_lc = product.type | downcase -%}
+{%- assign tags_lc = product.tags | join: ',' | downcase -%}
+{%- assign is_intl_eligible = false -%}
+
+{%- assign is_london_product = false -%}
+{%- for tag in product.tags -%}
+  {%- assign tag_lower = tag | downcase | strip -%}
+  {%- if tag_lower == 'london' or tag_lower == 'uk' or tag_lower == 'united kingdom' -%}
+    {%- assign is_london_product = true -%}
+    {%- break -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- assign is_usa_product = false -%}
+{%- for tag in product.tags -%}
+  {%- assign tag_lower = tag | downcase | strip -%}
+  {%- if tag_lower == 'usa' or tag_lower == 'us' or tag_lower == 'united states' -%}
+    {%- assign is_usa_product = true -%}
+    {%- break -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- assign is_in_flower_collection = false -%}
+{%- if collection and collection.handle contains 'flower' -%}
+  {%- assign is_in_flower_collection = true -%}
+{%- endif -%}
+{%- for c in product.collections -%}
+  {%- assign c_handle = c.handle | downcase -%}
+  {%- if c_handle contains 'flower' -%}
+    {%- assign is_in_flower_collection = true -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- if is_london_product or is_usa_product or tags_lc contains 'international' or tags_lc contains 'worldwide' or tags_lc contains 'dubai' or tags_lc contains 'uae' or tags_lc contains 'canada' or tags_lc contains 'australia' or title_lc contains 'london' or title_lc contains 'usa' or title_lc contains 'international' or title_lc contains 'worldwide' or tags_lc contains 'balloon' or title_lc contains 'balloon' or type_lc contains 'balloon' or is_in_flower_collection or title_lc contains 'flower' or title_lc contains 'cake' or title_lc contains 'rose' or title_lc contains 'bouquet' or title_lc contains 'bloom' or title_lc contains 'blossom' or title_lc contains 'carnation' or title_lc contains 'lily' or title_lc contains 'orchid' or title_lc contains 'tulip' or title_lc contains 'gerbera' or title_lc contains 'sunflower' or title_lc contains 'hydrangea' or title_lc contains 'iris' or title_lc contains 'peony' or title_lc contains 'bunch' or title_lc contains 'vase' or type_lc contains 'flowers' or type_lc contains 'cakes' or tags_lc contains 'flowers' or tags_lc contains 'cakes' -%}
+  {%- assign is_intl_eligible = true -%}
+{%- endif -%}
+
+{%- assign is_in_plant_collection = false -%}
+{%- if collection and collection.handle contains 'plant' -%}
+  {%- assign is_in_plant_collection = true -%}
+{%- endif -%}
+{%- for c in product.collections -%}
+  {%- assign c_handle = c.handle | downcase -%}
+  {%- if c_handle contains 'plant' -%}
+    {%- assign is_in_plant_collection = true -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- comment -%} ABSOLUTE EXCLUSION: Plants, Hampers, Gifts, Sweets, Mugs, Teddy Bears are ALWAYS INDIA DELIVERY ONLY unless explicitly tagged with country {%- endcomment -%}
+{%- assign prod_desc_lc = product.description | strip_html | downcase -%}
+{%- assign advance_days = 0 -%}
+
+{%- if prod_desc_lc contains 'advance' or prod_desc_lc contains 'process' -%}
+  {%- if prod_desc_lc contains '4-5 advance' or prod_desc_lc contains '4 to 5 advance' or prod_desc_lc contains '4-5 days advance' or prod_desc_lc contains '5 days advance' or prod_desc_lc contains '5-day advance' -%}
+    {%- assign advance_days = 5 -%}
+  {%- elsif prod_desc_lc contains '3-4 advance' or prod_desc_lc contains '3 to 4 advance' or prod_desc_lc contains '4 days advance' or prod_desc_lc contains '4-day advance' -%}
+    {%- assign advance_days = 4 -%}
+  {%- elsif prod_desc_lc contains '2-3 advance' or prod_desc_lc contains '2 to 3 advance' or prod_desc_lc contains '2-3 days advance' or prod_desc_lc contains '3 days advance' or prod_desc_lc contains '3-day advance' or prod_desc_lc contains '3 days process' -%}
+    {%- assign advance_days = 2 -%}
+  {%- elsif prod_desc_lc contains '1-2 advance' or prod_desc_lc contains '1 to 2 advance' or prod_desc_lc contains '2 days advance' or prod_desc_lc contains '2-day advance' or prod_desc_lc contains '2 days process' -%}
+    {%- assign advance_days = 2 -%}
+  {%- elsif prod_desc_lc contains '1 day advance' or prod_desc_lc contains '1-day advance' or prod_desc_lc contains '1 day process' -%}
+    {%- assign advance_days = 1 -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- for tag in product.tags -%}
+  {%- assign tag_lc = tag | downcase | strip -%}
+  {%- if tag_lc == '2-days-advance' or tag_lc == '2 days advance' or tag_lc == '2-advance' -%}
+    {%- assign advance_days = 2 -%}
+  {%- elsif tag_lc == '3-days-advance' or tag_lc == '3 days advance' or tag_lc == '3-advance' -%}
+    {%- assign advance_days = 3 -%}
+  {%- elsif tag_lc == '4-days-advance' or tag_lc == '4 days advance' or tag_lc == '4-advance' -%}
+    {%- assign advance_days = 4 -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- assign desc_no_sunday = false -%}
+{%- if prod_desc_lc contains 'sunday delivery not possible' or prod_desc_lc contains 'sundays non-delivery' or prod_desc_lc contains 'no sunday' or prod_desc_lc contains 'sunday closed' -%}
+  {%- assign desc_no_sunday = true -%}
+{%- endif -%}
+
+{%- assign has_choc = false -%}
+{%- assign has_gifting = false -%}
+{%- assign is_exotic = false -%}
+{%- for tag in product.tags -%}
+  {%- assign tag_clean = tag | downcase | strip -%}
+  {%- if tag_clean == 'chocolate' or tag_clean == 'chocolates' -%}
+    {%- assign has_choc = true -%}
+  {%- endif -%}
+  {%- if tag_clean == 'gifting' -%}
+    {%- assign has_gifting = true -%}
+  {%- endif -%}
+  {%- if tag_clean contains 'exotic' -%}
+    {%- assign is_exotic = true -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- assign is_choc_gifting = false -%}
+{%- if has_choc and has_gifting -%}
+  {%- assign is_choc_gifting = true -%}
+  {%- if advance_days < 1 -%}
+    {%- assign advance_days = 1 -%}
+  {%- endif -%}
+{%- endif -%}
+{%- if is_exotic -%}
+  {%- if advance_days < 2 -%}
+    {%- assign advance_days = 2 -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- comment -%} Tier-Based Delivery Logic Detection (Diwali Idols & Fruit Hampers) {%- endcomment -%}
+{%- assign is_tier_restricted = false -%}
+{%- if title_lc contains 'idol' or title_lc contains 'statue' or title_lc contains 'murti' or tags_lc contains 'idol' or tags_lc contains 'diwali idol' or type_lc contains 'idol' or title_lc contains 'fruit hamper' or type_lc contains 'fruit hamper' or tags_lc contains 'fruit hamper' -%}
+  {%- assign is_tier_restricted = true -%}
+{%- else -%}
+  {%- for c in product.collections -%}
+    {%- assign c_handle = c.handle | downcase -%}
+    {%- if c_handle contains 'idol' or c_handle contains 'diwali-idol' or c_handle contains 'fruit-hampers' or c_handle == 'fruit hampers' -%}
+      {%- assign is_tier_restricted = true -%}
+      {%- break -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+
+{%- assign is_cake = false -%}
+{%- if title_lc contains 'cake' or type_lc contains 'cake' or type_lc contains 'cakes' or tags_lc contains 'cake' or tags_lc contains 'cakes' -%}
+  {%- assign is_cake = true -%}
+{%- endif -%}
+
+<div class="delivery-picker-container mb-6" data-advance-days="{{ advance_days }}" data-no-sunday="{{ desc_no_sunday }}" data-is-idol="{{ is_tier_restricted }}" data-is-cake="{{ is_cake }}" data-is-choc-gifting="{{ is_choc_gifting }}" data-is-exotic="{{ is_exotic }}">
+
+  <!-- International Delivery PDP Notice -->
+  <div id="intl-delivery-pdp-notice" data-intl-eligible="{{ is_intl_eligible }}" data-is-london="{{ is_london_product }}" data-is-usa="{{ is_usa_product }}" class="hidden mb-4 p-3.5 rounded-2xl border text-xs leading-relaxed">
+    <!-- Populated dynamically via JS -->
+  </div>
+
+  <!-- City / Location Row -->
+  <div class="mb-4 rounded-lg overflow-hidden border border-gray-200 shadow-2xs" id="delivery-location-container">
+    
+    <!-- State 1: Displayed when NO pincode is selected (India Mode) -->
+    <div id="no-pincode-prompt" onclick="openPincodeModal('india')" class="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors flex items-center justify-between cursor-pointer border-dashed border-2 border-primary/30 rounded-lg group/prompt">
+      <div class="flex items-center gap-2 text-primary font-semibold text-xs">
+        <svg class="w-4 h-4 text-primary shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span>Select City / Enter Pincode for Delivery</span>
+      </div>
+      <span class="text-xs font-bold bg-primary text-white px-3 py-1 rounded-full shadow-2xs group-hover/prompt:bg-primary-600 transition-colors">Enter Pincode</span>
+    </div>
+
+    <!-- State 2: Displayed when an Indian Pincode IS selected -->
+    <div id="active-pincode-bar" class="hidden flex w-full flex-col sm:flex-row">
+      <select name="properties[City]" id="delivery-location"
+        class="px-3.5 py-2.5 bg-primary text-white text-sm font-bold border-none outline-none cursor-pointer shrink-0"
+        style="min-width: 120px;">
+        <option value="Mumbai">Mumbai</option>
+        <option value="Delhi">Delhi</option>
+        <option value="Lucknow">Lucknow</option>
+        <option value="Bangalore">Bangalore</option>
+        <option value="Hyderabad">Hyderabad</option>
+        <option value="Chennai">Chennai</option>
+        <option value="Kolkata">Kolkata</option>
+        <option value="Pune">Pune</option>
+        <option value="Ahmedabad">Ahmedabad</option>
+        <option value="Jaipur">Jaipur</option>
+        <option value="Chandigarh">Chandigarh</option>
+      </select>
+
+      <div class="flex-1 flex items-center bg-white px-3.5 py-2 gap-2 border-t sm:border-t-0 sm:border-l border-gray-200">
+        <input type="text" id="delivery-exact-location" name="properties[Exact Location]" placeholder="House No / Street Address (optional)"
+          class="flex-1 text-xs text-gray-800 bg-transparent border-none outline-none placeholder-gray-400 font-medium truncate">
+        <button type="button" id="change-pincode-btn" class="text-[11px] font-bold text-primary shrink-0 whitespace-nowrap bg-primary/10 hover:bg-primary hover:text-white px-2.5 py-1 rounded-md transition-colors cursor-pointer">
+          Change Pincode
+        </button>
+      </div>
+    </div>
+
+    <!-- State 3: Displayed when International Delivery Mode is active -->
+    <div id="intl-active-location-bar" class="hidden flex w-full items-center justify-between bg-gradient-to-r from-amber-500 to-pink-600 text-white p-2.5 px-3.5 rounded-lg shadow-2xs">
+      <div class="flex items-center gap-2 text-xs font-bold min-w-0 truncate">
+        <span class="text-base shrink-0">🌐</span>
+        <span class="truncate">Delivering to: <strong id="pdp-intl-location-display" class="underline underline-offset-2">USA</strong></span>
+      </div>
+      <button type="button" onclick="openPincodeModal('international')" class="text-[11px] font-bold bg-white text-amber-900 hover:bg-amber-100 px-3 py-1 rounded-full transition-colors cursor-pointer shrink-0 ml-2">
+        Change Location
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Date & Time of Delivery Label + Countdown -->
+  <div class="flex items-center justify-between mb-3">
+    <label class="text-xs font-bold text-gray-500 uppercase tracking-widest">Date and Time of Delivery</label>
+    <span id="delivery-countdown" class="text-xs font-semibold text-secondary"></span>
+  </div>
+
+  <!-- Quick-Select Date Tabs (Green Pill Design) -->
+  <div class="flex gap-2 mb-4" id="delivery-date-tabs">
+    <button type="button"
+      class="date-tab flex-1 py-2.5 px-2 rounded-lg bg-white border border-gray-200 text-gray-700 text-center text-xs font-bold transition-all hover:border-primary hover:shadow-md"
+      data-date="today" id="tab-today">
+      <span class="block font-bold today-label">Today</span>
+      <span class="block text-[10px] opacity-90 today-date-display"></span>
+    </button>
+    <button type="button"
+      class="date-tab flex-1 py-2.5 px-2 rounded-lg bg-white border border-gray-200 text-gray-700 text-center text-xs font-bold transition-all hover:border-primary hover:shadow-md"
+      data-date="tomorrow" id="tab-tomorrow">
+      <span class="block font-bold">Tomorrow</span>
+      <span class="block text-[10px] text-gray-400 tomorrow-date-display"></span>
+    </button>
+    <button type="button"
+      class="date-tab flex-1 py-2.5 px-2 rounded-lg bg-white border border-gray-200 text-gray-700 text-center text-xs font-bold transition-all hover:border-primary hover:shadow-md"
+      data-date="dayafter" id="tab-dayafter">
+      <span class="block font-bold">Day After</span>
+      <span class="block text-[10px] text-gray-400 dayafter-date-display"></span>
+    </button>
+    <button type="button"
+      class="date-tab w-12 py-2.5 rounded-lg bg-white border border-gray-200 text-gray-500 text-center transition-all hover:border-primary hover:shadow-md flex items-center justify-center"
+      id="custom-date-btn" title="Choose your own date">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Hidden date value -->
+  <input type="hidden" name="properties[Delivery Date]" id="selected-delivery-date" value="" required>
+
+  <!-- Hidden Flatpickr input -->
+  <input type="text" id="custom-calendar-picker" class="sr-only" tabindex="-1">
+
+  <!-- Peak Surcharge Notice (hidden by default) -->
+  <div id="peak-surcharge-notice" class="hidden mb-3 p-3 bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold rounded-lg flex items-center gap-2">
+    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    <span></span>
+  </div>
+
+  <!-- Time Slot Info Notice -->
+  <div id="timeslot-notice" class="hidden mb-2 px-3 py-2 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold rounded-lg flex items-center gap-2">
+    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+    <span id="timeslot-notice-text"></span>
+  </div>
+
+  <!-- Time Slot Dropdown -->
+  <div id="time-select-container" class="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2.5 bg-white transition-all">
+    <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+    </svg>
+    <select name="properties[Delivery Time]" id="delivery-time-select" class="flex-1 text-sm text-gray-700 bg-transparent border-none outline-none cursor-pointer font-medium" required>
+      <option value="" selected disabled>Select favourable time of delivery</option>
+      <option value="08:00 AM - 10:00 AM" data-start="8">08:00 AM - 10:00 AM</option>
+      <option value="10:00 AM - 1:00 PM" data-start="10">10:00 AM - 1:00 PM</option>
+      <option value="1:00 PM - 4:00 PM" data-start="13">1:00 PM - 4:00 PM</option>
+      <option value="4:00 PM - 7:00 PM" data-start="16">4:00 PM - 7:00 PM</option>
+      <option value="7:00 PM - 10:00 PM" data-start="19">7:00 PM - 10:00 PM</option>
+      <option value="10:00 PM - 12:00 AM (Midnight)" data-start="22" data-midnight="true">10:00 PM - 12:00 AM (Midnight)</option>
+    </select>
+    <svg class="w-4 h-4 text-gray-400 flex-shrink-0 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path d="m6 9 6 6 6-6"/>
+    </svg>
+  </div>
+</div>
+
+<!-- Flatpickr CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+window.checkDeliveryTimeBeforeSubmit = function(e) {
+  const select = document.getElementById('delivery-time-select');
+  if (!select || !select.value || select.value.trim() === '') {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+    }
+    alert('Please select time of delivery');
+    if (select) select.focus();
+    return false;
+  }
+  return true;
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+
+  // ---- Constants ----
+  const PREP_HOURS      = 3;   // minimum prep time before any slot
+  const MIDNIGHT_HOURS  = 6;   // advance notice required for midnight slot
+  const SAMEDAY_CUTOFF  = 16;  // 4 PM — no same-day delivery after this hour
+
+  // ---- Diwali Idol Tier-Based Delivery Logic ----
+  const deliveryContainer = document.querySelector('.delivery-picker-container');
+  const isIdolProduct = deliveryContainer && deliveryContainer.dataset.isIdol === 'true';
+
+  // Metro cities where same day / next day delivery is possible for idols
+  const METRO_CITIES = [
+    'mumbai', 'delhi', 'new delhi', 'bangalore', 'bengaluru', 'hyderabad',
+    'chennai', 'kolkata', 'pune', 'ahmedabad', 'noida', 'gurgaon', 'gurugram', 
+    'faridabad', 'ghaziabad', 'navi mumbai', 'thane'
+  ];
+
+  function isUserInTier1City() {
+    const savedCity = (localStorage.getItem('user_city') || '').toLowerCase().trim();
+    // Strictly check by city name to ensure only true Metro Cities get same-day idol delivery
+    if (savedCity && METRO_CITIES.some(c => savedCity.includes(c))) return true;
+    return false;
+  }
+
+  const now     = new Date();
+  const today   = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const tomorrow  = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
+  const dayAfter  = new Date(today); dayAfter.setDate(dayAfter.getDate() + 2);
+
+  // ---- Format helpers ----
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const days   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  function formatTabDate(d) {
+    return days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate();
+  }
+  function formatISODate(d) {
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+
+  // ---- Populate tab labels ----
+  document.querySelector('.today-date-display').textContent  = formatTabDate(today);
+  document.querySelector('.tomorrow-date-display').textContent = formatTabDate(tomorrow);
+  document.querySelector('.dayafter-date-display').textContent = formatTabDate(dayAfter);
+
+  // ---- Current hour (decimal) ----
+  const currentHour = now.getHours() + now.getMinutes() / 60;
+
+  // ---- Determine if today's delivery is possible ----
+  // Same-day cutoff: 4 PM (16:00)
+  const todayAvailable = currentHour < SAMEDAY_CUTOFF;
+
+  // ---- Hidden inputs ----
+  const hiddenInput  = document.getElementById('selected-delivery-date');
+  const timeSelect   = document.getElementById('delivery-time-select');
+  const notice       = document.getElementById('timeslot-notice');
+  const noticeText   = document.getElementById('timeslot-notice-text');
+
+  // ---- Pincode Lock Logic ----
+  const citySelect = document.getElementById('delivery-location');
+  const exactLocationInput = document.getElementById('delivery-exact-location');
+  const noPincodePrompt = document.getElementById('no-pincode-prompt');
+  const activePincodeBar = document.getElementById('active-pincode-bar');
+  const changePincodeBtn = document.getElementById('change-pincode-btn');
+
+  // Click listeners for modal trigger
+  if (noPincodePrompt) {
+    noPincodePrompt.addEventListener('click', function(e) {
+      e.preventDefault();
+      if (window.openPincodeModal) window.openPincodeModal();
+    });
+  }
+
+  if (changePincodeBtn) {
+    changePincodeBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (window.openPincodeModal) window.openPincodeModal();
+    });
+  }
+
+  const sundayAllowedCountries = [
+    'AE', 'UAE', 'UNITED ARAB EMIRATES', 'DUBAI',
+    'ID', 'INDONESIA',
+    'SA', 'SAUDI ARABIA', 'SAUDI',
+    'QA', 'QATAR',
+    'OM', 'OMAN',
+    'KW', 'KUWAIT',
+    'BH', 'BAHRAIN'
+  ];
+
+  function getIntlDeliveryState() {
+    const mode = localStorage.getItem('delivery_mode') || 'india';
+    const country = (localStorage.getItem('user_country') || 'India').trim();
+    const countryCode = (localStorage.getItem('user_country_code') || 'IN').toUpperCase().trim();
+    const isIntl = (mode === 'international') && (country.toUpperCase() !== 'INDIA' && country.toUpperCase() !== 'IN');
+    const isSundayAllowed = sundayAllowedCountries.includes(countryCode) || sundayAllowedCountries.includes(country.toUpperCase());
+
+    return { isIntl, isSundayAllowed, country, countryCode };
+  }
+
+  function updatePDPLocationDisplay() {
+    const noPincodePrompt = document.getElementById('no-pincode-prompt');
+    const activePincodeBar = document.getElementById('active-pincode-bar');
+    const intlActiveBar = document.getElementById('intl-active-location-bar');
+    const pdpIntlDisplay = document.getElementById('pdp-intl-location-display');
+
+    const intlState = getIntlDeliveryState();
+
+    if (intlState.isIntl) {
+      // International Mode: FORCE HIDE Indian pincode bar and prompt!
+      if (noPincodePrompt) {
+        noPincodePrompt.classList.add('hidden');
+        noPincodePrompt.style.setProperty('display', 'none', 'important');
+      }
+      if (activePincodeBar) {
+        activePincodeBar.classList.add('hidden');
+        activePincodeBar.style.setProperty('display', 'none', 'important');
+      }
+
+      if (intlActiveBar) {
+        intlActiveBar.classList.remove('hidden');
+        intlActiveBar.style.setProperty('display', 'flex', 'important');
+      }
+
+      if (pdpIntlDisplay) {
+        const zip = localStorage.getItem('user_intl_zip') || '';
+        const locality = localStorage.getItem('user_intl_locality') || '';
+        const country = intlState.country;
+        if (locality) {
+          pdpIntlDisplay.textContent = `${locality}, ${country}${zip ? ' (' + zip + ')' : ''}`;
+        } else if (zip) {
+          pdpIntlDisplay.textContent = `${country} (${zip})`;
+        } else {
+          pdpIntlDisplay.textContent = country;
+        }
+      }
+    } else {
+      // India Mode: FORCE HIDE International location bar!
+      if (intlActiveBar) {
+        intlActiveBar.classList.add('hidden');
+        intlActiveBar.style.setProperty('display', 'none', 'important');
+      }
+
+      const savedPincode = getCookieVal('user_pincode') || localStorage.getItem('user_pincode');
+      if (savedPincode) {
+        if (noPincodePrompt) {
+          noPincodePrompt.classList.add('hidden');
+          noPincodePrompt.style.setProperty('display', 'none', 'important');
+        }
+        if (activePincodeBar) {
+          activePincodeBar.classList.remove('hidden');
+          activePincodeBar.style.setProperty('display', 'flex', 'important');
+        }
+      } else {
+        if (activePincodeBar) {
+          activePincodeBar.classList.add('hidden');
+          activePincodeBar.style.setProperty('display', 'none', 'important');
+        }
+        if (noPincodePrompt) {
+          noPincodePrompt.classList.remove('hidden');
+          noPincodePrompt.style.setProperty('display', 'flex', 'important');
+        }
+      }
+    }
+  }
+
+  function lockLocationWithPincode(pincodeData) {
+    const intlState = getIntlDeliveryState();
+    if (intlState.isIntl) {
+      updatePDPLocationDisplay();
+      return;
+    }
+
+    let pincode = (typeof pincodeData === 'object' && pincodeData) ? pincodeData.pincode : (pincodeData || getCookieVal('user_pincode') || localStorage.getItem('user_pincode'));
+    let targetCity = (typeof pincodeData === 'object' && pincodeData && pincodeData.city) ? pincodeData.city : (getCookieVal('user_city') || localStorage.getItem('user_city'));
+    let fullLocation = (typeof pincodeData === 'object' && pincodeData && pincodeData.location) ? pincodeData.location : (getCookieVal('user_location') || localStorage.getItem('user_location'));
+
+    const promptEl = document.getElementById('no-pincode-prompt');
+    const barEl = document.getElementById('active-pincode-bar');
+    const cityEl = document.getElementById('delivery-location');
+    const exactInputEl = document.getElementById('delivery-exact-location');
+
+    if (!pincode && !targetCity) {
+      updatePDPLocationDisplay();
+      return;
+    }
+
+    // Create or update a hidden input to pass the pincode to the cart/checkout
+    let hiddenPincodeInput = document.getElementById('hidden-pincode-property');
+    if (!hiddenPincodeInput) {
+      hiddenPincodeInput = document.createElement('input');
+      hiddenPincodeInput.type = 'hidden';
+      hiddenPincodeInput.id = 'hidden-pincode-property';
+      hiddenPincodeInput.name = 'properties[_Pincode]';
+      if (cityEl && cityEl.parentNode) cityEl.parentNode.appendChild(hiddenPincodeInput);
+    }
+    if (pincode) hiddenPincodeInput.value = pincode;
+
+    if (exactInputEl && fullLocation) {
+      exactInputEl.value = fullLocation;
+    } else if (exactInputEl && pincode) {
+      exactInputEl.value = `PIN: ${pincode}`;
+    }
+
+    // Map city name from targetCity or pincode prefix
+    if (!targetCity && pincode) {
+      const firstDigit = pincode.charAt(0);
+      const prefix2 = pincode.substring(0, 3);
+      if (prefix2 === '226') targetCity = 'Lucknow';
+      else if (firstDigit === '2') targetCity = 'Lucknow';
+      else if (firstDigit === '4') targetCity = 'Mumbai';
+      else if (firstDigit === '1') targetCity = 'Delhi';
+      else if (firstDigit === '5') targetCity = 'Bangalore';
+      else if (firstDigit === '6') targetCity = 'Chennai';
+      else if (firstDigit === '7') targetCity = 'Kolkata';
+      else if (firstDigit === '3') targetCity = 'Ahmedabad';
+    }
+
+    if (targetCity && cityEl) {
+      let hasOption = false;
+      for (let i = 0; i < cityEl.options.length; i++) {
+        if (cityEl.options[i].value.toLowerCase() === targetCity.toLowerCase()) {
+          cityEl.selectedIndex = i;
+          hasOption = true;
+          break;
+        }
+      }
+      if (!hasOption) {
+        const opt = document.createElement('option');
+        opt.value = targetCity;
+        opt.textContent = targetCity;
+        cityEl.appendChild(opt);
+        cityEl.value = targetCity;
+      }
+      cityEl.disabled = true;
+      cityEl.title = "City locked to PIN code " + (pincode || '');
+    }
+
+    updateCountdown();
+    updatePDPLocationDisplay();
+  }
+
+  function getCookieVal(name) {
+    let nameEQ = name + "=";
+    let ca = document.cookie.split(';');
+    for(let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) == 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+    }
+    return null;
+  }
+
+  // Check on load from Cookies + localStorage
+  const savedPincode = getCookieVal('user_pincode') || localStorage.getItem('user_pincode');
+  const savedCity = getCookieVal('user_city') || localStorage.getItem('user_city');
+  const savedLocation = getCookieVal('user_location') || localStorage.getItem('user_location');
+
+  lockLocationWithPincode({ 
+    pincode: savedPincode, 
+    city: savedCity,
+    location: savedLocation
+  });
+
+  // Listen for popup updates
+  document.addEventListener('pincodeUpdated', function(e) {
+    lockLocationWithPincode(e.detail);
+  });
+
+  // International Delivery PDP Notice Handler
+  function updateIntlPdpNotice(detail) {
+    const noticeEl = document.getElementById('intl-delivery-pdp-notice');
+    const timeSelectContainer = document.getElementById('time-select-container');
+    const timeSelectEl = document.getElementById('delivery-time-select');
+    const countdownEl = document.getElementById('delivery-countdown');
+
+    const intlState = getIntlDeliveryState();
+
+    // Toggle location display bars based on active mode
+    updatePDPLocationDisplay();
+
+    if (intlState.isIntl) {
+      // Rule 1: Hide time slot selection for International Delivery
+      if (timeSelectContainer) timeSelectContainer.style.display = 'none';
+      if (timeSelectEl) {
+        timeSelectEl.removeAttribute('required');
+        timeSelectEl.value = 'Standard Full Day Delivery';
+      }
+      if (countdownEl) countdownEl.style.display = 'none';
+    } else {
+      if (timeSelectContainer) timeSelectContainer.style.display = 'flex';
+      if (timeSelectEl) timeSelectEl.setAttribute('required', 'required');
+      if (countdownEl) countdownEl.style.display = 'inline';
+    }
+
+    if (!noticeEl) return;
+
+    const country = (detail && detail.country) ? detail.country : intlState.country;
+    const zip = (detail && detail.zip) ? detail.zip : (localStorage.getItem('user_intl_zip') || '');
+    const locality = (detail && detail.locality) ? detail.locality : (localStorage.getItem('user_intl_locality') || '');
+    
+    const userCountry = (country || '').toLowerCase().trim();
+    const isUsaActive = userCountry.includes('usa') || userCountry.includes('united states');
+    const isLondonActive = userCountry.includes('london') || userCountry.includes('uk') || userCountry.includes('united kingdom');
+
+    let isEligible = noticeEl.dataset.intlEligible === 'true';
+    if ((isLondonActive && noticeEl.dataset.isLondon === 'true') || (isUsaActive && noticeEl.dataset.isUsa === 'true')) {
+      isEligible = true;
+    }
+
+    const submitBtn = document.querySelector('form[action*="/cart/add"] button[type="submit"], button.add-to-cart-btn, #add-to-cart-btn');
+    const container = document.querySelector('.delivery-picker-container');
+    const isChocGifting = container && container.dataset.isChocGifting === 'true';
+    const isExotic = container && container.dataset.isExotic === 'true';
+    const isCityRestrictedProduct = isChocGifting || isExotic;
+
+    if (intlState.isIntl) {
+      if (isCityRestrictedProduct) isEligible = false;
+      
+      noticeEl.classList.remove('hidden');
+      let locationLabel = country;
+      if (locality) {
+        locationLabel = `${locality}, ${country}${zip ? ' (' + zip + ')' : ''}`;
+      } else if (zip) {
+        locationLabel = `${country} (PIN: ${zip})`;
+      }
+
+      if (isEligible) {
+        noticeEl.className = "mb-4 p-3.5 rounded-2xl border border-amber-300 bg-amber-50/70 text-amber-900 text-xs leading-relaxed flex items-center justify-between gap-3 shadow-2xs";
+        noticeEl.innerHTML = `
+          <div class="flex items-center gap-2.5">
+            <span class="text-xl">🌐</span>
+            <div>
+              <div class="font-bold text-amber-900">International Delivery Active: ${locationLabel}</div>
+              <div class="text-[11px] text-amber-700">Flowers & Cakes eligible. Earliest delivery: <strong>${todayAvailable ? 'Today (Same Day)' : 'Tomorrow'}</strong>. Time slots not applicable. ${intlState.isSundayAllowed ? 'Sunday delivery available!' : 'Sundays non-delivery.'}</div>
+            </div>
+          </div>
+          <button type="button" onclick="openPincodeModal('international')" class="text-[10px] font-bold bg-amber-200 hover:bg-amber-300 text-amber-900 px-2.5 py-1 rounded-lg shrink-0 transition-colors cursor-pointer">Change Location</button>
+        `;
+        if (submitBtn) submitBtn.disabled = false;
+      } else {
+        noticeEl.className = "mb-4 p-3.5 rounded-2xl border border-rose-300 bg-rose-50/80 text-rose-900 text-xs leading-relaxed flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs";
+        let title = isCityRestrictedProduct ? "Product Not Eligible" : "Gifts Not Included in International Shipping";
+        let desc = isCityRestrictedProduct ? "This product is only available in Delhi, Mumbai, Kolkata, Pune, and Bangalore." : "Gifts are available for <strong>India Delivery only</strong>. Switch to India Delivery to order this item.";
+        noticeEl.innerHTML = `
+          <div class="flex items-center gap-2.5">
+            <span class="text-xl">⚠️</span>
+            <div>
+              <div class="font-bold text-rose-900">${title}</div>
+              <div class="text-[11px] text-rose-700">${desc}</div>
+            </div>
+          </div>
+          <button type="button" onclick="openPincodeModal('india')" class="text-[11px] font-bold bg-emerald-700 text-white hover:bg-emerald-800 px-3 py-1.5 rounded-xl shrink-0 transition-colors shadow-2xs cursor-pointer">Switch to India Delivery 🇮🇳</button>
+        `;
+        if (submitBtn) submitBtn.disabled = true;
+      }
+    } else {
+      const savedCity = (localStorage.getItem('user_city') || '').toLowerCase().trim();
+      const allowedCities = ['delhi', 'new delhi', 'mumbai', 'kolkata', 'pune', 'bangalore', 'bengaluru'];
+      let isCityAllowed = true;
+      
+      if (isCityRestrictedProduct && savedCity) {
+        if (!allowedCities.some(c => savedCity.includes(c))) {
+          isCityAllowed = false;
+        }
+      }
+
+      if (!isCityAllowed) {
+        noticeEl.classList.remove('hidden');
+        noticeEl.className = "mb-4 p-3.5 rounded-2xl border border-rose-300 bg-rose-50/80 text-rose-900 text-xs leading-relaxed flex items-center justify-between gap-3 shadow-2xs";
+        noticeEl.innerHTML = `
+          <div class="flex items-center gap-2.5">
+            <span class="text-xl">⚠️</span>
+            <div>
+              <div class="font-bold text-rose-900">City Not Eligible</div>
+              <div class="text-[11px] text-rose-700">This product is only available in Delhi, Mumbai, Kolkata, Pune, and Bangalore.</div>
+            </div>
+          </div>
+          <button type="button" onclick="openPincodeModal('india')" class="text-[10px] font-bold bg-rose-200 hover:bg-rose-300 text-rose-900 px-2.5 py-1 rounded-lg shrink-0 transition-colors cursor-pointer">Change Location</button>
+        `;
+        if (submitBtn) submitBtn.disabled = true;
+      } else {
+        noticeEl.classList.add('hidden');
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    }
+  }
+
+  updateIntlPdpNotice();
+  document.addEventListener('deliveryModeChanged', (e) => {
+    updateIntlPdpNotice(e.detail);
+    setupDateTabsAndRules();
+  });
+
+  // ---- Tab references ----
+  const tabToday    = document.getElementById('tab-today');
+  const tabTomorrow = document.getElementById('tab-tomorrow');
+  const tabDayAfter = document.getElementById('tab-dayafter');
+  const customBtn   = document.getElementById('custom-date-btn');
+  const allQuickTabs = document.querySelectorAll('#delivery-date-tabs .date-tab:not(#custom-date-btn)');
+
+  let fp = null;
+
+  function getProductProcessingRules() {
+    const container = document.querySelector('.delivery-picker-container');
+    let advanceDays = container ? (parseInt(container.dataset.advanceDays, 10) || 0) : 0;
+    let noSunday = container ? (container.dataset.noSunday === 'true') : false;
+
+    const descEl = document.getElementById('tab-desc') || document.querySelector('.product-description') || document.body;
+    if (descEl) {
+      const descText = descEl.textContent.toLowerCase();
+      const advMatch = descText.match(/(\d+)\s*(?:-\s*\d+)?\s*(?:days?)?\s*advance/) || 
+                       descText.match(/(\d+)\s*(?:-\s*\d+)?\s*days?\s*to\s*process/) ||
+                       descText.match(/process(?:ing)?\s*(?:time|order)?\s*(?:is|:)?\s*(\d+)/);
+
+      if (advMatch && advMatch[1]) {
+        const parsed = parseInt(advMatch[1], 10);
+        if (!isNaN(parsed) && parsed > advanceDays) {
+          advanceDays = parsed;
+        }
+      }
+
+      if (descText.includes('4-5 advance') || descText.includes('4-5 days advance')) advanceDays = Math.max(advanceDays, 4);
+      else if (descText.includes('3-4 advance') || descText.includes('3-4 days advance')) advanceDays = Math.max(advanceDays, 3);
+      else if (descText.includes('2-3 advance') || descText.includes('2-3 days advance')) advanceDays = Math.max(advanceDays, 2);
+      else if (descText.includes('1-2 advance') || descText.includes('1-2 days advance')) advanceDays = Math.max(advanceDays, 1);
+
+      if (descText.includes('sunday delivery not possible') || descText.includes('sundays non-delivery') || descText.includes('no sunday delivery')) {
+        noSunday = true;
+      }
+    }
+
+    return { advanceDays, noSunday };
+  }
+
+  function setupDateTabsAndRules() {
+    const intlState = getIntlDeliveryState();
+    const rules = getProductProcessingRules();
+    let minAdv = rules.advanceDays;
+
+    // ---- Diwali Idol: Tier-based delivery override ----
+    const idolCourierNotice = document.getElementById('idol-courier-notice');
+    const timeSelectContainer = document.getElementById('time-select-container');
+    const timeSelectEl = document.getElementById('delivery-time-select');
+    const dateTabsContainer = document.getElementById('delivery-date-tabs');
+    const dateLabelContainer = document.querySelector('.delivery-picker-container > .flex.items-center.justify-between.mb-3');
+    let isIdolCourier = false;
+
+    if (isIdolProduct && !intlState.isIntl) {
+      if (isUserInTier1City()) {
+        // Tier 1: Same day / next day — normal delivery behavior
+        isIdolCourier = false;
+        if (idolCourierNotice) idolCourierNotice.classList.add('hidden');
+        if (timeSelectContainer) timeSelectContainer.style.display = 'flex';
+        if (timeSelectEl) timeSelectEl.setAttribute('required', 'required');
+        if (dateTabsContainer) dateTabsContainer.style.display = 'flex';
+        if (dateLabelContainer) dateLabelContainer.style.display = 'flex';
+      } else {
+        // Non-Tier 1: Courier 3-5 days
+        isIdolCourier = true;
+
+        // Show courier notice
+        if (!idolCourierNotice) {
+          const noticeDiv = document.createElement('div');
+          noticeDiv.id = 'idol-courier-notice';
+          noticeDiv.className = 'mb-4 p-3.5 rounded-2xl border border-amber-300 bg-amber-50/80 text-amber-900 text-xs leading-relaxed flex items-center gap-3 shadow-xs';
+          noticeDiv.innerHTML = `
+            <span class="text-xl shrink-0">📦</span>
+            <div>
+              <div class="font-bold text-amber-900">Courier Delivery (3–5 Business Days)</div>
+              <div class="text-[11px] text-amber-700 mt-0.5">Same day/next day delivery is possible in Metro Cities (Other cities by courier 3-5 days).</div>
+            </div>
+          `;
+          const container = document.querySelector('.delivery-picker-container');
+          if (dateLabelContainer) {
+            dateLabelContainer.parentNode.insertBefore(noticeDiv, dateLabelContainer);
+          } else if (container) {
+            container.insertBefore(noticeDiv, container.children[1]);
+          }
+        } else {
+          idolCourierNotice.classList.remove('hidden');
+        }
+
+        // Ensure time slot selector is visible
+        if (timeSelectContainer) timeSelectContainer.style.display = 'flex';
+        if (timeSelectEl) timeSelectEl.setAttribute('required', 'required');
+        
+        // Set 3 day minimum advance for courier delivery
+        minAdv = Math.max(minAdv, 3);
+        
+        // Ensure date tabs are visible
+        if (dateTabsContainer) dateTabsContainer.style.display = 'flex';
+        if (dateLabelContainer) dateLabelContainer.style.display = 'flex';
+      }
+    } else if (!isIdolProduct && idolCourierNotice) {
+      idolCourierNotice.classList.add('hidden');
+      if (dateTabsContainer) dateTabsContainer.style.display = 'flex';
+      if (dateLabelContainer) dateLabelContainer.style.display = 'flex';
+    }
+    // ---- USA & London Cake Override ----
+    const isCakeProduct = deliveryContainer && deliveryContainer.dataset.isCake === 'true';
+    if (intlState.isIntl && isCakeProduct) {
+      const userCountry = (intlState.country || '').toLowerCase().trim();
+      const isUsaActive = userCountry.includes('usa') || userCountry.includes('united states');
+      const isLondonActive = userCountry.includes('london') || userCountry.includes('uk') || userCountry.includes('united kingdom');
+      if (isUsaActive || isLondonActive) {
+        minAdv = Math.max(minAdv, 2);
+      }
+    }
+
+    // Calculate earliest available date
+    let earliestAvailableDate = new Date(today);
+    if (minAdv > 0) {
+      earliestAvailableDate.setDate(today.getDate() + minAdv);
+    } else if (!todayAvailable) {
+      earliestAvailableDate.setDate(today.getDate() + 1);
+    }
+
+    const pdpNoticeEl = document.getElementById('intl-delivery-pdp-notice');
+    const isLondon = pdpNoticeEl && pdpNoticeEl.dataset.isLondon === 'true';
+    const isUsa = pdpNoticeEl && pdpNoticeEl.dataset.isUsa === 'true';
+    const noWeekendDelivery = isLondon || isUsa;
+
+    // Check Sunday & Saturday restrictions
+    const disallowSunday = (!intlState.isSundayAllowed || rules.noSunday || noWeekendDelivery);
+    const disallowSaturday = noWeekendDelivery;
+
+    while ((disallowSunday && earliestAvailableDate.getDay() === 0) || (disallowSaturday && earliestAvailableDate.getDay() === 6)) {
+      earliestAvailableDate.setDate(earliestAvailableDate.getDate() + 1);
+    }
+
+    const earliestISO = formatISODate(earliestAvailableDate);
+    const todayISO = formatISODate(today);
+    const tomorrowISO = formatISODate(tomorrow);
+    const dayAfterISO = formatISODate(dayAfter);
+
+    // Disable quick-select date tabs earlier than earliestAvailableDate
+    if (tabToday) {
+      if (todayISO < earliestISO) {
+        tabToday.disabled = true;
+        tabToday.classList.add('opacity-40', 'cursor-not-allowed');
+        tabToday.title = isIdolCourier ? 'Courier delivery: 3-5 business days' : (minAdv > 0 ? `Requires ${minAdv} days advance order processing` : 'Same-day delivery is not available');
+      } else {
+        tabToday.disabled = false;
+        tabToday.classList.remove('opacity-40', 'cursor-not-allowed');
+      }
+    }
+
+    if (tabTomorrow) {
+      if (tomorrowISO < earliestISO || (disallowSunday && tomorrow.getDay() === 0) || (disallowSaturday && tomorrow.getDay() === 6)) {
+        tabTomorrow.disabled = true;
+        tabTomorrow.classList.add('opacity-40', 'cursor-not-allowed');
+        const dayName = tomorrow.getDay() === 0 ? 'Sunday' : 'Saturday';
+        tabTomorrow.title = isIdolCourier ? 'Courier delivery: 3-5 business days' : ((tomorrowISO < earliestISO && minAdv > 0)
+          ? `Requires ${minAdv} days advance order processing`
+          : `${dayName} is a non-delivery day`);
+      } else {
+        tabTomorrow.disabled = false;
+        tabTomorrow.classList.remove('opacity-40', 'cursor-not-allowed');
+      }
+    }
+
+    if (tabDayAfter) {
+      if (dayAfterISO < earliestISO || (disallowSunday && dayAfter.getDay() === 0) || (disallowSaturday && dayAfter.getDay() === 6)) {
+        tabDayAfter.disabled = true;
+        tabDayAfter.classList.add('opacity-40', 'cursor-not-allowed');
+        const dayName = dayAfter.getDay() === 0 ? 'Sunday' : 'Saturday';
+        tabDayAfter.title = isIdolCourier ? 'Courier delivery: 3-5 business days' : ((dayAfterISO < earliestISO && minAdv > 0)
+          ? `Requires ${minAdv} days advance order processing`
+          : `${dayName} is a non-delivery day`);
+      } else {
+        tabDayAfter.disabled = false;
+        tabDayAfter.classList.remove('opacity-40', 'cursor-not-allowed');
+      }
+    }
+
+    // Auto-select earliest available date
+    if (earliestISO === todayISO && tabToday && !tabToday.disabled) {
+      selectDate(today, tabToday);
+    } else if (earliestISO === tomorrowISO && tabTomorrow && !tabTomorrow.disabled) {
+      selectDate(tomorrow, tabTomorrow);
+    } else if (earliestISO === dayAfterISO && tabDayAfter && !tabDayAfter.disabled) {
+      selectDate(dayAfter, tabDayAfter);
+    } else {
+      allQuickTabs.forEach(function(t) {
+        t.classList.remove('active', 'bg-primary', 'text-white');
+        t.classList.add('bg-white', 'border', 'border-gray-200', 'text-gray-700');
+      });
+      if (customBtn) {
+        customBtn.classList.add('bg-primary', 'text-white');
+        customBtn.classList.remove('bg-white', 'border', 'border-gray-200', 'text-gray-500');
+      }
+      hiddenInput.value = earliestISO;
+      document.dispatchEvent(new CustomEvent('deliveryDateChanged', { detail: earliestISO }));
+    }
+
+    // Display notice
+    if (isIdolCourier) {
+      showNotice(`📦 Courier Delivery: Same day/next day delivery is possible in Metro Cities (Other cities by courier 3-5 days). Earliest delivery: ${formatTabDate(earliestAvailableDate)}.`, 'info');
+    } else if (isIdolProduct && isUserInTier1City()) {
+      showNotice(`🪔 Diwali Idol: Same day/next day delivery is possible in Metro Cities (Other cities by courier 3-5 days). You are in a Metro City!`, 'info');
+    } else if (minAdv > 0 && !isIdolCourier) {
+      showNotice(`ℹ️ Advance Order Notice: Product requires ${minAdv} days advance processing notice. Earliest delivery: ${formatTabDate(earliestAvailableDate)}.`, 'info');
+    } else if (intlState.isIntl) {
+      if (noWeekendDelivery && (tomorrow.getDay() === 0 || tomorrow.getDay() === 6 || dayAfter.getDay() === 0 || dayAfter.getDay() === 6)) {
+        showNotice(`✈️ International Delivery to ${intlState.country}: (Weekends non-delivery).`, 'info');
+      } else if (disallowSunday && (tomorrow.getDay() === 0 || dayAfter.getDay() === 0)) {
+        showNotice(`✈️ International Delivery to ${intlState.country}: (Sundays non-delivery).`, 'info');
+      } else {
+        showNotice(`✈️ International Delivery to ${intlState.country}: Earliest delivery: ${todayAvailable ? 'Today (Same Day)' : 'Tomorrow'}.`, 'info');
+      }
+    }
+
+    // Re-init Flatpickr with minDate set to earliestISO
+    const maxDate = new Date(today);
+    maxDate.setMonth(maxDate.getMonth() + 12);
+
+    if (typeof flatpickr !== 'undefined') {
+      if (fp) fp.destroy();
+
+      const disableRules = [];
+      if (disallowSunday || disallowSaturday) {
+        disableRules.push(function(date) {
+          if (disallowSunday && date.getDay() === 0) return true;
+          if (disallowSaturday && date.getDay() === 6) return true;
+          return false;
+        });
+      }
+
+      fp = flatpickr('#custom-calendar-picker', {
+        minDate: earliestISO,
+        maxDate: maxDate,
+        dateFormat: 'Y-m-d',
+        disableMobile: true,
+        disable: disableRules,
+        defaultDate: earliestISO,
+        onChange: function(selectedDates, dateStr) {
+          if (selectedDates.length > 0) {
+            allQuickTabs.forEach(function(t) {
+              t.classList.remove('active', 'bg-primary', 'text-white');
+              t.classList.add('bg-white', 'border', 'border-gray-200', 'text-gray-700');
+            });
+            if (customBtn) {
+              customBtn.classList.add('bg-primary', 'text-white');
+              customBtn.classList.remove('bg-white', 'border', 'border-gray-200', 'text-gray-500');
+            }
+
+            hiddenInput.value = dateStr;
+            filterTimeSlots(dateStr);
+            document.dispatchEvent(new CustomEvent('deliveryDateChanged', { detail: dateStr }));
+            // Save to localStorage so cart page can read it
+            try { localStorage.setItem('floral_pdp_delivery_date', dateStr); } catch(e) {}
+          }
+        }
+      });
+    }
+  }
+
+  // ---- Core: filter time slots based on selected date ----
+  function filterTimeSlots(selectedDateISO) {
+    const intlState = getIntlDeliveryState();
+
+    if (intlState.isIntl) {
+      hideNotice();
+      return;
+    }
+
+    const isToday = (selectedDateISO === formatISODate(today));
+    const options  = timeSelect.querySelectorAll('option');
+    let allDisabled = true;
+    let firstEnabled = null;
+
+    options.forEach(function(opt) {
+      if (!opt.value) return; // placeholder
+
+      const slotStart  = parseInt(opt.dataset.start, 10);
+      const isMidnight = opt.dataset.midnight === 'true';
+
+      let disabled = false;
+      let reason   = '';
+
+      if (slotStart === 8 || opt.value.indexOf('08:00 AM') !== -1) {
+        const parts = selectedDateISO.split('-');
+        if (parts.length === 3) {
+          const selY = parseInt(parts[0], 10);
+          const selM = parseInt(parts[1], 10) - 1;
+          const selD = parseInt(parts[2], 10);
+          const morningCutoff = new Date(selY, selM, selD - 1, 19, 0, 0, 0);
+          if (new Date() >= morningCutoff) {
+            disabled = true;
+            reason   = 'morning_cutoff';
+          }
+        }
+      }
+
+      if (intlState.isIntl && isMidnight) {
+        disabled = true;
+        reason   = 'intl_no_midnight';
+      }
+
+      if (isToday) {
+        if (isMidnight) {
+          const midnightCutoff = 22 - MIDNIGHT_HOURS;
+          if (currentHour >= midnightCutoff) {
+            disabled = true;
+            reason   = 'midnight';
+          }
+        } else {
+          if (currentHour + PREP_HOURS > slotStart) {
+            disabled = true;
+            reason   = 'prep';
+          }
+        }
+      }
+
+      opt.disabled = disabled;
+      opt.style.color = disabled ? '#bbb' : '';
+
+      if (!disabled && allDisabled) {
+        allDisabled  = false;
+        firstEnabled = opt;
+      }
+    });
+
+    const currentOption = timeSelect.querySelector(`option[value="${CSS.escape(timeSelect.value)}"]`);
+    if (!timeSelect.value || (currentOption && currentOption.disabled)) {
+      timeSelect.value = '';
+    }
+
+    const morningOpt = timeSelect.querySelector('option[data-start="8"]');
+    const morningBlocked = morningOpt && morningOpt.disabled;
+
+    if (isToday) {
+      const midnightOpt = timeSelect.querySelector('option[data-midnight="true"]');
+      const midnightBlocked = midnightOpt && midnightOpt.disabled;
+
+      if (allDisabled) {
+        showNotice('⚠️ No delivery slots available today. Please select Tomorrow or a future date.', 'warning');
+      } else if (midnightBlocked && currentHour >= (22 - MIDNIGHT_HOURS)) {
+        showNotice('🌙 Midnight slot unavailable — must be ordered 6 hrs in advance (by 4 PM). Select tomorrow for midnight delivery.', 'info');
+      } else if (currentHour >= PREP_HOURS) {
+        showNotice('⏱️ Showing slots with 3-hour preparation time. Earlier slots are unavailable.', 'info');
+      } else {
+        hideNotice();
+      }
+    } else if (morningBlocked && currentHour >= 19 && selectedDateISO === formatISODate(tomorrow)) {
+      showNotice('🌅 Morning slot (8:00 AM – 10:00 AM) closed — must be ordered before 7:00 PM on the previous day.', 'info');
+    } else {
+      hideNotice();
+    }
+  }
+
+  // Global validation function to force alert before any submit or click action
+  window.checkDeliveryTimeBeforeSubmit = function(e) {
+    const intlState = getIntlDeliveryState();
+    if (intlState.isIntl) {
+      // Time slots not required for International Delivery
+      return true;
+    }
+
+    const select = document.getElementById('delivery-time-select');
+    if (!select || !select.value || select.value.trim() === '') {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+      }
+      alert('Please select time of delivery');
+      if (select) select.focus();
+      return false;
+    }
+    return true;
+  };
+
+  const addToCartBtn = document.getElementById('add-to-cart-btn');
+  if (addToCartBtn) {
+    addToCartBtn.addEventListener('click', window.checkDeliveryTimeBeforeSubmit, true);
+  }
+
+  const productForm = timeSelect ? timeSelect.closest('form') : document.querySelector('form[action*="/cart/add"]');
+  if (productForm) {
+    productForm.addEventListener('submit', window.checkDeliveryTimeBeforeSubmit, true);
+  }
+
+  function showNotice(msg, type) {
+    noticeText.textContent = msg;
+    notice.classList.remove('hidden');
+    if (type === 'warning') {
+      notice.classList.remove('bg-blue-50', 'border-blue-200', 'text-blue-700');
+      notice.classList.add('bg-amber-50', 'border-amber-200', 'text-amber-700');
+    } else {
+      notice.classList.remove('bg-amber-50', 'border-amber-200', 'text-amber-700');
+      notice.classList.add('bg-blue-50', 'border-blue-200', 'text-blue-700');
+    }
+  }
+
+  function hideNotice() {
+    notice.classList.add('hidden');
+  }
+
+  // ---- Activate tab visually ----
+  function activateTab(tab) {
+    if (!tab) return;
+    allQuickTabs.forEach(function(t) {
+      t.classList.remove('active', 'bg-primary', 'text-white');
+      t.classList.add('bg-white', 'border', 'border-gray-200', 'text-gray-700');
+    });
+    if (customBtn) {
+      customBtn.classList.remove('bg-primary', 'text-white');
+      customBtn.classList.add('bg-white', 'border', 'border-gray-200', 'text-gray-500');
+    }
+
+    tab.classList.add('active', 'bg-primary', 'text-white');
+    tab.classList.remove('bg-white', 'border', 'border-gray-200', 'text-gray-700');
+  }
+
+  // ---- Set date & update slots ----
+  function selectDate(dateObj, tabEl) {
+    const isoDate = formatISODate(dateObj);
+    hiddenInput.value = isoDate;
+    activateTab(tabEl);
+    filterTimeSlots(isoDate);
+    document.dispatchEvent(new CustomEvent('deliveryDateChanged', { detail: isoDate }));
+    // Save to localStorage so cart page can read it
+    try { localStorage.setItem('floral_pdp_delivery_date', isoDate); } catch(e) {}
+  }
+
+  // Initial Date Setup
+  setupDateTabsAndRules();
+
+  // ---- Tab click logic ----
+  if (tabToday) {
+    tabToday.addEventListener('click', function(e) {
+      e.preventDefault();
+      if (!this.disabled) selectDate(today, this);
+    });
+  }
+  if (tabTomorrow) {
+    tabTomorrow.addEventListener('click', function(e) {
+      e.preventDefault();
+      if (!this.disabled) selectDate(tomorrow, this);
+    });
+  }
+  if (tabDayAfter) {
+    tabDayAfter.addEventListener('click', function(e) {
+      e.preventDefault();
+      if (!this.disabled) selectDate(dayAfter, this);
+    });
+  }
+
+  // Save time to localStorage whenever it changes
+  if (timeSelect) {
+    timeSelect.addEventListener('change', function() {
+      try { localStorage.setItem('floral_pdp_delivery_time', this.value); } catch(e) {}
+    });
+  }
+
+  if (customBtn) {
+    customBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      if (fp) {
+        fp.open();
+      } else {
+        const picker = document.getElementById('custom-calendar-picker');
+        if (picker) {
+          picker.type = 'date';
+          picker.focus();
+          if (typeof picker.showPicker === 'function') picker.showPicker();
+        }
+      }
+    });
+  }
+
+  // ---- Countdown Timer ----
+  function updateCountdown() {
+    const el = document.getElementById('delivery-countdown');
+    if (!el) return;
+
+    const intlState = getIntlDeliveryState();
+    if (intlState.isIntl) {
+      el.style.display = 'none';
+      return;
+    }
+
+    const tabToday = document.getElementById('tab-today');
+    if (tabToday && tabToday.disabled) {
+      el.style.display = 'none';
+      return;
+    }
+
+    el.style.display = 'inline';
+
+    const cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate(), SAMEDAY_CUTOFF, 0, 0);
+    const diff   = cutoff - new Date();
+
+    if (diff > 0) {
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      el.innerHTML = '<span class="text-secondary font-bold">' + h + 'h ' + m + 'm ' + s + 's</span> left for today';
+    } else {
+      el.innerHTML = '<span class="text-rose-600 font-bold">Today\'s delivery closed</span>';
+    }
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+});
+</script>

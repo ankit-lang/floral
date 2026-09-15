@@ -1,0 +1,923 @@
+{% comment %}
+  AI Shopping Assistant Widget
+  Floating AI assistant drawer for intelligent, country-aware product discovery and shopping guidance.
+{% endcomment %}
+
+<!-- AI Assistant Floating Trigger Button (Bottom-Center Pill) -->
+<div id="ai-assistant-trigger-container" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[95]">
+  <button id="ai-assistant-toggle-btn"
+    type="button"
+    class="flex items-center gap-2.5 bg-black text-white pl-2 pr-5 py-2 rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 border border-white/20 group cursor-pointer"
+    aria-label="Open AI Shopping Assistant">
+    <!-- White Circle Icon Badge -->
+    <div class="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center shrink-0 shadow-sm group-hover:rotate-12 transition-transform duration-300">
+      <svg class="w-4.5 h-4.5 text-black" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z" />
+        <path d="M19 16L19.9 19.1L23 20L19.9 20.9L19 24L18.1 20.9L15 20L18.1 19.1L19 16Z" opacity="0.8" />
+      </svg>
+    </div>
+    
+    <!-- Text Label -->
+    <span class="text-sm font-bold tracking-wide text-white whitespace-nowrap">Shop with AI</span>
+  </button>
+</div>
+
+<!-- AI Assistant Drawer Chat Window -->
+<div id="ai-assistant-drawer"
+  class="fixed bottom-20 left-1/2 -translate-x-1/2 w-[94vw] sm:w-[420px] max-h-[80vh] h-[620px] bg-[#18181b] text-white rounded-3xl shadow-2xl z-[100] flex flex-col overflow-hidden border border-white/10 opacity-0 translate-y-6 pointer-events-none transition-all duration-300 ease-out font-sans">
+  
+  <!-- Header -->
+  <div class="px-5 py-3.5 bg-[#212124] border-b border-white/10 flex items-center justify-between shrink-0">
+    <div class="flex items-center gap-3">
+      <!-- AI Avatar -->
+      <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-500 via-[#d15c7e] to-purple-600 flex items-center justify-center text-white shadow-md shrink-0">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z" />
+          <path d="M19 16L19.9 19.1L23 20L19.9 20.9L19 24L18.1 19.1L19 16Z" opacity="0.8" />
+        </svg>
+      </div>
+      <div class="min-w-0">
+        <h3 class="text-base font-bold text-white tracking-wide flex items-center gap-1.5 leading-tight">
+          Floral AI
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        </h3>
+        <!-- Country/Location Selection Pill -->
+        <button type="button" id="ai-location-badge" class="mt-0.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white/10 hover:bg-amber-500/20 text-amber-300 border border-white/10 transition-all cursor-pointer" title="Click to change delivery country">
+          <span id="ai-location-flag">🇮🇳</span>
+          <span id="ai-location-text" class="truncate max-w-[150px]">India Delivery</span>
+          <svg class="w-2.5 h-2.5 opacity-60 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Action Icons -->
+    <div class="flex items-center gap-1.5 text-gray-400">
+      <!-- Expand / Panel Icon -->
+      <button type="button" id="ai-assistant-expand-btn" class="p-2 hover:text-white hover:bg-white/10 rounded-full transition-colors" title="Expand View">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+        </svg>
+      </button>
+      <!-- Close Button -->
+      <button type="button" id="ai-assistant-close-btn" class="p-2 hover:text-white hover:bg-white/10 rounded-full transition-colors text-gray-300 ml-1" title="Close AI Assistant">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Messages Container -->
+  <div id="ai-chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4 hide-scrollbar">
+    <!-- Initial AI Welcome Message -->
+    <div class="ai-msg flex flex-col gap-2">
+      <div class="bg-[#27272a] text-gray-100 rounded-2xl rounded-tl-sm p-4 text-sm leading-relaxed max-w-[92%] shadow-sm border border-white/5">
+        <p class="font-medium">
+          Welcome to <strong class="text-white font-semibold">Floral India</strong>! I'm your <strong class="text-amber-300 font-semibold">Floral AI Shopping Advisor</strong>. 🌸
+        </p>
+        <p id="ai-welcome-dest" class="mt-2 text-gray-300 text-xs leading-normal">
+          Tell me what you're looking for—whether it's fresh flowers, birthday cakes, gourmet hampers, or gifts within your budget!
+        </p>
+      </div>
+      
+      <!-- Quick Filter Pills -->
+      <div class="flex flex-wrap gap-1.5 mt-1">
+        <button type="button" class="ai-filter-pill px-3 py-1.5 rounded-full bg-[#27272a] hover:bg-white/20 text-gray-200 text-xs font-medium border border-white/10 transition-colors cursor-pointer" data-query="Flowers">
+          🌸 Flowers
+        </button>
+        <button type="button" class="ai-filter-pill px-3 py-1.5 rounded-full bg-[#27272a] hover:bg-white/20 text-gray-200 text-xs font-medium border border-white/10 transition-colors cursor-pointer" data-query="Cakes">
+          🎂 Cakes
+        </button>
+        <button type="button" class="ai-filter-pill px-3 py-1.5 rounded-full bg-[#27272a] hover:bg-white/20 text-gray-200 text-xs font-medium border border-white/10 transition-colors cursor-pointer" data-query="Hampers">
+          🧺 Hampers
+        </button>
+        <button type="button" class="ai-filter-pill px-3 py-1.5 rounded-full bg-[#27272a] hover:bg-white/20 text-gray-200 text-xs font-medium border border-white/10 transition-colors cursor-pointer" data-query="Balloons">
+          🎈 Balloons
+        </button>
+        <button type="button" class="ai-filter-pill px-3 py-1.5 rounded-full bg-[#27272a] hover:bg-white/20 text-gray-200 text-xs font-medium border border-white/10 transition-colors cursor-pointer" data-query="Gifts under 2000">
+          💰 Budget Gifts
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast inside Drawer -->
+  <div id="ai-toast-notice" class="mx-4 mb-2 px-3 py-2 bg-emerald-900/90 text-emerald-200 text-xs rounded-xl hidden items-center justify-between border border-emerald-500/30 transition-all">
+    <span id="ai-toast-text">Added to cart successfully!</span>
+    <a href="/cart" class="underline font-bold text-white ml-2">View Cart</a>
+  </div>
+
+  <!-- Footer Input Area -->
+  <div class="p-3 bg-[#212124] border-t border-white/10 shrink-0">
+    <form id="ai-chat-form" class="relative flex items-center">
+      <input type="text"
+        id="ai-chat-input"
+        placeholder="Message Floral AI..."
+        class="w-full bg-[#2a2a2e] text-white text-xs sm:text-sm rounded-full pl-4 pr-11 py-3 focus:outline-none focus:ring-2 focus:ring-amber-400/50 border border-white/10 placeholder-gray-400"
+        autocomplete="off">
+      <button type="submit"
+        id="ai-chat-send-btn"
+        class="absolute right-2 w-8 h-8 rounded-full bg-amber-400 hover:bg-amber-300 text-black flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer disabled:opacity-50"
+        aria-label="Send query">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0l-6 6m6-6l6 6"/>
+        </svg>
+      </button>
+    </form>
+    <p class="text-[10px] text-gray-500 text-center mt-2 font-medium">Powered by Floral AI • Country-Wise Smart Recommendations</p>
+  </div>
+</div>
+
+<!-- Store Products Catalog Script -->
+<script>
+  (function() {
+    {% comment %} Helper macro to output a product JSON object {% endcomment %}
+    {% assign ai_seen_ids = '' %}
+
+    var rawProducts = [];
+
+    {% comment %} ── PRIORITY COLLECTIONS: cakes & flowers first ───────────── {% endcomment %}
+    {% assign priority_collections = 'cakes,flowers,combos,hampers,chocolates,gifts,eggless-cakes' | split: ',' %}
+    {% for col_handle in priority_collections %}
+      {% if collections[col_handle] %}
+        {% for product in collections[col_handle].products limit: 100 %}
+          {% assign pid = product.id | append: '' %}
+          {% unless ai_seen_ids contains pid %}
+            {% assign ai_seen_ids = ai_seen_ids | append: pid | append: ',' %}
+            {% assign v_id = product.selected_or_first_available_variant.id | default: product.variants.first.id %}
+            {% assign title_lc = product.title | downcase %}
+            {% assign is_uk = false %}
+            {% assign is_usa = false %}
+            {% assign is_uae = false %}
+            {% assign is_canada = false %}
+            {% assign is_aus = false %}
+            {% for t in product.tags %}
+              {% assign t_down = t | downcase | strip %}
+              {% if t_down == 'london' or t_down == 'uk' or t_down == 'united kingdom' %}{% assign is_uk = true %}{% endif %}
+              {% if t_down contains 'usa' or t_down contains 'united states' or t_down == 'us' %}{% assign is_usa = true %}{% endif %}
+              {% if t_down == 'uae' or t_down == 'dubai' %}{% assign is_uae = true %}{% endif %}
+              {% if t_down == 'canada' or t_down == 'ca' %}{% assign is_canada = true %}{% endif %}
+              {% if t_down == 'australia' or t_down == 'au' %}{% assign is_aus = true %}{% endif %}
+            {% endfor %}
+            {% if title_lc contains 'london' %}{% assign is_uk = true %}{% endif %}
+            {% if title_lc contains 'usa' %}{% assign is_usa = true %}{% endif %}
+            rawProducts.push({
+              id: {{ product.id | json }},
+              variantId: {{ v_id | json }},
+              title: {{ product.title | json }},
+              handle: {{ product.handle | json }},
+              url: {{ product.url | json }},
+              price: {{ product.price | json }},
+              image: {{ product.featured_image | image_url: width: 400 | json }},
+              tags: {{ product.tags | json }},
+              type: {{ product.type | json }},
+              description: {{ product.description | strip_html | truncate: 120 | json }},
+              isLondon: {{ is_uk | json }},
+              isUsa: {{ is_usa | json }},
+              isUae: {{ is_uae | json }},
+              isCanada: {{ is_canada | json }},
+              isAustralia: {{ is_aus | json }}
+            });
+          {% endunless %}
+        {% endfor %}
+      {% endif %}
+    {% endfor %}
+
+    {% comment %} ── ALL PRODUCTS: fill remaining slots ─────────────────────── {% endcomment %}
+    {% for product in collections['all'].products limit: 250 %}
+      {% assign pid = product.id | append: '' %}
+      {% unless ai_seen_ids contains pid %}
+        {% assign ai_seen_ids = ai_seen_ids | append: pid | append: ',' %}
+        {% assign v_id = product.selected_or_first_available_variant.id | default: product.variants.first.id %}
+        {% assign title_lc = product.title | downcase %}
+        {% assign is_uk = false %}
+        {% assign is_usa = false %}
+        {% assign is_uae = false %}
+        {% assign is_canada = false %}
+        {% assign is_aus = false %}
+        {% for t in product.tags %}
+          {% assign t_down = t | downcase | strip %}
+          {% if t_down == 'london' or t_down == 'uk' or t_down == 'united kingdom' %}{% assign is_uk = true %}{% endif %}
+          {% if t_down contains 'usa' or t_down contains 'united states' or t_down == 'us' %}{% assign is_usa = true %}{% endif %}
+          {% if t_down == 'uae' or t_down == 'dubai' %}{% assign is_uae = true %}{% endif %}
+          {% if t_down == 'canada' or t_down == 'ca' %}{% assign is_canada = true %}{% endif %}
+          {% if t_down == 'australia' or t_down == 'au' %}{% assign is_aus = true %}{% endif %}
+        {% endfor %}
+        {% if title_lc contains 'london' %}{% assign is_uk = true %}{% endif %}
+        {% if title_lc contains 'usa' %}{% assign is_usa = true %}{% endif %}
+        rawProducts.push({
+          id: {{ product.id | json }},
+          variantId: {{ v_id | json }},
+          title: {{ product.title | json }},
+          handle: {{ product.handle | json }},
+          url: {{ product.url | json }},
+          price: {{ product.price | json }},
+          image: {{ product.featured_image | image_url: width: 400 | json }},
+          tags: {{ product.tags | json }},
+          type: {{ product.type | json }},
+          description: {{ product.description | strip_html | truncate: 120 | json }},
+          isLondon: {{ is_uk | json }},
+          isUsa: {{ is_usa | json }},
+          isUae: {{ is_uae | json }},
+          isCanada: {{ is_canada | json }},
+          isAustralia: {{ is_aus | json }}
+        });
+      {% endunless %}
+    {% endfor %}
+
+    window.STORE_CATALOG = rawProducts;
+    console.log('[Floral AI] Catalog loaded:', rawProducts.length, 'products |',
+      rawProducts.filter(p => p.isUsa).length, 'USA |',
+      rawProducts.filter(p => p.isLondon).length, 'UK |',
+      rawProducts.filter(p => p.isUae).length, 'UAE');
+  })();
+</script>
+
+<!-- AI Assistant Logic Script -->
+<script>
+(function() {
+  const triggerBtn = document.getElementById('ai-assistant-toggle-btn');
+  const drawer = document.getElementById('ai-assistant-drawer');
+  const closeBtn = document.getElementById('ai-assistant-close-btn');
+  const expandBtn = document.getElementById('ai-assistant-expand-btn');
+  const chatMessages = document.getElementById('ai-chat-messages');
+  const chatForm = document.getElementById('ai-chat-form');
+  const chatInput = document.getElementById('ai-chat-input');
+  const toastNotice = document.getElementById('ai-toast-notice');
+  const toastText = document.getElementById('ai-toast-text');
+
+  if (!triggerBtn || !drawer) return;
+
+  let isOpen = false;
+  let isExpanded = false;
+
+  // Location Helper
+  function getCookie(n) {
+    var v = "; " + document.cookie;
+    var p = v.split("; " + n + "=");
+    if (p.length === 2) return p.pop().split(";").shift();
+    return "";
+  }
+
+  function getActiveLocation() {
+    const mode = localStorage.getItem('delivery_mode') || getCookie('delivery_mode') || 'india';
+    const country = localStorage.getItem('user_country') || getCookie('user_country') || 'India';
+    const countryCode = (localStorage.getItem('user_country_code') || getCookie('user_country_code') || 'IN').toUpperCase();
+    const locality = localStorage.getItem('user_intl_locality') || getCookie('user_intl_locality') || '';
+    const city = localStorage.getItem('user_city') || getCookie('user_city') || '';
+    const pincode = localStorage.getItem('user_pincode') || getCookie('user_pincode') || '';
+
+    const countryLower = country.toLowerCase();
+    const codeLower = countryCode.toLowerCase();
+    const locLower = locality.toLowerCase();
+
+    const isIntl = (mode === 'international');
+    const isLondon = isIntl && (
+      countryLower.includes('london') ||
+      countryLower.includes('united kingdom') ||
+      countryLower.includes('britain') ||
+      countryLower === 'uk' ||
+      codeLower === 'gb' ||
+      codeLower === 'uk' ||
+      locLower.includes('london') ||
+      locLower.includes('uk') ||
+      locLower.includes('england')
+    );
+    const isUsa = isIntl && (
+      countryLower.includes('usa') ||
+      countryLower.includes('united states') ||
+      countryLower === 'us' ||
+      codeLower === 'us' ||
+      codeLower === 'usa'
+    );
+    const isUae = isIntl && (
+      countryLower.includes('uae') ||
+      countryLower.includes('dubai') ||
+      codeLower === 'ae'
+    );
+    const isCanada = isIntl && (
+      countryLower.includes('canada') ||
+      codeLower === 'ca'
+    );
+    const isAus = isIntl && (
+      countryLower.includes('australia') ||
+      codeLower === 'au'
+    );
+
+    return {
+      mode,
+      country,
+      countryCode,
+      locality,
+      city,
+      pincode,
+      isIntl,
+      isLondon,
+      isUsa,
+      isUae,
+      isCanada,
+      isAus
+    };
+  }
+
+  function getCountryFlag(countryName, countryCode) {
+    const code = (countryCode || '').toUpperCase();
+    const name = (countryName || '').toLowerCase();
+    if (code === 'GB' || name.includes('uk') || name.includes('kingdom') || name.includes('london')) return '🇬🇧';
+    if (code === 'US' || name.includes('usa') || name.includes('united states')) return '🇺🇸';
+    if (code === 'AE' || name.includes('uae') || name.includes('dubai')) return '🇦🇪';
+    if (code === 'CA' || name.includes('canada')) return '🇨🇦';
+    if (code === 'AU' || name.includes('australia')) return '🇦🇺';
+    if (code === 'DE' || name.includes('germany')) return '🇩🇪';
+    if (code === 'FR' || name.includes('france')) return '🇫🇷';
+    if (code === 'SG' || name.includes('singapore')) return '🇸🇬';
+    if (code === 'IN' || name.includes('india')) return '🇮🇳';
+    return '🌐';
+  }
+
+  // Update AI Assistant Header Location Badge & Welcome Context
+  function updateAiLocationInfo() {
+    const loc = getActiveLocation();
+    const badge = document.getElementById('ai-location-badge');
+    const flagEl = document.getElementById('ai-location-flag');
+    const textEl = document.getElementById('ai-location-text');
+    const welcomeDest = document.getElementById('ai-welcome-dest');
+
+    const flag = getCountryFlag(loc.country, loc.countryCode);
+    let displayLoc = 'India Delivery';
+
+    if (loc.isIntl) {
+      displayLoc = loc.country || 'International';
+      if (loc.locality && !displayLoc.toLowerCase().includes(loc.locality.toLowerCase())) {
+        displayLoc = `${loc.locality}, ${displayLoc}`;
+      }
+    } else if (loc.city) {
+      displayLoc = `India (${loc.city})`;
+    }
+
+    if (flagEl) flagEl.textContent = flag;
+    if (textEl) textEl.textContent = displayLoc;
+
+    if (welcomeDest) {
+      if (loc.isIntl) {
+        welcomeDest.innerHTML = `Delivering to <strong class="text-amber-300 font-semibold">${escapeHTML(displayLoc)}</strong> ${flag}. (Flowers & Cakes available for International Delivery)`;
+      } else {
+        welcomeDest.innerHTML = `Delivering across <strong class="text-amber-300 font-semibold">India</strong> 🇮🇳. Tell me what you're looking for!`;
+      }
+    }
+  }
+
+  // Format price using FloralCurrencyManager if available
+  function formatProductPrice(priceVal) {
+    if (window.FloralCurrencyManager && typeof window.FloralCurrencyManager.formatBasePrice === 'function') {
+      return window.FloralCurrencyManager.formatBasePrice(priceVal);
+    }
+    const num = (priceVal > 10000) ? (priceVal / 100) : priceVal;
+    return '₹' + num.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+  }
+
+  // Helper to check country tags robustly
+  function hasCountryTag(p, countryKey) {
+    const tagsArr = Array.isArray(p.tags) ? p.tags : (typeof p.tags === 'string' ? p.tags.split(',') : []);
+    const cleanTags = tagsArr.map(t => String(t).toLowerCase().trim());
+    const key = (countryKey || '').toLowerCase().trim();
+    const titleStr = (p.title || '').toLowerCase();
+
+    if (key === 'usa' || key === 'us') {
+      const tagMatch = cleanTags.some(t => t === 'usa' || t === 'us' || t === 'united states' || t.includes('usa') || t.includes('united states'));
+      return tagMatch || titleStr.includes('usa') || titleStr.includes('united states');
+    } else if (key === 'uk' || key === 'london' || key === 'gb') {
+      const tagMatch = cleanTags.some(t => t === 'london' || t === 'uk' || t === 'gb' || t === 'united kingdom' || t.includes('london') || t.includes('uk'));
+      return tagMatch || titleStr.includes('london') || titleStr.includes('uk');
+    } else if (key === 'uae' || key === 'dubai' || key === 'ae') {
+      const tagMatch = cleanTags.some(t => t === 'uae' || t === 'dubai' || t === 'ae' || t.includes('uae') || t.includes('dubai'));
+      return tagMatch || titleStr.includes('dubai') || titleStr.includes('uae');
+    } else if (key === 'canada' || key === 'ca') {
+      const tagMatch = cleanTags.some(t => t === 'canada' || t === 'ca' || t.includes('canada'));
+      return tagMatch || titleStr.includes('canada');
+    } else if (key === 'australia' || key === 'au') {
+      const tagMatch = cleanTags.some(t => t === 'australia' || t === 'au' || t.includes('australia'));
+      return tagMatch || titleStr.includes('australia');
+    }
+    return cleanTags.some(t => t === key || t.includes(key));
+  }
+
+  // Check product country eligibility — STRICT TAG MATCHING
+  function isProductEligibleForLocation(p, loc) {
+    const isUkProd = p.isLondon || hasCountryTag(p, 'uk');
+    const isUsaProd = p.isUsa || hasCountryTag(p, 'usa');
+    const isUaeProd = p.isUae || hasCountryTag(p, 'uae');
+    const isCanadaProd = p.isCanada || hasCountryTag(p, 'canada');
+    const isAusProd = p.isAustralia || hasCountryTag(p, 'australia');
+
+    const isCountryExclusive = isUkProd || isUsaProd || isUaeProd || isCanadaProd || isAusProd;
+
+    const typeStr = (p.type || '').toLowerCase();
+    const titleStr = (p.title || '').toLowerCase();
+    const isPlant = typeStr.includes('plant') || titleStr.includes('plant') || titleStr.includes('jade') || titleStr.includes('ivy') || titleStr.includes('succulent');
+    const isBalloon = typeStr.includes('balloon') || titleStr.includes('balloon');
+    const isIdol = typeStr.includes('idol') || titleStr.includes('idol');
+
+    if (loc.isIntl) {
+      if (p.isIndiaOnly) return false;
+
+      // Plants, Balloons, Idols are India-only unless explicitly tagged for a country
+      if ((isPlant || isBalloon || isIdol) && !isCountryExclusive) return false;
+
+      // STRICT: only show products explicitly tagged for the active country
+      if (loc.isLondon) return isUkProd;
+      if (loc.isUsa)    return isUsaProd;
+      if (loc.isUae)    return isUaeProd;
+      if (loc.isCanada) return isCanadaProd;
+      if (loc.isAus)    return isAusProd;
+
+      // Generic international: match by country tag
+      const countryTag = (loc.country || '').toLowerCase();
+      const codeTag = (loc.countryCode || '').toLowerCase();
+      return hasCountryTag(p, countryTag) || hasCountryTag(p, codeTag);
+    } else {
+      // India mode: hide products exclusively tagged for another country
+      if (isCountryExclusive) {
+        if (p.isIndiaOnly) return true;
+        return false;
+      }
+      return true;
+    }
+  }
+
+  // Toggle drawer open/close
+  function toggleDrawer(open) {
+    isOpen = (typeof open === 'boolean') ? open : !isOpen;
+    if (isOpen) {
+      updateAiLocationInfo();
+      drawer.classList.remove('opacity-0', 'translate-y-6', 'pointer-events-none');
+      drawer.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
+      chatInput.focus();
+    } else {
+      drawer.classList.add('opacity-0', 'translate-y-6', 'pointer-events-none');
+      drawer.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
+    }
+  }
+
+  triggerBtn.addEventListener('click', () => toggleDrawer());
+  closeBtn.addEventListener('click', () => toggleDrawer(false));
+
+  if (expandBtn) {
+    expandBtn.addEventListener('click', () => {
+      isExpanded = !isExpanded;
+      if (isExpanded) {
+        drawer.classList.remove('sm:w-[420px]', 'h-[620px]');
+        drawer.classList.add('sm:w-[580px]', 'h-[750px]');
+      } else {
+        drawer.classList.add('sm:w-[420px]', 'h-[620px]');
+        drawer.classList.remove('sm:w-[580px]', 'h-[750px]');
+      }
+    });
+  }
+
+  // Open pincode modal when location badge is clicked
+  document.addEventListener('click', function(e) {
+    const badge = e.target.closest('#ai-location-badge');
+    if (badge) {
+      const modal = document.getElementById('pincode-modal-overlay');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        setTimeout(() => {
+          modal.classList.remove('opacity-0');
+          modal.classList.add('opacity-100');
+        }, 10);
+      }
+    }
+  });
+
+  // Handle Quick Filter Pills
+  document.addEventListener('click', function(e) {
+    const pill = e.target.closest('.ai-filter-pill');
+    if (pill) {
+      const query = pill.getAttribute('data-query') || pill.textContent.trim();
+      handleUserQuery(query);
+    }
+  });
+
+  // Handle Form Submission
+  chatForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const query = chatInput.value.trim();
+    if (!query) return;
+    chatInput.value = '';
+    handleUserQuery(query);
+  });
+
+  // Core Intelligence Engine
+  function handleUserQuery(userQuery) {
+    appendUserMessage(userQuery);
+    const typingId = showTypingIndicator();
+
+    setTimeout(() => {
+      removeTypingIndicator(typingId);
+      processQueryAndRespond(userQuery);
+    }, 700);
+  }
+
+  function appendUserMessage(text) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'flex justify-end';
+    msgDiv.innerHTML = `
+      <div class="bg-black/60 text-white rounded-2xl rounded-tr-xs px-4 py-2.5 text-xs sm:text-sm font-medium max-w-[85%] border border-white/10 shadow-sm">
+        ${escapeHTML(text)}
+      </div>
+    `;
+    chatMessages.appendChild(msgDiv);
+    scrollToBottom();
+  }
+
+  function showTypingIndicator() {
+    const id = 'typing-' + Date.now();
+    const typingDiv = document.createElement('div');
+    typingDiv.id = id;
+    typingDiv.className = 'flex gap-2 items-center text-gray-400 text-xs pl-2 py-1';
+    typingDiv.innerHTML = `
+      <div class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-300 flex items-center justify-center text-[10px]">✨</div>
+      <div class="flex gap-1 items-center bg-[#27272a] px-3 py-2 rounded-xl">
+        <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
+        <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay:0.2s"></span>
+        <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay:0.4s"></span>
+      </div>
+    `;
+    chatMessages.appendChild(typingDiv);
+    scrollToBottom();
+    return id;
+  }
+
+  function removeTypingIndicator(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  }
+
+  function scrollToBottom() {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  // AI Response Generator with Country-Wise Matching
+  function processQueryAndRespond(query) {
+    const qLower = query.toLowerCase().trim();
+    const loc = getActiveLocation();
+    const fullCatalog = (window.STORE_CATALOG && Array.isArray(window.STORE_CATALOG)) ? window.STORE_CATALOG : [];
+
+    // ─── STEP 1: Filter catalog strictly by active country ──────────────────
+    // Only show products tagged for the active country
+    let countryPool = fullCatalog.filter(p => isProductEligibleForLocation(p, loc));
+
+    // Deduplicate by title
+    const seenTitles = new Set();
+    countryPool = countryPool.filter(p => {
+      const key = (p.title || '').toLowerCase().trim();
+      if (seenTitles.has(key)) return false;
+      seenTitles.add(key);
+      return true;
+    });
+
+    // ─── STEP 2: Handle non-deliverable category queries in intl mode ─────────
+    let isNonIntlQuery = false;
+    let nonIntlCatName = '';
+    if (loc.isIntl) {
+      if (qLower.includes('plant') || qLower.includes('succulent') || qLower.includes('bonsai') || qLower.includes('garden')) {
+        isNonIntlQuery = true;
+        nonIntlCatName = 'Plants';
+      } else if (qLower.includes('balloon')) {
+        isNonIntlQuery = true;
+        nonIntlCatName = 'Balloons';
+      } else if (qLower.includes('idol') || qLower.includes('murti') || qLower.includes('statue')) {
+        isNonIntlQuery = true;
+        nonIntlCatName = 'Idols & Statues';
+      }
+    }
+
+    // ─── STEP 3: Parse budget ──────────────────────────────────────────────
+    let maxBudget = null;
+    const priceMatch = qLower.match(/(?:under|below|less\s*than|budget|within|up\s*to)?\s*[₹$]?\s*(\d{2,5})/i);
+    if (priceMatch && priceMatch[1]) {
+      const budgetValue = parseInt(priceMatch[1], 10);
+      if (budgetValue >= 10) {
+        maxBudget = (loc.isIntl && budgetValue < 500) ? budgetValue * 100 * 100 : budgetValue * 100;
+      }
+    }
+
+    // ─── STEP 4: Build keyword list (singular + plural expansion) ────────────
+    const STOP_WORDS = new Set(['and', 'the', 'for', 'with', 'gift', 'gifts', 'show', 'best', 'please', 'send', 'get', 'want', 'need', 'any', 'some', 'give', 'all', 'top', 'good', 'nice', 'that', 'this', 'from', 'have', 'can', 'you']);
+    const searchTerms = qLower.replace(/(?:under|below|less\s*than|budget|within|up\s*to|\d{2,5}|[₹$])/gi, '').trim();
+    const rawWords = searchTerms.split(/\s+/).filter(k => k.length > 2 && !STOP_WORDS.has(k));
+
+    const expandedKeywords = new Set();
+    const PLURAL_MAP = { 'cake': 'cakes', 'cakes': 'cake', 'flower': 'flowers', 'flowers': 'flower', 'rose': 'roses', 'roses': 'rose', 'bouquet': 'bouquets', 'bouquets': 'bouquet', 'hamper': 'hampers', 'hampers': 'hamper', 'chocolate': 'chocolates', 'gift': 'gifts' };
+    rawWords.forEach(w => {
+      expandedKeywords.add(w);
+      if (PLURAL_MAP[w]) expandedKeywords.add(PLURAL_MAP[w]);
+      if (w.endsWith('s') && w.length > 4) expandedKeywords.add(w.slice(0, -1));
+      else if (!w.endsWith('s')) expandedKeywords.add(w + 's');
+    });
+    const uniqueKeywords = Array.from(expandedKeywords);
+
+    // ─── STEP 5: Match products by keyword within country pool ──────────────
+    let matches = [];
+    let isCategoryExactMatch = false;
+
+    const scoreProduct = (p) => {
+      const titleStr = (p.title || '').toLowerCase();
+      const typeStr = (p.type || '').toLowerCase();
+      const tagsArr = Array.isArray(p.tags) ? p.tags : (typeof p.tags === 'string' ? p.tags.split(',') : []);
+      const tagsStr = tagsArr.map(t => String(t).toLowerCase().trim()).join(' ');
+      const descStr = (p.description || '').toLowerCase();
+      let score = 0;
+
+      // Keyword relevance scoring
+      uniqueKeywords.forEach(k => {
+        if (titleStr.includes(k)) score += 3;
+        if (typeStr === k || typeStr.includes(k)) score += 2;
+        if (tagsStr.includes(k)) score += 2;
+        if (descStr.includes(k)) score += 1;
+      });
+
+      // Prioritize explicitly country-tagged products
+      if (loc.isUsa && (p.isUsa || hasCountryTag(p, 'usa'))) score += 5;
+      else if (loc.isLondon && (p.isLondon || hasCountryTag(p, 'uk'))) score += 5;
+      else if (loc.isUae && (p.isUae || hasCountryTag(p, 'uae'))) score += 5;
+      else if (loc.isCanada && (p.isCanada || hasCountryTag(p, 'canada'))) score += 5;
+      else if (loc.isAus && (p.isAustralia || hasCountryTag(p, 'australia'))) score += 5;
+
+      return score;
+    };
+
+    // Debug: log to browser console for verification
+    if (window.__aiDebug) {
+      console.log('[Floral AI] countryPool size:', countryPool.length);
+      console.log('[Floral AI] keywords:', uniqueKeywords);
+      console.log('[Floral AI] sample USA products:', countryPool.filter(p => p.isUsa || hasCountryTag(p, 'usa')).slice(0, 5).map(p => p.title));
+    }
+
+    if (isNonIntlQuery) {
+      // Category not deliverable internationally — show top country products
+      matches = countryPool.slice(0, 4);
+    } else if (uniqueKeywords.length > 0) {
+      // Score all country-eligible products against keywords
+      const scored = countryPool
+        .map(p => ({ p, score: scoreProduct(p) }))
+        .filter(({ score }) => score > 0)
+        .sort((a, b) => {
+          if (maxBudget) {
+            if (a.p.price !== b.p.price) return a.p.price - b.p.price;
+          }
+          return b.score - a.score;
+        });
+
+      if (scored.length > 0) {
+        isCategoryExactMatch = true;
+        matches = scored.slice(0, 4).map(({ p }) => p);
+      } else {
+        // No keyword match within country pool — show best country products
+        matches = countryPool.slice(0, 4);
+      }
+    } else if (qLower.includes('best seller') || qLower.includes('bestseller') || qLower.includes('popular') || qLower.includes('top')) {
+      matches = countryPool.slice(0, 4);
+    } else if (maxBudget) {
+      matches = [...countryPool].sort((a, b) => a.price - b.price).slice(0, 4);
+    } else {
+      matches = countryPool.slice(0, 4);
+    }
+
+    // ─── STEP 6: Build response text & section heading ───────────────────────
+    const countryLabel = escapeHTML(loc.country || 'your destination');
+    const codeLabel = escapeHTML(loc.countryCode || loc.country || '');
+    let introText = '';
+    let sectionHeading = `Recommended for ${countryLabel}`;
+
+    if (isNonIntlQuery) {
+      introText = `ℹ️ <strong>Note:</strong> <strong>${nonIntlCatName}</strong> are available for <strong>India Delivery</strong> only.<br>Showing our top deliverable options for <strong>${countryLabel}</strong>:`;
+      sectionHeading = `Top Picks for ${countryLabel}`;
+    } else if (uniqueKeywords.length > 0) {
+      const rawCategory = rawWords[0] || uniqueKeywords[0];
+      const categoryName = rawCategory.charAt(0).toUpperCase() + rawCategory.slice(1);
+      if (isCategoryExactMatch) {
+        sectionHeading = `${categoryName} Options (${codeLabel || countryLabel})`;
+        introText = `Here are our top recommended <strong>${categoryName.toLowerCase()}</strong> choices deliverable to <strong>${countryLabel}</strong>:`;
+      } else {
+        sectionHeading = `Top Picks for ${codeLabel || countryLabel}`;
+        introText = `ℹ️ We currently don't have <strong>${categoryName.toLowerCase()}</strong> listed for delivery to <strong>${countryLabel}</strong>.<br>Here are top deliverable options for <strong>${countryLabel}</strong>:`;
+      }
+    } else if (loc.isIntl) {
+      sectionHeading = `Delivering to ${countryLabel}`;
+      introText = `Here are our top floral & cake recommendations deliverable to <strong>${countryLabel}</strong> 🌐:`;
+    } else {
+      introText = `Here are the top matches curated for <strong>India Delivery</strong>:`;
+    }
+
+    // Render AI Response Container
+    const aiContainer = document.createElement('div');
+    aiContainer.className = 'ai-msg flex flex-col gap-3';
+
+    let html = `
+      <div class="bg-[#27272a] text-gray-100 rounded-2xl rounded-tl-xs p-4 text-xs sm:text-sm leading-relaxed max-w-[95%] border border-white/5 shadow-sm">
+        <p>${introText}</p>
+        
+        <h4 class="text-sm font-bold text-white mt-4 mb-3 border-b border-white/10 pb-1.5 flex items-center justify-between gap-2">
+          <span class="flex items-center gap-1.5">✨ ${sectionHeading}</span>
+          <span class="text-[10px] text-amber-300 font-normal opacity-80">${getCountryFlag(loc.country, loc.countryCode)} ${escapeHTML(loc.countryCode || loc.country)}</span>
+        </h4>
+
+        <!-- Structured Product Cards -->
+        <div class="space-y-3">
+    `;
+
+    const flag = getCountryFlag(loc.country, loc.countryCode);
+    matches.forEach(p => {
+      const priceFormatted = formatProductPrice(p.price);
+
+      const isUkProd = p.isLondon || hasCountryTag(p, 'uk');
+      const isUsaProd = p.isUsa || hasCountryTag(p, 'usa');
+      const isUaeProd = p.isUae || hasCountryTag(p, 'uae');
+      const isCanadaProd = p.isCanada || hasCountryTag(p, 'canada');
+      const isAusProd = p.isAustralia || hasCountryTag(p, 'australia');
+
+      let tagLabel = 'intl';
+      if (isUkProd || loc.isLondon) {
+        tagLabel = 'Tag: london / uk';
+      } else if (isUsaProd || loc.isUsa) {
+        tagLabel = 'Tag: usa';
+      } else if (isUaeProd || loc.isUae) {
+        tagLabel = 'Tag: uae / dubai';
+      } else if (isCanadaProd || loc.isCanada) {
+        tagLabel = 'Tag: canada';
+      } else if (isAusProd || loc.isAus) {
+        tagLabel = 'Tag: australia';
+      } else if (!loc.isIntl) {
+        tagLabel = 'India Delivery';
+      }
+
+      const delBadge = loc.isIntl 
+        ? `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-amber-400/20 text-amber-300 border border-amber-400/30">${flag} ${escapeHTML(tagLabel)}</span>` 
+        : `<span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">🇮🇳 ${escapeHTML(tagLabel)}</span>`;
+
+      html += `
+        <div class="bg-[#1e1e22] rounded-2xl p-3 border border-white/10 flex gap-3 items-center hover:border-amber-400/40 transition-all group">
+          <a href="${p.url}" class="shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-black/40 relative block">
+            <img src="${p.image}" alt="${escapeHTML(p.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+          </a>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-1 mb-1">
+              ${delBadge}
+            </div>
+            <a href="${p.url}" class="block text-xs sm:text-sm font-bold text-white truncate hover:text-amber-300 transition-colors">
+              ${escapeHTML(p.title)}
+            </a>
+            <p class="text-xs font-semibold text-amber-300 mt-0.5" data-base-price="${p.price}">${priceFormatted}</p>
+            <p class="text-[10px] text-gray-400 line-clamp-2 mt-1 leading-snug">${escapeHTML(p.description)}</p>
+
+            <div class="mt-2.5">
+              <a href="${p.url}"
+                class="inline-flex items-center justify-center gap-1 bg-amber-400 text-black hover:bg-amber-300 font-bold text-[11px] px-4 py-1.5 rounded-full transition-all shadow-sm">
+                <span>View Product →</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+
+    html += `
+        </div>
+      </div>
+
+      <!-- Follow-up Suggestion Pills -->
+      <div class="flex flex-wrap gap-1.5 mt-1">
+        <button type="button" class="ai-filter-pill px-3 py-1 rounded-full bg-[#27272a] hover:bg-white/20 text-gray-300 text-[11px] font-medium border border-white/10 transition-colors cursor-pointer" data-query="Flowers">
+          🌸 Fresh Flowers
+        </button>
+        <button type="button" class="ai-filter-pill px-3 py-1 rounded-full bg-[#27272a] hover:bg-white/20 text-gray-300 text-[11px] font-medium border border-white/10 transition-colors cursor-pointer" data-query="Cakes">
+          🎂 Cakes
+        </button>
+        <button type="button" class="ai-filter-pill px-3 py-1 rounded-full bg-[#27272a] hover:bg-white/20 text-gray-300 text-[11px] font-medium border border-white/10 transition-colors cursor-pointer" data-query="Best Sellers">
+          ⭐ Best Sellers
+        </button>
+      </div>
+    `;
+
+    aiContainer.innerHTML = html;
+    chatMessages.appendChild(aiContainer);
+    scrollToBottom();
+
+    // Trigger FloralCurrencyManager update on newly appended DOM
+    if (window.FloralCurrencyManager && typeof window.FloralCurrencyManager.updateDOM === 'function') {
+      window.FloralCurrencyManager.updateDOM();
+    }
+  }
+
+  // Handle Add to Cart Action inside Chat Cards
+  document.addEventListener('click', function(e) {
+    const addBtn = e.target.closest('.ai-add-to-cart-btn');
+    if (!addBtn) return;
+
+    const variantId = addBtn.getAttribute('data-variant-id');
+    const handle = addBtn.getAttribute('data-handle');
+    const productUrl = addBtn.getAttribute('data-url') || '/collections/all';
+
+    addBtn.disabled = true;
+    addBtn.innerHTML = `<span>Adding...</span>`;
+
+    function addToCartAndRedirect(vId) {
+      const numericVId = parseInt(vId, 10);
+      if (!numericVId || isNaN(numericVId)) {
+        window.location.href = productUrl;
+        return;
+      }
+
+      try {
+        const ts = JSON.parse(localStorage.getItem('floral_cart_timestamps')) || {};
+        if (!ts[numericVId]) {
+          ts[numericVId] = Date.now();
+          localStorage.setItem('floral_cart_timestamps', JSON.stringify(ts));
+        }
+      } catch(e) {}
+
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: [{ id: numericVId, quantity: 1 }] })
+      })
+      .then(function(res) {
+        if (!res.ok) {
+          return fetch('/cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'id=' + encodeURIComponent(numericVId) + '&quantity=1'
+          }).then(function(r) { return r.json(); });
+        }
+        return res.json();
+      })
+      .then(function(data) {
+        document.dispatchEvent(new CustomEvent('cart:item-added', { bubbles: true, detail: { variant_id: numericVId } }));
+        window.location.href = '/cart';
+      })
+      .catch(function(err) {
+        console.error('AJAX add to cart error:', err);
+        window.location.href = '/cart';
+      });
+    }
+
+    let parsedVId = parseInt(variantId, 10);
+    if (parsedVId && !isNaN(parsedVId) && parsedVId > 10000) {
+      addToCartAndRedirect(parsedVId);
+    } else if (handle && handle !== 'null' && handle !== '') {
+      fetch('/products/' + handle + '.js')
+        .then(function(r) { return r.json(); })
+        .then(function(prod) {
+          if (prod && prod.variants && prod.variants.length > 0) {
+            addToCartAndRedirect(prod.variants[0].id);
+          } else {
+            window.location.href = productUrl;
+          }
+        })
+        .catch(function() {
+          window.location.href = productUrl;
+        });
+    } else {
+      window.location.href = productUrl;
+    }
+  });
+
+  // Listen to global events for live updates when location or currency changes
+  document.addEventListener('deliveryModeChanged', function() {
+    updateAiLocationInfo();
+  });
+  window.addEventListener('currencyUpdated', function() {
+    updateAiLocationInfo();
+    if (window.FloralCurrencyManager && typeof window.FloralCurrencyManager.updateDOM === 'function') {
+      window.FloralCurrencyManager.updateDOM();
+    }
+  });
+  window.addEventListener('storage', function() {
+    updateAiLocationInfo();
+  });
+
+  function showToast(msg) {
+    if (!toastNotice || !toastText) return;
+    toastText.textContent = msg;
+    toastNotice.classList.remove('hidden');
+    toastNotice.classList.add('flex');
+    setTimeout(() => {
+      toastNotice.classList.add('hidden');
+      toastNotice.classList.remove('flex');
+    }, 4000);
+  }
+
+  function escapeHTML(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>'"]/g, 
+      tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+    );
+  }
+
+  // Initial call on load
+  updateAiLocationInfo();
+})();
+</script>

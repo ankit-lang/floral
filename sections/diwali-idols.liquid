@@ -1,0 +1,129 @@
+<!-- Diwali Idols & Festive Statues Section -->
+<section class="w-full bg-gradient-to-b from-amber-50/60 via-white to-amber-50/30 py-12 md:py-16 relative overflow-hidden" id="diwali-idols-{{ section.id }}">
+  <!-- Festive Glow Accents -->
+  <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-amber-300/20 blur-[100px] rounded-full pointer-events-none"></div>
+  <div class="absolute -bottom-20 -right-20 w-[400px] h-[400px] bg-amber-400/15 blur-[120px] rounded-full pointer-events-none"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <!-- Header -->
+    <div class="text-center max-w-3xl mx-auto mb-10 md:mb-12">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100/80 border border-amber-300/60 text-amber-900 text-xs font-bold uppercase tracking-wider mb-4 shadow-xs">
+        <span class="text-base animate-pulse">🪔</span>
+        <span>{{ section.settings.badge_text | default: 'Auspicious Festive Collection' }}</span>
+        <span class="text-base animate-pulse">✨</span>
+      </div>
+
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-gray-900 tracking-tight leading-tight mb-4">
+        {{ section.settings.heading | default: 'Sacred Diwali Idols & Divine Statues' }}
+      </h2>
+
+      <p class="text-base sm:text-lg text-gray-600 font-light leading-relaxed">
+        {{ section.settings.subheading | default: 'Pure Brass, Handcrafted Lakshmi & Ganesha Idols for Your Auspicious Diwali Pooja & Royal Gifting' }}
+      </p>
+
+      <div class="flex items-center justify-center gap-2 mt-4 text-amber-600/80">
+        <span class="h-[1px] w-12 bg-amber-300"></span>
+        <span class="text-xs font-serif italic">🪔 Shubh Diwali 🪔</span>
+        <span class="h-[1px] w-12 bg-amber-300"></span>
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    {% assign idol_col = collections[section.settings.collection] %}
+    {% if idol_col == blank or idol_col.products_count == 0 %}
+      {% assign idol_col = collections['diwali-idol'] %}
+    {% endif %}
+    {% if idol_col == blank or idol_col.products_count == 0 %}
+      {% assign idol_col = collections['diwali-idols'] %}
+    {% endif %}
+    {% if idol_col == blank or idol_col.products_count == 0 %}
+      {% assign idol_col = collections['diwaliidol'] %}
+    {% endif %}
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mb-10">
+      {% if idol_col != blank and idol_col.products_count > 0 %}
+        {% for product in idol_col.products limit: section.settings.products_to_show %}
+          <div class="anim-scale stagger-{{ forloop.index }}">
+            {% render 'product-card', product_card_product: product %}
+          </div>
+        {% endfor %}
+      {% else %}
+        <!-- Demo Showcase Cards if collection is being uploaded/empty in dev -->
+        {% assign demo_titles = "Pure Brass Lakshmi Ganesha Idol Set,Handcrafted Terracotta Diya & Ganesha Idol,Royal Gold Plated Brass Idol,Eco-Friendly Clay Ganesha Statuette" | split: "," %}
+        {% assign demo_prices = "₹1,499,₹899,₹2,299,₹699" | split: "," %}
+        {% for title in demo_titles %}
+          <div class="bg-white rounded-2xl p-4 border border-amber-200/70 shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col justify-between relative overflow-hidden">
+            <div class="aspect-square bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl mb-4 flex flex-col items-center justify-center relative overflow-hidden">
+              <span class="text-6xl group-hover:scale-110 transition-transform duration-500">🪔</span>
+              <span class="absolute top-3 left-3 bg-amber-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Diwali Idol</span>
+            </div>
+            <div>
+              <h3 class="text-sm sm:text-base font-serif font-semibold text-gray-900 mb-1 group-hover:text-amber-700 transition-colors line-clamp-2">{{ title }}</h3>
+              <p class="text-xs text-gray-500 mb-2">Ideal for Lakshmi Pooja & Gifting</p>
+              <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+                <span class="text-base font-bold text-amber-900">{{ demo_prices[forloop.index0] }}</span>
+                <a href="/collections/diwali-idol" class="text-xs font-bold text-amber-800 hover:text-amber-900 underline decoration-amber-300">View Idol →</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    <!-- CTA Button -->
+    <div class="text-center mt-8">
+      <a href="{% if idol_col != blank and idol_col.url %}{{ idol_col.url }}{% else %}/collections/diwali-idol{% endif %}" 
+         class="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-gradient-to-r from-amber-700 via-amber-600 to-yellow-600 text-white font-bold text-sm tracking-wide shadow-lg hover:shadow-amber-500/30 hover:scale-105 transition-all duration-300 group">
+        <span>Explore Full Diwali Idol Collection</span>
+        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Diwali Idols Showcase",
+  "settings": [
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge Text",
+      "default": "Auspicious Festive Collection"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Sacred Diwali Idols & Divine Statues"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Pure Brass, Handcrafted Lakshmi & Ganesha Idols for Your Auspicious Diwali Pooja & Royal Gifting"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Diwali Idol Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 4,
+      "max": 12,
+      "step": 4,
+      "default": 8,
+      "label": "Products to show"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Diwali Idols Showcase"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,34 @@
+{%- comment -%}
+  Accepts:
+  - image: {Image} image object or placeholder string
+  - title: {String} title of the card
+  - subtitle: {String} optional subtitle
+  - link: {String} url for the card
+  
+  Usage:
+  {% render 'magic-card', image: product.featured_image, title: 'Product', link: '#' %}
+{%- endcomment -%}
+
+<a href="{{ link | default: '#' }}" class="block w-full h-full">
+  <div class="magic-border p-[1px] h-full group">
+    <div class="relative bg-white rounded-2xl h-full flex flex-col items-center justify-center overflow-hidden">
+      <!-- Glow Effect on Hover -->
+      <div class="absolute inset-0 bg-gradient-to-tr from-secondary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      
+      {% if image != blank and image.src != blank %}
+        <img src="{{ image | img_url: '400x400', crop: 'center' }}" alt="{{ title }}" class="w-full h-48 object-cover rounded-t-2xl transition-transform duration-700 group-hover:scale-105" loading="lazy">
+      {% else %}
+        <div class="w-full h-48 bg-gray-100 flex items-center justify-center rounded-t-2xl">
+          <span class="text-gray-400">Image Placeholder</span>
+        </div>
+      {% endif %}
+      
+      <div class="p-6 text-center z-10 w-full bg-white">
+        <h3 class="text-lg font-semibold text-gray-900 group-hover:text-secondary transition-colors">{{ title }}</h3>
+        {% if subtitle != blank %}
+          <p class="text-sm text-gray-500 mt-1">{{ subtitle }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</a>

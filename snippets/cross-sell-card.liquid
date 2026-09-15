@@ -1,0 +1,41 @@
+{% unless p.id == current_prod_id %}
+  {% assign p_title_lower = p.title | downcase %}
+  {% assign p_type_lower  = p.type | downcase %}
+  {% assign p_tags_lower  = p.tags | join: ',' | downcase %}
+
+  {% assign p_cat = 'Gifts' %}
+  {% if p_title_lower contains 'cake' or p_type_lower contains 'cake' or p_tags_lower contains 'cake' %}
+    {% assign p_cat = 'Cakes' %}
+  {% elsif p_title_lower contains 'gourmet' or p_tags_lower contains 'gourmet' or p_type_lower contains 'gourmet' or p_title_lower contains 'dry fruit' or p_tags_lower contains 'dry fruit' or p_title_lower contains 'hamper' or p_tags_lower contains 'hamper' %}
+    {% assign p_cat = 'Gourmet' %}
+  {% elsif p_title_lower contains 'chocolate' or p_title_lower contains 'choco' or p_title_lower contains 'truffle' or p_type_lower contains 'chocolate' or p_tags_lower contains 'chocolate' %}
+    {% assign p_cat = 'Chocolates' %}
+  {% elsif p_title_lower contains 'plant' or p_type_lower contains 'plant' or p_tags_lower contains 'plant' %}
+    {% assign p_cat = 'Plants' %}
+  {% elsif p_title_lower contains 'flower' or p_title_lower contains 'bouquet' or p_type_lower contains 'flower' %}
+    {% assign p_cat = 'Flowers' %}
+  {% elsif p_tags_lower contains 'fragrance' or p_type_lower contains 'fragrance' %}
+    {% assign p_cat = 'Fragrance' %}
+  {% endif %}
+
+  {% for tag in p.tags %}
+    {% if tag contains 'cross-sell:' %}
+      {% assign p_cat = tag | remove: 'cross-sell:' %}
+    {% endif %}
+  {% endfor %}
+
+  {% assign variant = p.selected_or_first_available_variant %}
+  {% if variant and p.featured_media %}
+    <div class="cs-card" data-category="{{ p_cat }}" data-tags="{{ p.tags | join: ',' | escape }}" data-product-url="{{ p.url }}" data-title="{{ p.title | escape }}" data-img="{{ p.featured_media | img_url: '400x400', crop: 'center' }}" data-variant-id="{{ variant.id }}" data-price="{{ variant.price }}">
+      <div class="cs-check"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></div>
+      <div class="w-full h-28 bg-gray-50 overflow-hidden relative">
+        <img src="{{ p.featured_media | img_url: '400x400', crop: 'center' }}" alt="{{ p.title | escape }}" class="w-full h-full object-cover" loading="lazy">
+      </div>
+      <div class="p-2.5">
+        <p class="text-[11px] font-bold text-gray-800 line-clamp-2 leading-tight mb-1">{{ p.title }}</p>
+        <p class="text-[11px] font-semibold text-primary cs-price" data-base-price="{{ variant.price }}">{{ variant.price | money }}</p>
+        <button class="cs-add-btn" type="button">+ Add</button>
+      </div>
+    </div>
+  {% endif %}
+{% endunless %}

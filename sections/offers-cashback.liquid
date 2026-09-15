@@ -1,0 +1,40 @@
+<!-- Discount & Coupon Voucher Row -->
+<section class="max-w-7xl mx-auto px-4 py-10 anim-up">
+  <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">Exclusive Offers</h2>
+  <div class="flex overflow-x-auto hide-scrollbar gap-4 pb-4 drag-scroll" style="cursor:grab;">
+
+    {%- assign offer_titles = '₹100 OFF,20% OFF,Free Delivery,Flat 15% OFF' | split: ',' -%}
+    {%- assign offer_codes = 'FIRST100,BLOOM20,FREEDEL,FEST15' | split: ',' -%}
+    {%- assign offer_descs = 'First-time users on any order amount,On orders above ₹1499,On all prepaid orders,Sitewide this festive season' | split: ',' -%}
+
+    {% for i in (0..3) %}
+      <div class="min-w-[260px] md:min-w-[280px] flex-shrink-0 anim-scale stagger-{{ forloop.index }}">
+        <div class="relative bg-gradient-to-br from-champagne via-amber-50 to-yellow-50 rounded-2xl p-6 border border-amber-200/50 overflow-hidden group hover:shadow-lg hover:shadow-amber-100/50 transition-all duration-300 hover:scale-[1.03]">
+          <!-- Gold shimmer line -->
+          <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
+          <!-- Dashed cut circle -->
+          <div class="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-white border-2 border-dashed border-amber-300"></div>
+          <div class="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-white border-2 border-dashed border-amber-300"></div>
+          
+          <div class="text-center relative z-10">
+            <span class="text-3xl font-extrabold text-amber-800 block mb-1">{{ offer_titles[i] }}</span>
+            <p class="text-sm text-amber-700 mb-3">{{ offer_descs[i] }}</p>
+            <div class="inline-flex items-center gap-2 bg-white/70 backdrop-blur-sm border border-dashed border-amber-400 rounded-lg px-4 py-2">
+              <span class="text-xs font-bold text-amber-900 tracking-widest">{{ offer_codes[i] }}</span>
+              <button class="text-xs font-bold text-secondary hover:text-primary transition-colors">COPY</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Discount Coupons",
+  "settings": [],
+  "presets": [{ "name": "Discount Coupons" }]
+}
+{% endschema %}

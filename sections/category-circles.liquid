@@ -1,0 +1,455 @@
+<!-- Luxury Categories Navigation -->
+<section class="w-full bg-white py-3 border-b border-gray-100 shadow-sm relative z-40">
+  <div class="max-w-7xl mx-auto px-2 md:px-4">
+    <div class="border border-[#e5d5c0] rounded-sm flex items-center justify-between overflow-x-auto md:overflow-visible hide-scrollbar snap-x snap-mandatory py-3 bg-white relative z-40">
+      
+      <!-- 0. Dynamic Festival Dropdown (Before Flowers) -->
+      {% assign today_num = 'now' | date: '%Y%m%d' | plus: 0 %}
+      {% assign current_month = 'now' | date: '%m' %}
+      {% capture raw_festivals_list %}{% render 'festivals-list' %}{% endcapture %}
+      {% assign all_festivals_list = raw_festivals_list | strip | split: ',' %}
+
+      {% assign cat_fest_name = 'Independence Day' %}
+      {% assign cat_fest_icon = '🇮🇳' %}
+      {% assign cat_found_active = false %}
+
+      {% for entry in all_festivals_list %}
+        {% assign f_parts = entry | split: ':' %}
+        {% assign f_date  = f_parts[0] %}
+        {% assign f_short = f_parts[2] %}
+        {% assign f_icon  = f_parts[3] %}
+        {% assign f_num   = f_date | remove: '-' | plus: 0 %}
+
+        {% if f_num >= today_num and cat_found_active == false %}
+          {% assign cat_fest_name = f_short %}
+          {% assign cat_fest_icon = f_icon %}
+          {% assign cat_found_active = true %}
+        {% endif %}
+      {% endfor %}
+
+      {% if cat_found_active == false %}
+        {% assign cat_first_entry = all_festivals_list.first | split: ':' %}
+        {% assign cat_fest_name = cat_first_entry[2] %}
+        {% assign cat_fest_icon = cat_first_entry[3] %}
+      {% endif %}
+
+      <div class="category-circles-festival-wrap flex-1 min-w-[120px] flex flex-col items-center justify-center group relative px-2 snap-center cursor-pointer" onclick="openCatFestMobileModal()">
+        <div class="flex flex-col items-center gap-1">
+          <div class="w-7 h-7 text-[#b58e58] flex items-center justify-center text-xl transition-transform duration-300 group-hover:-translate-y-1">
+            <span class="category-circles-festival-icon">{{ cat_fest_icon }}</span>
+          </div>
+          <span class="text-[12px] font-serif text-[#b58e58] font-semibold group-hover:text-primary transition-colors text-center whitespace-nowrap flex items-center gap-1">
+            <span class="category-circles-festival-name">{{ cat_fest_name }}</span>
+            <svg class="w-3 h-3 text-[#b58e58] group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+          </span>
+        </div>
+
+        <!-- Desktop Level 1 Dropdown: Current Month's Festivals -->
+        <div class="category-circles-festival-dropdown hidden md:block absolute left-0 top-full mt-2 w-64 bg-white border border-[#e5d5c0] shadow-2xl rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 py-2.5 px-2 text-left">
+          <div class="px-3 py-1.5 border-b border-gray-100 mb-1 flex items-center justify-between">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-amber-700">Festivals Calendar</span>
+            <span class="fest-calendar-month-badge text-[10px] text-amber-800 font-bold bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200/60">{{ 'now' | date: '%B' }}</span>
+          </div>
+
+          <ul class="space-y-0.5 text-xs text-gray-700">
+            {% for entry in all_festivals_list %}
+              {% assign f_parts = entry | split: ':' %}
+              {% assign f_date  = f_parts[0] %}
+              {% assign f_title = f_parts[1] %}
+              {% assign f_short = f_parts[2] %}
+              {% assign f_icon  = f_parts[3] %}
+              {% assign f_handle= f_parts[4] %}
+              {% assign f_num   = f_date | remove: '-' | plus: 0 %}
+
+              {% assign show_festival = false %}
+              {% if f_num >= today_num %}
+                {% assign show_festival = true %}
+              {% endif %}
+
+              {% if show_festival %}
+                <!-- Festival Item with Sub-dropdown Flyout -->
+                <li class="relative group/sub fest-nav-li"
+                    data-festival-region="{{ f_parts[5] | default: 'ALL' }}" 
+                    data-festival-date="{{ f_date }}" 
+                    data-festival-short="{{ f_short }}" 
+                    data-festival-icon="{{ f_icon }}">
+                  <a href="{% if f_handle == 'rakhi' or f_short == 'Rakhi' %}/collections/rakhihampers{% elsif f_handle == 'diwali' or f_short == 'Diwali' %}/collections/diwali-hampers{% else %}/collections/all{% endif %}" class="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-amber-50 hover:text-amber-800 transition-colors font-semibold">
+                    <span class="flex items-center gap-2">
+                      <span>{{ f_icon }}</span>
+                      <span>{{ f_short }}</span>
+                    </span>
+                    <div class="flex items-center gap-1.5">
+                      <span class="text-[10px] text-gray-500 font-bold bg-gray-100 px-1.5 py-0.5 rounded border border-gray-200/80">{{ f_date | date: '%b %d' }}</span>
+                      <svg class="w-3.5 h-3.5 text-gray-400 group-hover/sub:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>
+                    </div>
+                  </a>
+
+                  <!-- Level 2 Sub-Dropdown Flyout (Opens to the right) -->
+                  <div class="absolute left-full top-0 ml-1 w-60 bg-white border border-gray-100 shadow-2xl rounded-2xl opacity-0 invisible group-hover/sub:opacity-100 group-hover/sub:visible transition-all duration-200 z-50 py-2.5 px-2">
+                    <div class="px-3 py-1.5 border-b border-gray-100 mb-1 font-bold text-xs text-amber-800 flex items-center justify-between">
+                      <span class="flex items-center gap-1.5">
+                        <span>{{ f_icon }}</span>
+                        <span>{{ f_short }} Specials</span>
+                      </span>
+                      <span class="text-[10px] font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/50">{{ f_date | date: '%b %d' }}</span>
+                    </div>
+                    <ul class="space-y-0.5 text-xs text-gray-700 font-medium">
+                      {% if f_handle == 'diwali' or f_short == 'Diwali' %}
+                        <li>
+                          <a href="/collections/diwali-hampers" class="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-amber-50 hover:text-amber-800 transition-colors font-semibold">
+                            <span class="flex items-center gap-2"><span>🪔</span> <span>Diwali Hampers</span></span>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="/collections/diwali-idol" class="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-amber-50 hover:text-amber-800 transition-colors font-semibold">
+                            <span class="flex items-center gap-2"><span>✨</span> <span>Diwali Idol & Statues</span></span>
+                          </a>
+                        </li>
+                      {% elsif f_handle == 'rakhi' or f_short == 'Rakhi' %}
+                        <li>
+                          <a href="/collections/rakhihampers" class="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-amber-50 hover:text-amber-800 transition-colors font-semibold">
+                            <span class="flex items-center gap-2"><span>🪢</span> <span>Rakhi Hampers</span></span>
+                          </a>
+                        </li>
+                      {% else %}
+                        <li>
+                          <a href="/collections/all" class="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-amber-50 hover:text-amber-800 transition-colors font-semibold">
+                            <span class="flex items-center gap-2"><span>🎁</span> <span>Gifts for {{ f_short }}</span></span>
+                          </a>
+                        </li>
+                      {% endif %}
+                      <li>
+                        <a href="/collections/combos" class="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-amber-50 hover:text-amber-800 transition-colors font-semibold">
+                          <span class="flex items-center gap-2"><span>🎈</span> <span>Combos for {{ f_short }}</span></span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="/collections/flowers" class="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-amber-50 hover:text-amber-800 transition-colors font-semibold">
+                          <span class="flex items-center gap-2"><span>🌸</span> <span>Flowers for {{ f_short }}</span></span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="/collections/cakes" class="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-amber-50 hover:text-amber-800 transition-colors font-semibold">
+                          <span class="flex items-center gap-2"><span>🎂</span> <span>Cakes for {{ f_short }}</span></span>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      <div class="w-[1px] h-9 bg-[#e5d5c0] flex-shrink-0"></div>
+
+      <!-- 1. Flowers Dropdown -->
+      <div class="flex-1 min-w-[100px] flex flex-col items-center gap-2.5 group relative px-2 snap-center cursor-pointer">
+        <a href="/collections/flowers" class="flex flex-col items-center gap-2.5 w-full" onclick="openFlowersMobileModal(event)">
+          <div class="w-7 h-7 text-[#b58e58] transition-transform duration-300 group-hover:-translate-y-1">
+            <svg fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.5"/><path stroke-linecap="round" d="M12 4v2m0 12v2M4 12h2m12 0h2m-2.636-6.364l-1.414 1.414M7.05 16.95l-1.414 1.414M16.95 16.95l1.414 1.414M7.05 7.05L5.636 5.636"/></svg>
+          </div>
+          <span class="text-[12px] font-serif text-gray-700 group-hover:text-[#b58e58] transition-colors text-center whitespace-nowrap flex items-center justify-center gap-1">
+            Flowers
+            <svg class="w-3 h-3 text-[#b58e58] group-hover:rotate-180 transition-transform md:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+          </span>
+        </a>
+
+        <!-- Desktop Dropdown -->
+        <div class="hidden md:block absolute left-1/2 -translate-x-1/2 top-full mt-2 w-56 bg-white border border-[#e5d5c0] shadow-2xl rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] py-2.5 px-2 text-left">
+          <div class="px-3 py-1.5 border-b border-gray-100 mb-1">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-[#b58e58]">Flower Collections</span>
+          </div>
+          <ul class="space-y-0.5 text-xs text-gray-700">
+            {%- assign flower_cats = 'Roses,Lilies,Orchids,Carnations,Sunflowers,Daisies,Hydrangea,Mixed Flowers' | split: ',' -%}
+            {% for cat in flower_cats %}
+              <li>
+                <a href="/collections/{{ cat | handleize }}" class="block px-4 py-2 rounded-xl hover:bg-[#fdf8f0] hover:text-[#8c6b42] transition-colors font-semibold">
+                  {{ cat }}
+                </a>
+              </li>
+            {% endfor %}
+            <li class="border-t border-gray-100 mt-1.5 pt-1.5">
+              <a href="/collections/flowers" class="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-amber-50 to-pink-50 text-[#8c6b42] hover:from-amber-100 hover:to-pink-100 transition-colors font-bold text-center">
+                <span>View All Flowers</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m9 5 7 7-7 7"/></svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="w-[1px] h-9 bg-[#e5d5c0] flex-shrink-0"></div>
+
+      <!-- 2. Cakes -->
+      <a href="/collections/cakes" class="flex-1 min-w-[100px] flex flex-col items-center gap-2.5 group relative px-2 snap-center">
+        <div class="w-7 h-7 text-[#b58e58] transition-transform duration-300 group-hover:-translate-y-1">
+          <svg fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v3m-4-3v3m8-3v3M4 11h16v3H4v-3zm2 3v6h12v-6M4 11c0-1.1.9-2 2-2h12a2 2 0 012 2"/></svg>
+        </div>
+        <span class="text-[12px] font-serif text-gray-700 group-hover:text-[#b58e58] transition-colors text-center whitespace-nowrap">Cakes</span>
+      </a>
+
+      <div class="w-[1px] h-9 bg-[#e5d5c0] flex-shrink-0"></div>
+
+      <!-- 3. Plants -->
+      <a href="/collections/plants" class="flex-1 min-w-[100px] flex flex-col items-center gap-2.5 group relative px-2 snap-center">
+        <div class="w-7 h-7 text-[#b58e58] transition-transform duration-300 group-hover:-translate-y-1">
+          <svg fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 01-9-9c0-4.97 4.03-9 9-9s9 4.03 9 9a9 9 0 01-9 9z"/><path stroke-linecap="round" d="M12 3v18M12 12c3-3 6-3 6-3M12 15c-3-3-6-3-6-3"/></svg>
+        </div>
+        <span class="text-[12px] font-serif text-gray-700 group-hover:text-[#b58e58] transition-colors text-center whitespace-nowrap">Plants</span>
+      </a>
+
+      <div class="w-[1px] h-9 bg-[#e5d5c0] flex-shrink-0"></div>
+
+      <!-- 5. Combos -->
+      <a href="/collections/combos" class="flex-1 min-w-[100px] flex flex-col items-center gap-2.5 group relative px-2 snap-center">
+        <div class="w-7 h-7 text-[#b58e58] transition-transform duration-300 group-hover:-translate-y-1">
+          <svg fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm13 0v6m-3-3h6"/></svg>
+        </div>
+        <span class="text-[12px] font-serif text-gray-700 group-hover:text-[#b58e58] transition-colors text-center whitespace-nowrap">Combos</span>
+      </a>
+
+      <div class="w-[1px] h-9 bg-[#e5d5c0] flex-shrink-0"></div>
+
+      <!-- 6. Chocolates -->
+      <a href="/collections/chocolates" class="flex-1 min-w-[100px] flex flex-col items-center gap-2.5 group relative px-2 snap-center">
+        <div class="w-7 h-7 text-[#b58e58] transition-transform duration-300 group-hover:-translate-y-1">
+          <svg fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+        </div>
+        <span class="text-[12px] font-serif text-gray-700 group-hover:text-[#b58e58] transition-colors text-center whitespace-nowrap">Chocolates</span>
+      </a>
+
+      <div class="w-[1px] h-9 bg-[#e5d5c0] flex-shrink-0"></div>
+
+      <!-- 7. Hampers -->
+      <a href="/collections/hampers" class="flex-1 min-w-[100px] flex flex-col items-center gap-2.5 group relative px-2 snap-center">
+        <div class="w-7 h-7 text-[#b58e58] transition-transform duration-300 group-hover:-translate-y-1">
+          <svg fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.25v8.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 109.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1114.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/></svg>
+        </div>
+        <span class="text-[12px] font-serif text-gray-700 group-hover:text-[#b58e58] transition-colors text-center whitespace-nowrap">Hampers</span>
+      </a>
+
+      <div class="w-[1px] h-9 bg-[#e5d5c0] flex-shrink-0"></div>
+
+      <!-- 7.5. Diwali Idol -->
+      <a href="/collections/diwali-idol" class="flex-1 min-w-[100px] flex flex-col items-center gap-2.5 group relative px-2 snap-center">
+        <div class="w-7 h-7 text-[#b58e58] flex items-center justify-center text-lg transition-transform duration-300 group-hover:-translate-y-1">
+          <span>✨</span>
+        </div>
+        <span class="text-[12px] font-serif text-gray-700 group-hover:text-[#b58e58] transition-colors text-center whitespace-nowrap">Diwali Idol</span>
+      </a>
+
+      <div class="w-[1px] h-9 bg-[#e5d5c0] flex-shrink-0"></div>
+
+      <!-- 8. Same Day -->
+      <a href="/collections/same-day" class="flex-1 min-w-[100px] flex flex-col items-center gap-2.5 group relative px-2 snap-center">
+        <div class="w-7 h-7 text-[#b58e58] transition-transform duration-300 group-hover:-translate-y-1">
+          <svg fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <span class="text-[12px] font-serif text-gray-700 group-hover:text-[#b58e58] transition-colors text-center whitespace-nowrap">Same Day</span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- Mobile Festival Bottom Sheet Modal -->
+<div id="cat-fest-mobile-modal-overlay" class="fixed inset-0 bg-black/60 z-[1000] hidden items-end sm:items-center justify-center backdrop-blur-xs opacity-0 transition-opacity duration-300">
+  <div id="cat-fest-mobile-modal-content" class="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl p-5 max-w-md w-full max-h-[85vh] overflow-y-auto transform translate-y-full sm:translate-y-0 sm:scale-95 transition-transform duration-300 relative text-gray-800">
+    
+    <!-- Close Button & Title -->
+    <div class="flex items-center justify-between pb-3 border-b border-gray-100 mb-3 sticky top-0 bg-white z-10">
+      <div class="flex items-center gap-2">
+        <span class="text-xl">✨</span>
+        <div>
+          <h3 class="text-sm font-serif font-bold text-amber-900 leading-tight">Festivals Calendar</h3>
+          <p class="text-[10px] text-gray-500">Upcoming celebrations & gift collections</p>
+        </div>
+      </div>
+      <button type="button" onclick="closeCatFestMobileModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Festival Accordion List -->
+    <div class="space-y-2">
+      {% for entry in all_festivals_list %}
+        {% assign f_parts = entry | split: ':' %}
+        {% assign f_date  = f_parts[0] %}
+        {% assign f_title = f_parts[1] %}
+        {% assign f_short = f_parts[2] %}
+        {% assign f_icon  = f_parts[3] %}
+        {% assign f_handle= f_parts[4] %}
+        {% assign f_num   = f_date | remove: '-' | plus: 0 %}
+
+        {% if f_num >= today_num %}
+          <div class="border border-amber-200/70 rounded-2xl overflow-hidden bg-amber-50/40">
+            <button type="button" onclick="toggleCatFestSubAccordion('cat-fest-mob-sub-{{ forloop.index }}')" class="w-full flex items-center justify-between p-3 text-left font-bold text-xs text-gray-800 hover:bg-amber-100/50 transition-colors">
+              <span class="flex items-center gap-2">
+                <span class="text-base">{{ f_icon }}</span>
+                <span>{{ f_short }}</span>
+              </span>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] text-amber-800 font-bold bg-white px-2 py-0.5 rounded-full border border-amber-200/80">{{ f_date | date: '%b %d' }}</span>
+                <svg class="w-4 h-4 text-gray-400 transform transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+            </button>
+
+            <!-- Accordion Sub-items -->
+            <div id="cat-fest-mob-sub-{{ forloop.index }}" class="{% if f_short == cat_fest_name %}{% else %}hidden{% endif %} px-3 pb-3 pt-1 space-y-1 bg-white border-t border-amber-100/60">
+              {% if f_handle == 'diwali' or f_short == 'Diwali' %}
+                <a href="/collections/diwali-hampers" class="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-amber-50 text-xs font-semibold text-gray-700" onclick="closeCatFestMobileModal()">
+                  <span>🪔</span> <span>Diwali Hampers</span>
+                </a>
+                <a href="/collections/diwali-idol" class="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-amber-50 text-xs font-semibold text-gray-700" onclick="closeCatFestMobileModal()">
+                  <span>✨</span> <span>Diwali Idol & Statues</span>
+                </a>
+              {% elsif f_handle == 'rakhi' or f_short == 'Rakhi' %}
+                <a href="/collections/rakhihampers" class="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-amber-50 text-xs font-semibold text-gray-700" onclick="closeCatFestMobileModal()">
+                  <span>🪢</span> <span>Rakhi Hampers</span>
+                </a>
+              {% else %}
+                <a href="/collections/all" class="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-amber-50 text-xs font-semibold text-gray-700" onclick="closeCatFestMobileModal()">
+                  <span>🎁</span> <span>Gifts for {{ f_short }}</span>
+                </a>
+              {% endif %}
+              <a href="/collections/combos" class="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-amber-50 text-xs font-semibold text-gray-700" onclick="closeCatFestMobileModal()">
+                <span>🎈</span> <span>Combos for {{ f_short }}</span>
+              </a>
+              <a href="/collections/flowers" class="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-amber-50 text-xs font-semibold text-gray-700" onclick="closeCatFestMobileModal()">
+                <span>🌸</span> <span>Flowers for {{ f_short }}</span>
+              </a>
+              <a href="/collections/cakes" class="flex items-center gap-2 py-2 px-3 rounded-xl hover:bg-amber-50 text-xs font-semibold text-gray-700" onclick="closeCatFestMobileModal()">
+                <span>🎂</span> <span>Cakes for {{ f_short }}</span>
+              </a>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+
+<!-- Mobile Flowers Bottom Sheet Modal -->
+<div id="flowers-mobile-modal-overlay" class="fixed inset-0 bg-black/60 z-[1000] hidden items-end sm:items-center justify-center backdrop-blur-xs opacity-0 transition-opacity duration-300">
+  <div id="flowers-mobile-modal-content" class="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl p-5 max-w-md w-full max-h-[85vh] overflow-y-auto transform translate-y-full sm:translate-y-0 sm:scale-95 transition-transform duration-300 relative text-gray-800">
+    
+    <!-- Close Button & Title -->
+    <div class="flex items-center justify-between pb-3 border-b border-gray-100 mb-3 sticky top-0 bg-white z-10">
+      <div class="flex items-center gap-2">
+        <span class="text-xl">🌸</span>
+        <div>
+          <h3 class="text-sm font-serif font-bold text-[#b58e58] leading-tight">Flower Collections</h3>
+          <p class="text-[10px] text-gray-500">Explore our beautiful blooms</p>
+        </div>
+      </div>
+      <button type="button" onclick="closeFlowersMobileModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Flowers List -->
+    <div class="space-y-1.5">
+      {%- assign flower_cats = 'Roses,Lilies,Orchids,Carnations,Sunflowers,Daisies,Hydrangea,Mixed Flowers' | split: ',' -%}
+      {% for cat in flower_cats %}
+        <a href="/collections/{{ cat | handleize }}" class="flex items-center justify-between p-3 rounded-xl hover:bg-[#fdf8f0] text-sm font-semibold text-gray-700 border border-gray-50/50 bg-gray-50/30" onclick="closeFlowersMobileModal()">
+          <span>{{ cat }}</span>
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m9 5 7 7-7 7"/></svg>
+        </a>
+      {% endfor %}
+      
+      <div class="pt-2 mt-2 border-t border-gray-100">
+        <a href="/collections/flowers" class="flex items-center justify-center gap-2 p-3 rounded-xl bg-gradient-to-r from-amber-50 to-pink-50 text-[#8c6b42] font-bold" onclick="closeFlowersMobileModal()">
+          <span>View All Flowers</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m9 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.openFlowersMobileModal = function(e) {
+    if (window.innerWidth < 768) {
+      if (e) e.preventDefault();
+      const overlay = document.getElementById('flowers-mobile-modal-overlay');
+      const content = document.getElementById('flowers-mobile-modal-content');
+      if (!overlay || !content) return;
+      overlay.classList.remove('hidden');
+      overlay.classList.add('flex');
+      setTimeout(() => {
+        overlay.classList.remove('opacity-0');
+        content.classList.remove('translate-y-full', 'scale-95');
+      }, 20);
+    }
+  };
+
+  window.closeFlowersMobileModal = function() {
+    const overlay = document.getElementById('flowers-mobile-modal-overlay');
+    const content = document.getElementById('flowers-mobile-modal-content');
+    if (!overlay || !content) return;
+    overlay.classList.add('opacity-0');
+    content.classList.add('translate-y-full');
+    setTimeout(() => {
+      overlay.classList.add('hidden');
+      overlay.classList.remove('flex');
+    }, 300);
+  };
+
+  window.openCatFestMobileModal = function() {
+    const overlay = document.getElementById('cat-fest-mobile-modal-overlay');
+    const content = document.getElementById('cat-fest-mobile-modal-content');
+    if (!overlay || !content) return;
+    overlay.classList.remove('hidden');
+    overlay.classList.add('flex');
+    setTimeout(() => {
+      overlay.classList.remove('opacity-0');
+      content.classList.remove('translate-y-full', 'scale-95');
+    }, 20);
+  };
+
+  window.closeCatFestMobileModal = function() {
+    const overlay = document.getElementById('cat-fest-mobile-modal-overlay');
+    const content = document.getElementById('cat-fest-mobile-modal-content');
+    if (!overlay || !content) return;
+    overlay.classList.add('opacity-0');
+    content.classList.add('translate-y-full');
+    setTimeout(() => {
+      overlay.classList.add('hidden');
+      overlay.classList.remove('flex');
+    }, 300);
+  };
+
+  window.toggleCatFestSubAccordion = function(id) {
+    const target = document.getElementById(id);
+    if (target) {
+      target.classList.toggle('hidden');
+    }
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const overlay = document.getElementById('cat-fest-mobile-modal-overlay');
+    if (overlay) {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) closeCatFestMobileModal();
+      });
+    }
+
+    const flowerOverlay = document.getElementById('flowers-mobile-modal-overlay');
+    if (flowerOverlay) {
+      flowerOverlay.addEventListener('click', function(e) {
+        if (e.target === flowerOverlay) closeFlowersMobileModal();
+      });
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Luxury Categories",
+  "settings": [],
+  "presets": [{ "name": "Luxury Categories" }]
+}
+{% endschema %}

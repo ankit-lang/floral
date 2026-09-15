@@ -1,0 +1,239 @@
+<section class="max-w-7xl mx-auto px-4 py-12 md:py-16">
+  <!-- Header -->
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+    <div>
+      <h1 class="text-3xl md:text-4xl font-serif font-bold text-gray-900">My Account</h1>
+      <p class="text-sm text-gray-500 mt-1">Welcome back, {{ customer.first_name | default: 'Guest' }}!</p>
+    </div>
+    
+    <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+      <!-- Home Button -->
+      <a href="/" class="flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary text-primary hover:text-white text-xs sm:text-sm font-bold rounded-xl transition-all shadow-2xs hover:shadow-md">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Home</span>
+      </a>
+
+      <!-- Cart Button -->
+      <a href="{{ routes.cart_url }}" class="flex items-center gap-2 px-4 py-2 bg-secondary/10 hover:bg-secondary text-secondary hover:text-white text-xs sm:text-sm font-bold rounded-xl transition-all shadow-2xs hover:shadow-md">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span>Cart ({{ cart.item_count }})</span>
+      </a>
+
+      <!-- Logout Button -->
+      <a href="{{ routes.account_logout_url }}" class="text-xs sm:text-sm font-semibold text-gray-500 hover:text-red-600 transition-colors flex items-center gap-1.5 border border-gray-200 px-3.5 py-2 rounded-xl hover:border-red-200">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        <span>Log out</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="flex gap-1 border-b border-gray-200 mb-8" id="account-tabs-nav">
+    <button type="button" class="account-tab-btn active px-5 py-3 text-sm font-bold border-b-2 border-primary text-primary transition-colors" data-tab="orders">
+      Orders
+    </button>
+    <button type="button" class="account-tab-btn px-5 py-3 text-sm font-bold border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors" data-tab="addresses">
+      Addresses
+    </button>
+    <button type="button" class="account-tab-btn px-5 py-3 text-sm font-bold border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors" data-tab="profile">
+      Profile
+    </button>
+  </div>
+
+  <!-- ========== TAB: ORDERS ========== -->
+  <div id="tab-orders" class="account-tab-content">
+    {% if customer.orders.size > 0 %}
+      <div class="space-y-4">
+        {% for order in customer.orders %}
+          <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex flex-wrap items-start justify-between gap-4 mb-4">
+              <div class="flex items-start gap-4">
+                <!-- Order product thumbnail -->
+                {% for line_item in order.line_items limit: 1 %}
+                  {% if line_item.image %}
+                    <img src="{{ line_item.image | img_url: '80x80', crop: 'center' }}" alt="{{ line_item.title }}" class="w-16 h-16 rounded-xl object-cover border border-gray-100">
+                  {% else %}
+                    <div class="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center text-gray-300">
+                      <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+                <div>
+                  <a href="{{ order.customer_url }}" class="text-lg font-bold text-primary hover:text-primary-600 transition-colors">{{ order.name }}</a>
+                  <p class="text-xs text-gray-500 mt-1">{{ order.created_at | date: '%B %d, %Y' }}</p>
+                  <p class="text-xs text-gray-500">{{ order.line_items.size }} item{{ order.line_items.size | pluralize: '', 's' }}</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="text-lg font-bold text-gray-900">{{ order.total_price | money }}</p>
+                <span class="inline-block mt-1 px-2 py-0.5 text-[10px] font-bold uppercase rounded-full
+                  {% if order.fulfillment_status == 'fulfilled' %}bg-green-100 text-green-700
+                  {% elsif order.fulfillment_status == 'partial' %}bg-amber-100 text-amber-700
+                  {% else %}bg-gray-100 text-gray-600{% endif %}">
+                  {{ order.fulfillment_status_label | default: 'Unfulfilled' }}
+                </span>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 pt-3 border-t border-gray-100">
+              <a href="{{ order.customer_url }}" class="text-xs font-semibold text-primary hover:underline">View Details</a>
+              <span class="text-gray-300">|</span>
+              <a href="/pages/track-order" class="text-xs font-semibold text-secondary hover:underline flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                Track Order
+              </a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="bg-gray-50 rounded-2xl p-12 border border-gray-100 text-center">
+        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+        </div>
+        <h3 class="text-lg font-bold text-gray-900 mb-2">No orders yet</h3>
+        <p class="text-sm text-gray-500 mb-6">You haven't placed any orders with us yet. Start exploring our beautiful collections!</p>
+        <a href="/collections/all" class="inline-block bg-primary text-white text-sm font-semibold px-8 py-3 rounded-full hover:bg-primary-600 transition-colors shadow-md shadow-primary/20">Start Shopping</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- ========== TAB: ADDRESSES ========== -->
+  <div id="tab-addresses" class="account-tab-content hidden">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {% for address in customer.addresses %}
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm relative {% if address == customer.default_address %}ring-2 ring-primary/30{% endif %}">
+          {% if address == customer.default_address %}
+            <span class="absolute top-4 right-4 px-2 py-0.5 bg-primary text-white text-[10px] font-bold rounded-full uppercase">Default</span>
+          {% endif %}
+          <h3 class="font-bold text-gray-900 mb-2">{{ address.first_name }} {{ address.last_name }}</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            {{ address.street }}<br>
+            {{ address.city }}, {{ address.province_code }} {{ address.zip }}<br>
+            {{ address.country }}
+          </p>
+          {% if address.phone != blank %}
+            <p class="text-sm text-gray-500 mt-2">📞 {{ address.phone }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <!-- Add New Address Card -->
+      <a href="{{ routes.account_addresses_url }}" class="bg-gray-50 rounded-2xl p-6 border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-3 hover:border-primary hover:bg-primary/5 transition-all group min-h-[160px]">
+        <div class="w-12 h-12 rounded-full bg-gray-200 group-hover:bg-primary/20 flex items-center justify-center transition-colors">
+          <svg class="w-6 h-6 text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        </div>
+        <span class="text-sm font-bold text-gray-500 group-hover:text-primary transition-colors">Add New Address</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ========== TAB: PROFILE ========== -->
+  <div id="tab-profile" class="account-tab-content hidden">
+    <div class="max-w-lg">
+      <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
+        <div class="flex items-center gap-4 mb-8 pb-6 border-b border-gray-100">
+          <div class="w-16 h-16 bg-gradient-to-br from-primary to-primary-600 text-white text-2xl font-bold rounded-full flex items-center justify-center shadow-lg shadow-primary/20">
+            {{ customer.first_name | slice: 0 | upcase | default: 'U' }}
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-gray-900">{{ customer.name }}</h2>
+            <p class="text-sm text-gray-500">{{ customer.email }}</p>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Full Name</label>
+            <p class="text-gray-900 font-medium mt-1">{{ customer.name | default: 'Not set' }}</p>
+          </div>
+          <div>
+            <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Email</label>
+            <p class="text-gray-900 font-medium mt-1">{{ customer.email }}</p>
+          </div>
+          <div>
+            <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Orders</label>
+            <p class="text-gray-900 font-medium mt-1">{{ customer.orders_count }}</p>
+          </div>
+          <div>
+            <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Spent</label>
+            <p class="text-gray-900 font-medium mt-1">{{ customer.total_spent | money }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Tab Switching Script -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const tabBtns = document.querySelectorAll('.account-tab-btn');
+    const tabContents = document.querySelectorAll('.account-tab-content');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const target = this.dataset.tab;
+
+        // Update button styles
+        tabBtns.forEach(b => {
+          b.classList.remove('active', 'border-primary', 'text-primary');
+          b.classList.add('border-transparent', 'text-gray-500');
+        });
+        this.classList.add('active', 'border-primary', 'text-primary');
+        this.classList.remove('border-transparent', 'text-gray-500');
+
+        // Show/hide tab content
+        tabContents.forEach(c => c.classList.add('hidden'));
+        document.getElementById('tab-' + target).classList.remove('hidden');
+      });
+    });
+  });
+</script>
+
+<script>
+  /* Smart Post-Login Redirect
+     If customer just logged in (came from login page),
+     redirect to cart (if items) or homepage. */
+  (function() {
+    var REDIRECT_KEY = 'floral_post_login_redirected';
+
+    // Only redirect once per login session
+    if (sessionStorage.getItem(REDIRECT_KEY)) return;
+
+    var ref = document.referrer || '';
+    var isFromLogin = (
+      ref.indexOf('/account/login') !== -1 ||
+      ref.indexOf('/login') !== -1 ||
+      ref.indexOf('account/new_session') !== -1 ||
+      // New customer accounts login page
+      ref.indexOf('accounts.shopify.com') !== -1 ||
+      ref.indexOf('/account/sessions') !== -1
+    );
+
+    if (!isFromLogin) return;
+
+    // Mark as redirected so we don't loop
+    sessionStorage.setItem(REDIRECT_KEY, '1');
+
+    // Check if cart has items — if yes, go to cart, else go home
+    fetch('/cart.js')
+      .then(function(r) { return r.json(); })
+      .then(function(cart) {
+        if (cart && cart.item_count > 0) {
+          window.location.replace('/cart');
+        } else {
+          window.location.replace('/');
+        }
+      })
+      .catch(function() {
+        window.location.replace('/');
+      });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Account Page",
+  "settings": []
+}
+{% endschema %}

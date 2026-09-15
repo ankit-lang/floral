@@ -1,0 +1,396 @@
+{% style %}
+  :root {
+    --color-cream: #fbfbf9;
+    --color-sage: #9caf88;
+    --color-terracotta: #e2725b;
+    --color-navy: #1a2421;
+  }
+  
+  .bg-cream { background-color: var(--color-cream); }
+  .bg-sage { background-color: var(--color-sage); }
+  .bg-terracotta { background-color: var(--color-terracotta); }
+  .bg-navy { background-color: var(--color-navy); }
+  
+  .text-cream { color: var(--color-cream); }
+  .text-sage { color: var(--color-sage); }
+  .text-terracotta { color: var(--color-terracotta); }
+  .text-navy { color: var(--color-navy); }
+  
+  .border-sage { border-color: var(--color-sage); }
+  
+  /* Abstract Watercolor Background */
+  .watercolor-bg {
+    background: radial-gradient(circle at 10% 20%, rgba(156, 175, 136, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(226, 114, 91, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(251, 251, 249, 1) 0%, var(--color-cream) 100%);
+  }
+
+  /* Glassmorphism */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 8px 32px 0 rgba(26, 36, 33, 0.05);
+  }
+
+  /* Animations */
+  .fade-up { opacity: 0; transform: translateY(40px); transition: all 1s ease-out; }
+  .fade-up.in-view { opacity: 1; transform: translateY(0); }
+  
+  .slide-in-left { opacity: 0; transform: translateX(-50px); transition: all 1s ease-out; }
+  .slide-in-left.in-view { opacity: 1; transform: translateX(0); }
+  
+  .slide-in-right { opacity: 0; transform: translateX(50px); transition: all 1s ease-out; }
+  .slide-in-right.in-view { opacity: 1; transform: translateX(0); }
+
+  /* Map pins */
+  .pulse-pin {
+    animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  }
+  @keyframes pulse-ring {
+    0% { transform: scale(0.5); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
+  }
+
+  /* Sticky TOC styling */
+  .toc-link.active {
+    color: var(--color-terracotta);
+    font-weight: 700;
+    border-left: 2px solid var(--color-terracotta);
+  }
+
+  /* Accordion override for mobile */
+  @media (max-width: 768px) {
+    .content-section {
+      border-bottom: 1px solid rgba(156, 175, 136, 0.3);
+      padding: 1rem 0;
+    }
+    .content-body {
+      display: none;
+      padding-top: 1rem;
+    }
+    .content-section.open .content-body {
+      display: block;
+    }
+    .content-section.open .toggle-icon {
+      transform: rotate(180deg);
+    }
+  }
+{% endstyle %}
+
+<div class="bg-cream font-sans text-navy min-h-screen">
+
+  <!-- 1. Hero Section -->
+  <section class="relative w-full h-[60vh] flex items-center justify-center overflow-hidden watercolor-bg">
+    <!-- Abstract drifting shapes -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute top-10 left-10 w-64 h-64 bg-sage/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse"></div>
+      <div class="absolute bottom-10 right-20 w-96 h-96 bg-terracotta/10 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse" style="animation-delay: 2s;"></div>
+    </div>
+    
+    <div class="relative z-10 text-center px-4 max-w-4xl fade-up in-view">
+      <h1 class="text-4xl md:text-6xl lg:text-7xl font-serif text-navy mb-6 tracking-tight">Your Privacy is <br><span class="italic text-terracotta">Our Priority</span></h1>
+      <p class="text-lg md:text-xl text-navy/70 font-light max-w-2xl mx-auto">At Floral India, we value your trust and are committed to protecting your privacy in every thoughtful delivery we make.</p>
+    </div>
+  </section>
+
+  <!-- 2. The Gist (Glassmorphism Cards) -->
+  <section class="max-w-7xl mx-auto px-4 -mt-20 relative z-20 mb-32">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="glass-card p-8 rounded-[2rem] fade-up hover:-translate-y-2 transition-transform duration-500">
+        <div class="w-12 h-12 bg-sage/20 text-sage rounded-full flex items-center justify-center mb-6">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+        </div>
+        <h3 class="text-xl font-serif text-navy mb-3 font-bold">Order Details</h3>
+        <p class="text-sm text-navy/70 leading-relaxed">We collect only what is necessary—like delivery addresses and messages—to ensure your gifts arrive perfectly on time.</p>
+      </div>
+      
+      <div class="glass-card p-8 rounded-[2rem] fade-up hover:-translate-y-2 transition-transform duration-500" style="transition-delay: 0.1s">
+        <div class="w-12 h-12 bg-terracotta/20 text-terracotta rounded-full flex items-center justify-center mb-6">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+        </div>
+        <h3 class="text-xl font-serif text-navy mb-3 font-bold">Secure Payments</h3>
+        <p class="text-sm text-navy/70 leading-relaxed">Your transactions are encrypted and processed by trusted gateways. We never store your full banking details.</p>
+      </div>
+      
+      <div class="glass-card p-8 rounded-[2rem] fade-up hover:-translate-y-2 transition-transform duration-500" style="transition-delay: 0.2s">
+        <div class="w-12 h-12 bg-navy/10 text-navy rounded-full flex items-center justify-center mb-6">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+        </div>
+        <h3 class="text-xl font-serif text-navy mb-3 font-bold">Tech Data</h3>
+        <p class="text-sm text-navy/70 leading-relaxed">We use essential cookies to improve your browsing experience and keep our website running smoothly and securely.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Main Content & Sticky TOC -->
+  <section class="max-w-7xl mx-auto px-4 pb-32">
+    <div class="flex flex-col md:flex-row gap-16">
+      
+      <!-- Sidebar TOC (Desktop Only) -->
+      <aside class="hidden md:block w-1/4 flex-shrink-0">
+        <div class="sticky top-10 p-6 glass-card rounded-[2rem]">
+          <h4 class="font-serif text-xl mb-6 text-navy font-bold">Contents</h4>
+          <nav class="space-y-4 text-sm flex flex-col" id="toc-nav">
+            <a href="#info-collect" class="toc-link text-navy/60 hover:text-terracotta transition-colors pl-3 border-l-2 border-transparent">Information We Collect</a>
+            <a href="#how-we-use" class="toc-link text-navy/60 hover:text-terracotta transition-colors pl-3 border-l-2 border-transparent">How We Use It</a>
+            <a href="#sharing" class="toc-link text-navy/60 hover:text-terracotta transition-colors pl-3 border-l-2 border-transparent">Information Sharing</a>
+            <a href="#global-orders" class="toc-link text-navy/60 hover:text-terracotta transition-colors pl-3 border-l-2 border-transparent">Global & Corporate Orders</a>
+            <a href="#cookies-security" class="toc-link text-navy/60 hover:text-terracotta transition-colors pl-3 border-l-2 border-transparent">Cookies & Security</a>
+            <a href="#your-rights" class="toc-link text-navy/60 hover:text-terracotta transition-colors pl-3 border-l-2 border-transparent">Your Privacy Rights</a>
+            <a href="#contact" class="toc-link text-navy/60 hover:text-terracotta transition-colors pl-3 border-l-2 border-transparent">Contact Us</a>
+          </nav>
+        </div>
+      </aside>
+      
+      <!-- Main Content (Accordions on Mobile) -->
+      <article class="w-full md:w-3/4 space-y-2 md:space-y-16">
+        
+        <div id="info-collect" class="content-section fade-up scroll-mt-20">
+          <h2 class="text-2xl md:text-4xl font-serif text-navy mb-4 flex justify-between items-center cursor-pointer md:cursor-auto" onclick="toggleAccordion(this)">
+            Information We Collect
+            <svg class="w-6 h-6 toggle-icon md:hidden transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg>
+          </h2>
+          <div class="content-body text-navy/70 leading-relaxed space-y-4">
+            <p>To provide you with a seamless gifting experience, we may collect the following information:</p>
+            <h4 class="font-bold text-navy mt-4">Personal Information</h4>
+            <ul class="list-disc pl-5 space-y-1">
+              <li>Full name, Email address, Mobile or telephone number</li>
+              <li>Billing and delivery addresses</li>
+              <li>Recipient's name, address and contact details</li>
+              <li>Personalized gift messages</li>
+              <li>Company details (for corporate orders)</li>
+              <li>Any information you voluntarily provide while contacting us</li>
+            </ul>
+            <h4 class="font-bold text-navy mt-4">Payment Information</h4>
+            <p>For secure online transactions, payments are processed through trusted third-party payment gateways. Floral India does not store your complete debit card, credit card, or banking information on its servers.</p>
+            <h4 class="font-bold text-navy mt-4">Technical Information</h4>
+            <p>When you visit our website, we may automatically collect your IP address, browser type, device information, operating system, website usage statistics, and cookies. This information helps us improve website performance, security, and user experience.</p>
+          </div>
+        </div>
+        
+        <div id="how-we-use" class="content-section fade-up scroll-mt-20">
+          <h2 class="text-2xl md:text-4xl font-serif text-navy mb-4 flex justify-between items-center cursor-pointer md:cursor-auto" onclick="toggleAccordion(this)">
+            How We Use Your Information
+            <svg class="w-6 h-6 toggle-icon md:hidden transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg>
+          </h2>
+          <div class="content-body text-navy/70 leading-relaxed space-y-4">
+            <ul class="list-disc pl-5 space-y-2">
+              <li>Process and deliver your flower and gift orders.</li>
+              <li>Coordinate deliveries with local and international florist partners.</li>
+              <li>Confirm, update or modify your orders and provide customer support.</li>
+              <li>Process refunds and resolve disputes.</li>
+              <li>Improve our products, services and website functionality.</li>
+              <li>Personalize your shopping experience.</li>
+              <li>Send order confirmations and delivery updates.</li>
+              <li>Inform you about new collections, festive offers, and discounts (only where permitted).</li>
+              <li>Prevent fraudulent transactions and maintain website security.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="sharing" class="content-section fade-up scroll-mt-20">
+          <h2 class="text-2xl md:text-4xl font-serif text-navy mb-4 flex justify-between items-center cursor-pointer md:cursor-auto" onclick="toggleAccordion(this)">
+            Information Sharing
+            <svg class="w-6 h-6 toggle-icon md:hidden transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg>
+          </h2>
+          <div class="content-body text-navy/70 leading-relaxed space-y-4">
+            <p>Floral India respects your privacy and does not sell, rent, or trade your personal information to third parties for marketing purposes.</p>
+            <p>However, we may share limited information with trusted service providers only when necessary to fulfill your order, including local florists, logistics companies, payment gateways, and technology providers. These partners receive only the information necessary to perform their services and are expected to protect your information appropriately.</p>
+          </div>
+        </div>
+        
+        <div id="global-orders" class="content-section fade-up scroll-mt-20">
+          <h2 class="text-2xl md:text-4xl font-serif text-navy mb-4 flex justify-between items-center cursor-pointer md:cursor-auto" onclick="toggleAccordion(this)">
+            Global & Corporate Orders
+            <svg class="w-6 h-6 toggle-icon md:hidden transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg>
+          </h2>
+          <div class="content-body text-navy/70 leading-relaxed space-y-4">
+            <p>Since Floral India offers worldwide delivery, your information may be shared with trusted international fulfillment partners located outside your country solely for processing and delivering your order. We work only with reputable partners who maintain appropriate standards.</p>
+            <p>For corporate clients, concierge services, and premium customer programs where orders are placed on behalf of another individual, we collect and use only the information required to complete the requested delivery while maintaining strict confidentiality.</p>
+          </div>
+        </div>
+
+        <div id="cookies-security" class="content-section fade-up scroll-mt-20">
+          <h2 class="text-2xl md:text-4xl font-serif text-navy mb-4 flex justify-between items-center cursor-pointer md:cursor-auto" onclick="toggleAccordion(this)">
+            Cookies & Data Security
+            <svg class="w-6 h-6 toggle-icon md:hidden transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg>
+          </h2>
+          <div class="content-body text-navy/70 leading-relaxed space-y-4">
+            <p>Our website uses cookies and similar technologies to improve website functionality, remember preferences, and analyze traffic. You may disable cookies through your browser settings, though some features may not function properly.</p>
+            <p>Protecting your information is extremely important to us. Floral India uses appropriate technical and organizational security measures to safeguard personal information against unauthorized access, misuse, alteration, or disclosure. We retain your information only for as long as necessary to complete orders, provide support, and meet legal obligations.</p>
+          </div>
+        </div>
+
+        <div id="your-rights" class="content-section fade-up scroll-mt-20">
+          <h2 class="text-2xl md:text-4xl font-serif text-navy mb-4 flex justify-between items-center cursor-pointer md:cursor-auto" onclick="toggleAccordion(this)">
+            Your Privacy Rights
+            <svg class="w-6 h-6 toggle-icon md:hidden transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg>
+          </h2>
+          <div class="content-body text-navy/70 leading-relaxed space-y-4">
+            <p>Depending on applicable laws, you may have the right to access, correct, or request deletion of your information, or withdraw consent for marketing communications. If you subscribe to our newsletters, you may unsubscribe at any time.</p>
+            <p>Please note that transactional communications (order confirmations, delivery updates) cannot be opted out of while your order is active.</p>
+          </div>
+        </div>
+        
+        <div id="contact" class="content-section fade-up scroll-mt-20">
+          <h2 class="text-2xl md:text-4xl font-serif text-navy mb-4 flex justify-between items-center cursor-pointer md:cursor-auto" onclick="toggleAccordion(this)">
+            Contact Us
+            <svg class="w-6 h-6 toggle-icon md:hidden transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg>
+          </h2>
+          <div class="content-body text-navy/70 leading-relaxed space-y-4">
+            <p>Floral India reserves the right to update or modify this Privacy Policy at any time. The revised policy will become effective immediately upon being published on this website.</p>
+            <p>If you have any questions, requests, or concerns regarding this Privacy Policy or the way your personal information is handled, please contact us at:</p>
+            <p class="font-serif font-bold text-navy mt-4">Floral India</p>
+            <p>Email: <a href="mailto:info@floralindia.com" class="text-terracotta hover:underline">info@floralindia.com</a></p>
+            <p>Website: <a href="/" class="text-terracotta hover:underline">www.floralindia.com</a></p>
+          </div>
+        </div>
+
+      </article>
+    </div>
+  </section>
+
+  <!-- 4. Trust Banner (Split Screen Slide-in) -->
+  <section class="py-24 bg-white overflow-hidden border-y border-sage/20">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+      <div class="slide-in-left glass-card bg-sage/10 p-12 rounded-[3rem] text-center shadow-none border-none">
+        <div class="w-24 h-24 mx-auto bg-sage text-white rounded-full flex items-center justify-center mb-8 shadow-xl shadow-sage/30 animate-bounce" style="animation-duration: 3s;">
+          <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+        </div>
+        <h3 class="text-3xl font-serif text-navy mb-4">Ironclad Security</h3>
+        <p class="text-navy/70">Your data is guarded with industry-standard encryption, ensuring complete peace of mind when celebrating life's special moments.</p>
+      </div>
+      
+      <div class="slide-in-right">
+        <h3 class="text-3xl font-serif text-navy mb-8">Your Rights Checklist</h3>
+        <ul class="space-y-6">
+          <li class="flex items-center gap-4">
+            <div class="w-8 h-8 rounded-full bg-terracotta/10 text-terracotta flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <span class="text-navy font-medium">Right to Access Your Information</span>
+          </li>
+          <li class="flex items-center gap-4">
+            <div class="w-8 h-8 rounded-full bg-terracotta/10 text-terracotta flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <span class="text-navy font-medium">Right to Correct Inaccuracies</span>
+          </li>
+          <li class="flex items-center gap-4">
+            <div class="w-8 h-8 rounded-full bg-terracotta/10 text-terracotta flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <span class="text-navy font-medium">Right to Request Deletion</span>
+          </li>
+          <li class="flex items-center gap-4">
+            <div class="w-8 h-8 rounded-full bg-terracotta/10 text-terracotta flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <span class="text-navy font-medium">Control Over Marketing Communcations</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Global Reach Stylized Map -->
+  <section class="py-32 bg-navy text-cream relative overflow-hidden text-center px-4">
+    <div class="max-w-4xl mx-auto relative z-10 fade-up">
+      <h2 class="text-3xl md:text-5xl font-serif text-cream mb-6">Global Privacy Standards</h2>
+      <p class="text-cream/70 text-lg leading-relaxed mb-16">Because we deliver smiles across 100+ countries, we ensure our international partners uphold the same strict confidentiality and data protection standards.</p>
+    </div>
+    
+    <div class="w-full max-w-5xl mx-auto relative fade-up">
+      <!-- Abstract Map Lines using Sage and Terracotta -->
+      <svg viewBox="0 0 1000 500" class="w-full h-auto opacity-30 stroke-sage fill-none" stroke-width="1.5">
+        <path d="M0,250 Q250,150 500,250 T1000,250" />
+        <path d="M0,250 Q250,350 500,250 T1000,250" />
+        <path d="M500,0 Q600,250 500,500" />
+        <path d="M500,0 Q400,250 500,500" />
+      </svg>
+      <!-- Pulsing Pins -->
+      <div class="absolute top-[40%] left-[65%] text-terracotta">
+        <div class="w-4 h-4 bg-terracotta rounded-full absolute -ml-2 -mt-2 pulse-pin"></div>
+        <div class="w-2 h-2 bg-terracotta rounded-full absolute -ml-1 -mt-1 shadow-[0_0_10px_#e2725b]"></div>
+      </div>
+      <div class="absolute top-[30%] left-[48%] text-sage">
+        <div class="w-4 h-4 bg-sage rounded-full absolute -ml-2 -mt-2 pulse-pin" style="animation-delay: 1s;"></div>
+        <div class="w-2 h-2 bg-sage rounded-full absolute -ml-1 -mt-1 shadow-[0_0_10px_#9caf88]"></div>
+      </div>
+      <div class="absolute top-[35%] left-[28%] text-cream">
+        <div class="w-4 h-4 bg-cream rounded-full absolute -ml-2 -mt-2 pulse-pin" style="animation-delay: 0.5s;"></div>
+        <div class="w-2 h-2 bg-cream rounded-full absolute -ml-1 -mt-1 shadow-[0_0_10px_#fbfbf9]"></div>
+      </div>
+    </div>
+    
+    <!-- Footer Gradient shift -->
+    <div class="absolute bottom-0 left-0 w-full h-64 bg-gradient-to-t from-navy to-transparent"></div>
+  </section>
+
+</div>
+
+<script>
+  // Mobile Accordion Toggle
+  function toggleAccordion(el) {
+    if(window.innerWidth > 768) return; // Only run on mobile
+    const parent = el.parentElement;
+    parent.classList.toggle('open');
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    // Intersection Observer for Animations
+    const observerOptions = {
+      root: null,
+      rootMargin: "0px",
+      threshold: 0.15
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-up, .slide-in-left, .slide-in-right').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Intersection Observer for Sticky TOC Highlighting
+    const sections = document.querySelectorAll('.content-section');
+    const navLinks = document.querySelectorAll('.toc-link');
+
+    const tocObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Remove active from all
+          navLinks.forEach(link => link.classList.remove('active'));
+          // Add active to current
+          const id = entry.target.getAttribute('id');
+          const activeLink = document.querySelector(`.toc-link[href="#${id}"]`);
+          if(activeLink) activeLink.classList.add('active');
+        }
+      });
+    }, { rootMargin: "-20% 0px -70% 0px" });
+
+    sections.forEach(section => {
+      tocObserver.observe(section);
+    });
+    
+    // Default open first section on mobile
+    if(window.innerWidth <= 768 && sections.length > 0) {
+      sections[0].classList.add('open');
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Luxury Privacy Policy",
+  "settings": []
+}
+{% endschema %}

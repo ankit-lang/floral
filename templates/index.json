@@ -1,0 +1,201 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "luxury_banner": {
+      "type": "luxury-hero-banner",
+      "blocks": {
+        "slide_tizXtH": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/give-floral-banner-only-pattern-beautiful-user-friendy.png",
+            "image_url": "slide1_desktop.jpg",
+            "image_mobile_url": "slide1_mobile.jpg",
+            "heading": "Grace in Bloom",
+            "subheading": "Discover our collection",
+            "btn_text": "Shop now",
+            "btn_link": "/collections/all",
+            "btn_alignment": "right"
+          }
+        },
+        "slide_ztjX9A": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/floral-website-banner-only-beautiful-pattern.png",
+            "image_url": "slide2_desktop.jpg",
+            "image_mobile_url": "slide2_mobile.jpg",
+            "heading": "Nature's Finest",
+            "subheading": "Discover our collection",
+            "btn_text": "Shop now",
+            "btn_link": "/collections/all",
+            "btn_alignment": "left"
+          }
+        },
+        "slide_ganesh": {
+          "type": "slide",
+          "settings": {
+            "image_url": "ganeshbannerdesk.png",
+            "image_mobile_url": "ganeshbannermob.png",
+            "heading": "Ganesh Chaturthi Special",
+            "subheading": "",
+            "btn_text": "Shop now",
+            "btn_link": "/collections/all",
+            "btn_alignment": "right"
+          }
+        }
+      },
+      "block_order": [
+        "slide_tizXtH",
+        "slide_ztjX9A",
+        "slide_ganesh"
+      ],
+      "settings": {
+        "image": "shopify://shop_images/banner.jpg",
+        "heading": "",
+        "subheading": "",
+        "btn_text": "Shop now",
+        "btn_link": "shopify://collections"
+      }
+    },
+
+    "collage": {
+      "type": "banner-collage",
+      "settings": {}
+    },
+    "hashtags": {
+      "type": "trending-hashtags",
+      "settings": {}
+    },
+    "grid_trending": {
+      "type": "filtered-product-grid",
+      "settings": {
+        "title": "Trending Bestsellers",
+        "subtitle": "Most loved picks this season",
+        "collection": "",
+        "limit": 8,
+        "link": "",
+        "bg_color": "#ffffff",
+        "grid_index": 1
+      }
+    },
+    "grid_flowers": {
+      "type": "filtered-product-grid",
+      "settings": {
+        "title": "Flowers & Bouquets",
+        "subtitle": "Handcrafted arrangements for every occasion",
+        "collection": "",
+        "limit": 8,
+        "link": "",
+        "bg_color": "#fdf8f0",
+        "grid_index": 2
+      }
+    },
+    "grid_cakes": {
+      "type": "filtered-product-grid",
+      "settings": {
+        "title": "Gourmet Cakes",
+        "subtitle": "Freshly baked and delivered with love",
+        "collection": "",
+        "limit": 8,
+        "link": "",
+        "bg_color": "#fffbf5",
+        "grid_index": 3
+      }
+    },
+    "grid_combos": {
+      "type": "filtered-product-grid",
+      "settings": {
+        "title": "Birthday Specials & Combos",
+        "subtitle": "Complete celebration packages",
+        "collection": "",
+        "limit": 8,
+        "link": "",
+        "bg_color": "#ffffff",
+        "grid_index": 4
+      }
+    },
+    "coupons": {
+      "type": "offers-cashback",
+      "settings": {}
+    },
+    "grid_plants": {
+      "type": "filtered-product-grid",
+      "settings": {
+        "title": "Indoor Plants",
+        "subtitle": "Green companions for your home & office",
+        "collection": "",
+        "limit": 8,
+        "link": "",
+        "bg_color": "#f0fdf4",
+        "grid_index": 5
+      }
+    },
+    "grid_hampers": {
+      "type": "filtered-product-grid",
+      "settings": {
+        "title": "Curated Gift Hampers",
+        "subtitle": "Premium boxes of happiness",
+        "collection": "",
+        "limit": 4,
+        "link": "",
+        "bg_color": "#ffffff",
+        "grid_index": 5
+      }
+    },
+    "hamper_subcollections": {
+      "type": "hamper-subcollections",
+      "settings": {}
+    },
+    "diwali_idols": {
+      "type": "diwali-idols",
+      "settings": {
+        "badge_text": "Auspicious Festive Collection",
+        "heading": "Sacred Diwali Idols & Divine Statues",
+        "subheading": "Pure Brass, Handcrafted Lakshmi & Ganesha Idols for Your Auspicious Diwali Pooja & Royal Gifting",
+        "collection": "diwali-idol",
+        "products_to_show": 8
+      }
+    },
+    "reels": {
+      "type": "video-shorts-reel",
+      "settings": {}
+    },
+    "social": {
+      "type": "social-proof",
+      "settings": {}
+    },
+    "finder": {
+      "type": "gift-finder",
+      "settings": {}
+    },
+    "delivery": {
+      "type": "global-delivery-icons",
+      "settings": {}
+    }
+  },
+  "order": [
+    "luxury_banner",
+    "collage",
+    "hashtags",
+    "grid_trending",
+    "grid_flowers",
+    "delivery",
+    "grid_cakes",
+    "grid_combos",
+    "coupons",
+    "grid_plants",
+    "grid_hampers",
+    "hamper_subcollections",
+    "diwali_idols",
+    "reels",
+    "social",
+    "finder"
+  ]
+}

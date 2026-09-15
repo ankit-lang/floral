@@ -1,0 +1,201 @@
+<section class="min-h-screen bg-[#FDFBF7] text-gray-900 pb-24 relative overflow-hidden">
+  
+  <!-- Subtle Botanical Background Overlay -->
+  <div class="absolute inset-0 pointer-events-none opacity-[0.03]">
+    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+      <pattern id="floral-pattern" x="0" y="0" width="400" height="400" patternUnits="userSpaceOnUse">
+        <path d="M200 50 Q 250 100 200 200 Q 150 100 200 50 Z" fill="currentColor" />
+        <path d="M100 250 Q 150 200 200 250 Q 150 300 100 250 Z" fill="currentColor" />
+      </pattern>
+      <rect x="0" y="0" width="100%" height="100%" fill="url(#floral-pattern)"></rect>
+    </svg>
+  </div>
+
+  <!-- Hero Section -->
+  <div class="bg-gradient-to-b from-[#EAEFE9] to-[#FDFBF7] pt-24 pb-20 text-center px-4 relative z-10">
+    <span class="text-sm font-bold text-[#E07A5F] uppercase tracking-widest mb-4 block">Store Policies</span>
+    <h1 class="text-4xl md:text-5xl font-serif font-bold text-[#1D3557] mb-6 capitalize">{{ page.title | replace: '-', ' ' | default: 'Refund & Replacement Policy' }}</h1>
+    <p class="text-gray-600 max-w-2xl mx-auto text-lg mb-4">We are committed to delivering quality products and ensuring a seamless experience.</p>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="max-w-6xl mx-auto px-4 relative z-10">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+      
+      <!-- Card 1: Return Policy -->
+      <div class="bg-white rounded-3xl p-8 md:p-10 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+        <div class="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center text-red-500 mb-6 group-hover:scale-110 transition-transform">
+          <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+        </div>
+        <h2 class="text-2xl font-serif font-bold text-[#1D3557] mb-4">Return Policy</h2>
+        <p class="text-gray-600 mb-4 leading-relaxed">Due to the nature of our products, we generally do not accept returns for:</p>
+        <ul class="grid grid-cols-2 gap-2 mb-4">
+          <li class="flex items-center gap-2 text-sm text-gray-700"><span class="w-1.5 h-1.5 rounded-full bg-[#E07A5F]"></span> Fresh flowers</li>
+          <li class="flex items-center gap-2 text-sm text-gray-700"><span class="w-1.5 h-1.5 rounded-full bg-[#E07A5F]"></span> Cakes & Chocolates</li>
+          <li class="flex items-center gap-2 text-sm text-gray-700"><span class="w-1.5 h-1.5 rounded-full bg-[#E07A5F]"></span> Gourmet items</li>
+          <li class="flex items-center gap-2 text-sm text-gray-700"><span class="w-1.5 h-1.5 rounded-full bg-[#E07A5F]"></span> Plants</li>
+          <li class="flex items-center gap-2 text-sm text-gray-700"><span class="w-1.5 h-1.5 rounded-full bg-[#E07A5F]"></span> Fresh food products</li>
+          <li class="flex items-center gap-2 text-sm text-gray-700"><span class="w-1.5 h-1.5 rounded-full bg-[#E07A5F]"></span> Personalized gifts</li>
+        </ul>
+        <div class="bg-gray-50 p-4 rounded-xl text-sm text-gray-600 font-medium">
+          These products are perishable and prepared specifically for each order.
+        </div>
+      </div>
+
+      <!-- Card 2: Refund & Replacement -->
+      <div class="bg-white rounded-3xl p-8 md:p-10 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+        <div class="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 mb-6 group-hover:scale-110 transition-transform">
+          <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h2 class="text-2xl font-serif font-bold text-[#1D3557] mb-4">Refund & Replacement</h2>
+        <p class="text-gray-600 mb-4 leading-relaxed">If there is an issue with your order, please notify us within <strong class="text-[#1D3557]">2 hours of delivery</strong> by sharing your order number along with clear photographs of the product.</p>
+        <p class="text-gray-600 mb-4 leading-relaxed">Depending on the circumstances, Floral India may, at its sole discretion:</p>
+        <ul class="space-y-3">
+          <li class="flex items-center gap-3 text-gray-700"><div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 shrink-0"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg></div> Arrange a replacement product.</li>
+          <li class="flex items-center gap-3 text-gray-700"><div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 shrink-0"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg></div> Issue a partial or full refund.</li>
+          <li class="flex items-center gap-3 text-gray-700"><div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 shrink-0"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg></div> Offer store credit for a future purchase.</li>
+        </ul>
+      </div>
+
+      <!-- Card 3: Approved Refunds -->
+      <div class="bg-white rounded-3xl p-8 md:p-10 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group md:col-span-2 lg:col-span-1">
+        <div class="w-14 h-14 bg-[#E07A5F]/10 rounded-2xl flex items-center justify-center text-[#E07A5F] mb-6 group-hover:scale-110 transition-transform">
+          <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.5 9a2.5 2.5 0 00-5 0v1m5 0v1m-5-1a2.5 2.5 0 115 0v1H7.5m7 0a2.5 2.5 0 015 0v1H7.5m7 0a2.5 2.5 0 015 0v1m-5-1H7.5m0 0a2.5 2.5 0 01-5 0v-1m5 1v-1"/></svg>
+        </div>
+        <h2 class="text-2xl font-serif font-bold text-[#1D3557] mb-4">Refunds May Be Considered If:</h2>
+        <ul class="space-y-4">
+          <li class="flex items-start gap-3">
+            <span class="w-6 h-6 rounded-full bg-[#E07A5F]/10 flex items-center justify-center text-[#E07A5F] shrink-0 mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-[#E07A5F]"></span></span>
+            <span class="text-gray-600">The wrong product was delivered.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="w-6 h-6 rounded-full bg-[#E07A5F]/10 flex items-center justify-center text-[#E07A5F] shrink-0 mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-[#E07A5F]"></span></span>
+            <span class="text-gray-600">The product was significantly damaged during transit.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="w-6 h-6 rounded-full bg-[#E07A5F]/10 flex items-center justify-center text-[#E07A5F] shrink-0 mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-[#E07A5F]"></span></span>
+            <span class="text-gray-600">The delivered product differs substantially from the confirmed order.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="w-6 h-6 rounded-full bg-[#E07A5F]/10 flex items-center justify-center text-[#E07A5F] shrink-0 mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-[#E07A5F]"></span></span>
+            <span class="text-gray-600">The order could not be delivered due to reasons solely attributable to Floral India.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Card 4: Denied Refunds -->
+      <div class="bg-white rounded-3xl p-8 md:p-10 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group md:col-span-2 lg:col-span-1 border-t-4 border-t-red-400">
+        <h2 class="text-2xl font-serif font-bold text-[#1D3557] mb-4">Refunds Will Not Be Issued If:</h2>
+        <p class="text-gray-500 mb-6 italic text-sm">Refund requests cannot be accepted in the following situations:</p>
+        <ul class="space-y-3">
+          <li class="flex items-start gap-3 text-gray-600 text-sm"><svg class="w-4 h-4 text-red-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg> Incorrect or incomplete delivery address provided.</li>
+          <li class="flex items-start gap-3 text-gray-600 text-sm"><svg class="w-4 h-4 text-red-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg> Recipient unavailable or delivery refused.</li>
+          <li class="flex items-start gap-3 text-gray-600 text-sm"><svg class="w-4 h-4 text-red-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg> Repeated unsuccessful delivery attempts.</li>
+          <li class="flex items-start gap-3 text-gray-600 text-sm"><svg class="w-4 h-4 text-red-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg> Minor variations due to seasonal availability.</li>
+          <li class="flex items-start gap-3 text-gray-600 text-sm"><svg class="w-4 h-4 text-red-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg> Product substitutions made with items of equal or higher value.</li>
+          <li class="flex items-start gap-3 text-gray-600 text-sm"><svg class="w-4 h-4 text-red-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg> Delay caused by events beyond our reasonable control (weather, customs, etc.).</li>
+          <li class="flex items-start gap-3 text-gray-600 text-sm"><svg class="w-4 h-4 text-red-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg> Customer change of mind after the order has been prepared.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Special Policies Accordion -->
+  <div class="max-w-4xl mx-auto px-4 mt-16 relative z-10 space-y-4">
+    <h3 class="text-center text-3xl font-serif font-bold text-[#1D3557] mb-8">Additional Policies</h3>
+    
+    <!-- Substitution -->
+    <details class="group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all [&_summary::-webkit-details-marker]:hidden">
+      <summary class="flex items-center justify-between px-6 py-5 cursor-pointer font-serif font-bold text-lg text-[#1D3557]">
+        <span>Flower & Product Substitutions</span>
+        <span class="transition group-open:rotate-180">
+          <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+        </span>
+      </summary>
+      <div class="px-6 pb-6 text-gray-600 leading-relaxed border-t border-gray-50 pt-4">
+        <p class="mb-2">Flowers are seasonal and naturally vary in colour, size, and availability.</p>
+        <p>To maintain delivery commitments, Floral India reserves the right to substitute flowers, containers, wrapping materials, decorative accessories, cakes, or gift items with products of equal or greater value while preserving the overall style, quality, and colour theme whenever possible.</p>
+      </div>
+    </details>
+
+    <!-- Perishable -->
+    <details class="group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all [&_summary::-webkit-details-marker]:hidden">
+      <summary class="flex items-center justify-between px-6 py-5 cursor-pointer font-serif font-bold text-lg text-[#1D3557]">
+        <span>Delivery of Perishable Products</span>
+        <span class="transition group-open:rotate-180">
+          <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+        </span>
+      </summary>
+      <div class="px-6 pb-6 text-gray-600 leading-relaxed border-t border-gray-50 pt-4">
+        <p class="mb-3">Flowers, cakes, and other perishable items are delivered fresh and are generally attempted only once.</p>
+        <p class="mb-2 font-medium">If delivery cannot be completed because:</p>
+        <ul class="list-disc pl-5 mb-3 space-y-1">
+          <li>the recipient is unavailable,</li>
+          <li>the address is incorrect,</li>
+          <li>the premises are closed,</li>
+          <li>delivery is refused, or</li>
+          <li>no authorized person is available to receive the order,</li>
+        </ul>
+        <p>the order will be considered fulfilled and will not be eligible for cancellation, return, or refund.</p>
+      </div>
+    </details>
+
+    <!-- International -->
+    <details class="group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all [&_summary::-webkit-details-marker]:hidden">
+      <summary class="flex items-center justify-between px-6 py-5 cursor-pointer font-serif font-bold text-lg text-[#1D3557]">
+        <span>International Orders</span>
+        <span class="transition group-open:rotate-180">
+          <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+        </span>
+      </summary>
+      <div class="px-6 pb-6 text-gray-600 leading-relaxed border-t border-gray-50 pt-4">
+        <p class="mb-2">For international flower and gift delivery, Floral India works with trusted local florist partners worldwide.</p>
+        <p class="mb-2">Product availability, flower varieties, packaging, and presentation may vary depending on the destination country and local market conditions.</p>
+        <p>Refunds cannot be issued for reasonable regional substitutions that maintain the overall value and quality of the order.</p>
+      </div>
+    </details>
+
+    <!-- Processing -->
+    <details class="group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all [&_summary::-webkit-details-marker]:hidden">
+      <summary class="flex items-center justify-between px-6 py-5 cursor-pointer font-serif font-bold text-lg text-[#1D3557]">
+        <span>Refund Processing</span>
+        <span class="transition group-open:rotate-180">
+          <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+        </span>
+      </summary>
+      <div class="px-6 pb-6 text-gray-600 leading-relaxed border-t border-gray-50 pt-4">
+        <p class="mb-2">Where a refund is approved, it will be processed using the original payment method.</p>
+        <p>Refund timelines depend on your payment provider or financial institution and may typically take 5–10 business days after approval.</p>
+      </div>
+    </details>
+
+  </div>
+
+  <!-- Support Footer -->
+  <div class="max-w-4xl mx-auto mt-20 px-4 relative z-10">
+    <div class="bg-[#1D3557] rounded-3xl p-10 md:p-12 text-center text-white overflow-hidden shadow-2xl relative">
+      <div class="absolute inset-0 bg-[#E07A5F] opacity-10 mix-blend-overlay"></div>
+      <svg class="w-12 h-12 mx-auto text-white/80 mb-4 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      <h3 class="text-3xl font-serif font-bold mb-4 relative z-10">Contact Customer Support</h3>
+      <p class="text-gray-300 mb-8 max-w-lg mx-auto relative z-10">If you have any questions regarding cancellations, returns, refunds, or replacements, please contact our team. Please include your order number, delivery date, and supporting photographs.</p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4 relative z-10">
+        <a href="mailto:info@floralindia.com" class="inline-flex items-center justify-center gap-2 bg-white text-[#1D3557] font-bold px-8 py-4 rounded-full hover:bg-gray-100 transition-colors shadow-lg">
+          Email Support
+        </a>
+        <a href="/pages/contact" class="inline-flex items-center justify-center gap-2 bg-transparent border-2 border-white/30 text-white font-bold px-8 py-4 rounded-full hover:bg-white/10 transition-colors">
+          Contact Form
+        </a>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+{% schema %}
+{
+  "name": "Refund Policy",
+  "settings": [],
+  "presets": [{ "name": "Refund Policy" }]
+}
+{% endschema %}

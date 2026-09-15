@@ -1,0 +1,153 @@
+<style>
+  .hero-banner {
+    position: relative;
+    width: 100%;
+    height: 80vh;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #1a1a1a;
+    overflow: hidden;
+  }
+  .hero-banner__image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    animation: zoomInOut 20s infinite alternate;
+  }
+  .hero-banner__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%);
+    z-index: 2;
+  }
+  .hero-banner__content {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    color: #ffffff;
+    max-width: 800px;
+    padding: 0 20px;
+  }
+  .hero-banner__title {
+    font-size: 4.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-shadow: 2px 4px 10px rgba(0,0,0,0.5);
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 1s ease forwards 0.5s;
+  }
+  .hero-banner__subtitle {
+    font-size: 1.5rem;
+    font-weight: 300;
+    margin-bottom: 40px;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 1s ease forwards 0.8s;
+  }
+  .hero-banner__btn {
+    display: inline-block;
+    padding: 15px 40px;
+    background-color: transparent;
+    color: #fff;
+    border: 2px solid #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-decoration: none;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+    opacity: 0;
+    animation: fadeInUp 1s ease forwards 1.1s;
+  }
+  .hero-banner__btn:hover {
+    background-color: #fff;
+    color: #1a1a1a;
+  }
+
+  @keyframes zoomInOut {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.1); }
+  }
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @media (max-width: 768px) {
+    .hero-banner__title { font-size: 3rem; }
+    .hero-banner__subtitle { font-size: 1.2rem; }
+  }
+</style>
+
+<div class="hero-banner">
+  {% if section.settings.image != blank %}
+    <img src="{{ section.settings.image | img_url: 'master' }}" alt="{{ section.settings.title | escape }}" class="hero-banner__image" loading="lazy">
+  {% else %}
+    <img src="{{ 'hero-banner.png' | asset_url }}" alt="Premium Floral Arrangement" class="hero-banner__image" loading="lazy">
+  {% endif %}
+  
+  <div class="hero-banner__overlay"></div>
+  
+  <div class="hero-banner__content">
+    <h2 class="hero-banner__title">{{ section.settings.title | escape }}</h2>
+    <p class="hero-banner__subtitle">{{ section.settings.subtitle | escape }}</p>
+    {% if section.settings.button_link != blank and section.settings.button_text != blank %}
+      <a href="{{ section.settings.button_link }}" class="hero-banner__btn">{{ section.settings.button_text | escape }}</a>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Campaign Banner",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background Image"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Elegance in Every Petal"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subheading",
+      "default": "Curated floral experiences for life's most precious moments."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Shop Collection"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link",
+      "default": "/collections/all"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Campaign Banner"
+    }
+  ]
+}
+{% endschema %}

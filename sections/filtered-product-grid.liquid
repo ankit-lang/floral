@@ -1,0 +1,189 @@
+<!-- Product Showcase Grid with Carousel Slider & Floating Navigation Arrows -->
+{%- assign grid_index = section.settings.grid_index | default: 1 -%}
+{%- assign anim_class = 'anim-left' -%}
+{%- assign mod = grid_index | modulo: 2 -%}
+{%- if mod == 0 -%}{%- assign anim_class = 'anim-right' -%}{%- endif -%}
+
+{%- assign title_lower = section.settings.title | default: '' | downcase -%}
+{%- assign grid_limit = section.settings.limit | default: 20 -%}
+{%- assign target_collection = collections[section.settings.collection] -%}
+{%- if target_collection == blank or target_collection.products_count == 0 -%}
+  {%- if title_lower contains 'plant' or title_lower contains 'green' -%}
+    {%- if collections['plants'] != blank and collections['plants'].products_count > 0 -%}
+      {%- assign target_collection = collections['plants'] -%}
+    {%- elsif collections['indoor-plants'] != blank and collections['indoor-plants'].products_count > 0 -%}
+      {%- assign target_collection = collections['indoor-plants'] -%}
+    {%- endif -%}
+  {%- elsif title_lower contains 'flower' or title_lower contains 'bouquet' -%}
+    {%- if collections['flowers'] != blank and collections['flowers'].products_count > 0 -%}
+      {%- assign target_collection = collections['flowers'] -%}
+    {%- endif -%}
+  {%- elsif title_lower contains 'cake' or title_lower contains 'gourmet' -%}
+    {%- if collections['cakes'] != blank and collections['cakes'].products_count > 0 -%}
+      {%- assign target_collection = collections['cakes'] -%}
+    {%- endif -%}
+  {%- elsif title_lower contains 'combo' or title_lower contains 'birthday' -%}
+    {%- if collections['combos'] != blank and collections['combos'].products_count > 0 -%}
+      {%- assign target_collection = collections['combos'] -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}
+{%- assign is_plant_section = false -%}
+{%- if title_lower contains 'plant' or title_lower contains 'green' or section.settings.collection contains 'plant' -%}
+  {%- assign is_plant_section = true -%}
+{%- endif -%}
+
+<section class="filtered-grid-section py-10 {{ anim_class }} {% if is_plant_section %}plant-grid-section{% endif %}" data-is-plant-section="{{ is_plant_section }}" style="background: {{ section.settings.bg_color | default: '#ffffff' }};">
+  <div class="max-w-7xl mx-auto px-4">
+    <!-- Section Header -->
+    <div class="flex items-end justify-between mb-6">
+      <div>
+        <h2 class="text-2xl md:text-3xl font-serif font-bold text-gray-900">{{ section.settings.title | default: 'Our Collection' }}</h2>
+        {% if section.settings.subtitle != blank %}
+          <p class="text-gray-500 text-sm mt-1">{{ section.settings.subtitle }}</p>
+        {% endif %}
+      </div>
+
+      {% if section.settings.link != blank %}
+        <a href="{{ section.settings.link }}" class="text-sm font-semibold text-secondary hover:underline flex items-center gap-1 flex-shrink-0">
+          View All <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+        </a>
+      {% endif %}
+    </div>
+
+    <!-- Product Slider Container with Separated Left & Right Floating Arrows -->
+    <div class="relative group/slider">
+
+      <!-- Left Arrow Button (Far Left Side) -->
+      <button type="button" class="grid-prev-btn absolute -left-3 md:-left-5 top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white/95 text-gray-800 shadow-lg border border-gray-200/80 flex items-center justify-center hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 hover:scale-110 cursor-pointer" aria-label="Previous products">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+
+      <!-- Product Slider Track -->
+      <div class="product-slider tier-product-grid flex overflow-x-auto scroll-smooth hide-scrollbar gap-4 md:gap-6 py-2 px-1" data-limit="{{ grid_limit }}">
+        {%- if target_collection != blank and target_collection.products_count > 0 -%}
+          {%- for product in target_collection.products limit: 50 -%}
+            <div class="min-w-[240px] sm:min-w-[270px] md:min-w-[280px] w-[240px] sm:w-[270px] md:w-[280px] flex-shrink-0 anim-scale stagger-{{ forloop.index }}">
+              {% render 'product-card', product_card_product: product %}
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          {%- assign matched_count = 0 -%}
+
+          {%- paginate collections['all'].products by 250 -%}
+            {%- for product in collections['all'].products -%}
+              {%- assign p_title = product.title | downcase -%}
+              {%- assign p_type  = product.type | downcase -%}
+              {%- assign p_tags  = product.tags | join: ',' | downcase -%}
+
+              {%- assign is_match = false -%}
+              {%- if title_lower contains 'flower' or title_lower contains 'bouquet' -%}
+                {%- comment -%} Flowers & Bouquets ONLY {%- endcomment -%}
+                {%- unless p_title contains 'plant' or p_type contains 'plant' or p_tags contains 'plant' or p_title contains 'cake' or p_title contains 'balloon' or p_title contains 'hamper' -%}
+                  {%- if p_title contains 'flower' or p_title contains 'bouquet' or p_title contains 'rose' or p_title contains 'lili' or p_title contains 'lily' or p_title contains 'orchid' or p_title contains 'carnation' or p_title contains 'bloom' or p_type contains 'flower' or p_tags contains 'flower' -%}
+                    {%- assign is_match = true -%}
+                  {%- endif -%}
+                {%- endunless -%}
+
+              {%- elsif title_lower contains 'cake' or title_lower contains 'gourmet' -%}
+                {%- comment -%} Gourmet Cakes ONLY {%- endcomment -%}
+                {%- unless p_title contains 'plant' or p_type contains 'plant' or p_tags contains 'plant' or p_title contains 'flower' or p_title contains 'rose' or p_title contains 'balloon' -%}
+                  {%- if p_title contains 'cake' or p_title contains 'truffle' or p_title contains 'pastry' or p_type contains 'cake' or p_tags contains 'cake' -%}
+                    {%- assign is_match = true -%}
+                  {%- endif -%}
+                {%- endunless -%}
+
+              {%- elsif title_lower contains 'plant' or title_lower contains 'green' -%}
+                {%- comment -%} Indoor Plants (Broad matching for full grid) {%- endcomment -%}
+                {%- unless p_title contains 'balloon' -%}
+                  {%- if p_title contains 'plant' or p_title contains 'green' or p_title contains 'bamboo' or p_title contains 'bonsai' or p_title contains 'jade' or p_title contains 'pot' or p_title contains 'planter' or p_title contains 'succulent' or p_title contains 'money' or p_type contains 'plant' or p_tags contains 'plant' or p_tags contains 'plants' -%}
+                    {%- assign is_match = true -%}
+                  {%- endif -%}
+                {%- endunless -%}
+
+              {%- elsif title_lower contains 'combo' or title_lower contains 'birthday' -%}
+                {%- comment -%} Birthday Specials & Combos ONLY {%- endcomment -%}
+                {%- unless p_title contains 'balloon' -%}
+                  {%- if p_title contains 'combo' or p_title contains 'teddy' or p_title contains 'surprise' or p_title contains 'hamper' or p_tags contains 'combo' -%}
+                    {%- assign is_match = true -%}
+                  {%- endif -%}
+                {%- endunless -%}
+
+              {%- elsif title_lower contains 'hamper' -%}
+                {%- comment -%} Curated Hampers ONLY {%- endcomment -%}
+                {%- unless p_title contains 'balloon' -%}
+                  {%- if p_title contains 'hamper' or p_type contains 'hamper' or p_tags contains 'hamper' or p_tags contains 'diwali' or p_tags contains 'rakhi' -%}
+                    {%- assign is_match = true -%}
+                  {%- endif -%}
+                {%- endunless -%}
+
+              {%- elsif title_lower contains 'trending' or title_lower contains 'bestseller' or title_lower contains 'seller' or title_lower contains 'popular' -%}
+                {%- comment -%} Trending Bestsellers (Exclude balloons) {%- endcomment -%}
+                {%- unless p_title contains 'balloon' or p_tags contains 'balloon' -%}
+                  {%- assign is_match = true -%}
+                {%- endunless -%}
+
+              {%- else -%}
+                {%- comment -%} Default Fallback (Exclude balloons) {%- endcomment -%}
+                {%- unless p_title contains 'balloon' or p_tags contains 'balloon' -%}
+                  {%- assign is_match = true -%}
+                {%- endunless -%}
+              {%- endif -%}
+
+              {%- if is_match -%}
+                {%- assign matched_count = matched_count | plus: 1 -%}
+                <div class="min-w-[240px] sm:min-w-[270px] md:min-w-[280px] w-[240px] sm:w-[270px] md:w-[280px] flex-shrink-0 anim-scale stagger-{{ matched_count }}">
+                  {% render 'product-card', product_card_product: product %}
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endpaginate -%}
+        {%- endif -%}
+      </div>
+
+      <!-- Right Arrow Button (Far Right Side) -->
+      <button type="button" class="grid-next-btn absolute -right-3 md:-right-5 top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white/95 text-gray-800 shadow-lg border border-gray-200/80 flex items-center justify-center hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 hover:scale-110 cursor-pointer" aria-label="Next products">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  if (!window.__gridSliderArrowsBound) {
+    window.__gridSliderArrowsBound = true;
+    document.addEventListener('click', function(e) {
+      const prevBtn = e.target.closest('.grid-prev-btn');
+      const nextBtn = e.target.closest('.grid-next-btn');
+
+      if (prevBtn) {
+        const sec = prevBtn.closest('section');
+        const slider = sec ? sec.querySelector('.product-slider') : null;
+        if (slider) slider.scrollBy({ left: -320, behavior: 'smooth' });
+      }
+
+      if (nextBtn) {
+        const sec = nextBtn.closest('section');
+        const slider = sec ? sec.querySelector('.product-slider') : null;
+        if (slider) slider.scrollBy({ left: 320, behavior: 'smooth' });
+      }
+    });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Product Showcase Grid",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Title", "default": "Our Collection" },
+    { "type": "text", "id": "subtitle", "label": "Subtitle" },
+    { "type": "collection", "id": "collection", "label": "Select Collection" },
+    { "type": "range", "id": "limit", "min": 4, "max": 12, "step": 2, "default": 8, "label": "Products to show" },
+    { "type": "url", "id": "link", "label": "View All Link" },
+    { "type": "color", "id": "bg_color", "label": "Background Color", "default": "#ffffff" },
+    { "type": "range", "id": "grid_index", "min": 1, "max": 10, "step": 1, "default": 1, "label": "Grid Number (odd=left anim, even=right anim)" }
+  ],
+  "presets": [{ "name": "Product Showcase Grid" }]
+}
+{% endschema %}

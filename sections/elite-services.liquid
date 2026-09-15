@@ -1,0 +1,265 @@
+<!-- Elite Concierge Services -->
+<section class="max-w-7xl mx-auto px-4 py-8">
+
+  <!-- Premium Hero -->
+  <div class="relative rounded-3xl overflow-hidden h-[280px] md:h-[380px] mb-12" style="animation:headerIn 0.8s ease forwards;">
+    <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-amber-900"></div>
+    <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-6">
+      <span class="text-5xl mb-4">🎵</span>
+      <h1 class="text-4xl md:text-5xl font-serif font-bold mb-3">Elite Concierge</h1>
+      <p class="text-lg text-white/70 max-w-xl">Exclusive premium services to make your celebrations truly unforgettable. Live music, personal messages, and more.</p>
+    </div>
+  </div>
+
+  <!-- Service Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+    {%- assign service_names = 'Musician on Call,Guitarist on Call,Pianist on Call,Flute on Call,Video Message' | split: ',' -%}
+    {%- assign service_icons = '🎻,🎸,🎹,🪈,🎥' | split: ',' -%}
+    {%- assign service_descs = 'A professional musician at your doorstep to serenade your loved one with their favorite songs.,An acoustic guitarist to set the perfect romantic mood for any occasion.,A pianist to bring elegance and class to your celebration with live melodies.,A flautist to fill your space with soulful and calming flute melodies.,Send a personalized video message from a celebrity or a special performer.' | split: ',' -%}
+    {%- assign service_prices = 'From ₹4999/-,From ₹3999/-,From ₹5999/-,From ₹3499/-,From ₹1999/-' | split: ',' -%}
+    {%- assign service_ids = 'musician,guitarist,pianist,flute,video' | split: ',' -%}
+    {%- assign service_colors = 'from-amber-50 to-orange-50 border-amber-200,from-rose-50 to-pink-50 border-rose-200,from-violet-50 to-purple-50 border-violet-200,from-emerald-50 to-green-50 border-emerald-200,from-sky-50 to-blue-50 border-sky-200' | split: ',' -%}
+
+    {% for i in (0..4) %}
+      {%- assign mod = i | modulo: 2 -%}
+      <div id="{{ service_ids[i] }}" class="{% if mod == 0 %}anim-left{% else %}anim-right{% endif %} stagger-{{ forloop.index }}">
+        <div class="bg-gradient-to-br {{ service_colors[i] }} rounded-2xl p-8 border h-full flex flex-col hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
+          <span class="text-5xl mb-5">{{ service_icons[i] }}</span>
+          <h3 class="text-xl font-serif font-bold text-gray-900 mb-2">{{ service_names[i] }}</h3>
+          <p class="text-sm text-gray-600 leading-relaxed mb-6 flex-grow">{{ service_descs[i] }}</p>
+          <div class="flex items-center justify-between">
+            <span class="text-lg font-bold text-gray-900">{{ service_prices[i] }}</span>
+            <button type="button" class="open-service-booking-modal inline-flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-amber-700 transition-colors cursor-pointer" data-service="{{ service_names[i] }}">
+              Book Service
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- How It Works -->
+  <div class="bg-gray-50 rounded-3xl p-8 md:p-12 anim-up mb-12">
+    <h2 class="text-2xl font-serif font-bold text-gray-900 mb-8 text-center">How It Works</h2>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      {%- assign steps = 'Choose Service,Pick Date (48h+),Confirm Details,Enjoy!' | split: ',' -%}
+      {%- assign step_descs = 'Select from our premium concierge services above.,Select booking date at least 48 hours in advance.,Share venue details and song preferences.,Sit back and watch the live performance unfold.' | split: ',' -%}
+      {% for i in (0..3) %}
+        <div class="text-center anim-scale stagger-{{ forloop.index }}">
+          <div class="w-12 h-12 rounded-full bg-primary text-white text-lg font-bold flex items-center justify-center mx-auto mb-4">{{ forloop.index }}</div>
+          <h4 class="text-sm font-bold text-gray-900 mb-2">{{ steps[i] }}</h4>
+          <p class="text-xs text-gray-500 leading-relaxed">{{ step_descs[i] }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</section>
+
+<!-- Dedicated Service Booking Form Modal -->
+<div id="service-booking-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/65 backdrop-blur-sm transition-opacity duration-300">
+  <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-gray-100 relative animate-scale-up">
+    
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-gray-900 via-gray-800 to-amber-950 p-6 text-white relative">
+      <button type="button" id="close-service-modal-btn" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white text-lg transition-colors cursor-pointer">&times;</button>
+      <span class="inline-block bg-amber-400/20 text-amber-300 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full mb-1.5">Elite Concierge Booking</span>
+      <h3 id="modal-service-name-title" class="text-2xl font-serif font-bold text-white">Musician on Call</h3>
+      <p class="text-xs text-white/70 mt-1">Fill out the booking details below to schedule your live performance.</p>
+    </div>
+
+    <!-- Booking Form -->
+    {% form 'contact', id: 'EliteServiceBookingForm', class: 'p-6 space-y-4' %}
+      {% if form.posted_successfully? %}
+        <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-800 text-xs font-semibold">
+          ✅ Thank you! Your service booking request has been submitted successfully. Our concierge team will contact you shortly.
+        </div>
+      {% elsif form.errors %}
+        <div class="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-800 text-xs font-semibold">
+          ⚠️ {{ form.errors | default_errors }}
+        </div>
+      {% endif %}
+
+      <input type="hidden" name="contact[body]" id="booking-email-body" value="Elite Service Booking Request">
+
+      <!-- Service Requested Dropdown Field -->
+      <div>
+        <label class="block text-xs font-bold text-gray-700 mb-1">Selected Service <span class="text-red-600">*</span></label>
+        <select id="booking-service-select" name="contact[Service Requested]" required class="w-full text-xs p-2.5 rounded-xl border border-gray-200 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none bg-white font-bold text-amber-900 cursor-pointer">
+          <option value="Musician on Call">Musician on Call</option>
+          <option value="Guitarist on Call">Guitarist on Call</option>
+          <option value="Pianist on Call">Pianist on Call</option>
+          <option value="Flute on Call">Flute on Call</option>
+          <option value="Video Message">Video Message</option>
+        </select>
+      </div>
+
+      <!-- Customer Name & Phone -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Your Full Name <span class="text-red-600">*</span></label>
+          <input type="text" name="contact[name]" required placeholder="Enter full name" class="w-full text-xs p-2.5 rounded-xl border border-gray-200 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Mobile Number <span class="text-red-600">*</span></label>
+          <input type="tel" name="contact[phone]" required placeholder="10-digit mobile number" maxlength="10" pattern="[0-9]{10}" class="w-full text-xs p-2.5 rounded-xl border border-gray-200 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none">
+        </div>
+      </div>
+
+      <!-- Email & Booking Date -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Email Address <span class="text-red-600">*</span></label>
+          <input type="email" name="contact[email]" required placeholder="name@example.com" class="w-full text-xs p-2.5 rounded-xl border border-gray-200 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Booking Date (48h+ advance) <span class="text-red-600">*</span></label>
+          <input type="date" id="booking-performance-date" name="contact[Booking Date]" required class="w-full text-xs p-2.5 rounded-xl border border-gray-200 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none">
+        </div>
+      </div>
+
+      <!-- Venue & Song Requests -->
+      <div>
+        <label class="block text-xs font-bold text-gray-700 mb-1">Venue Address & Song / Event Requests</label>
+        <textarea id="booking-venue-textarea" name="contact[Venue and Special Requests]" rows="2" placeholder="Full address, time slot, favorite songs..." class="w-full text-xs p-2.5 rounded-xl border border-gray-200 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none"></textarea>
+      </div>
+
+      <!-- Prominent Mandatory Conditions Box with Red Asterisks (*) -->
+      <div class="p-3.5 bg-amber-50/90 border border-amber-200/90 rounded-2xl text-amber-950 text-xs leading-relaxed space-y-1.5">
+        <p class="font-bold text-amber-900 flex items-center gap-1 text-xs">
+          <span class="text-red-600 font-black text-sm">*</span> Mandatory Conditions & Booking Policy:
+        </p>
+        <div class="flex items-start gap-1.5 text-[11px] font-medium text-amber-900">
+          <span class="text-red-600 font-black text-xs shrink-0">*</span>
+          <span><strong>Advance booking of at least 48 hours or later is required.</strong></span>
+        </div>
+        <div class="flex items-start gap-1.5 text-[11px] font-medium text-amber-900">
+          <span class="text-red-600 font-black text-xs shrink-0">*</span>
+          <span><strong>Once the order is placed, it can't be cancelled.</strong></span>
+        </div>
+      </div>
+
+      <!-- Mandatory Conditions Agreement Checkbox -->
+      <label class="flex items-start gap-2 cursor-pointer pt-1">
+        <input type="checkbox" id="booking-terms-checkbox" required class="mt-0.5 rounded border-gray-300 text-amber-600 focus:ring-amber-500">
+        <span class="text-[11px] text-gray-700 font-medium leading-snug">
+          <span class="text-red-600 font-bold">*</span> I agree to the 48-hour advance notice requirement and confirm that this booking is non-cancellable once placed.
+        </span>
+      </label>
+
+      <!-- Submit Button -->
+      <button type="submit" id="submit-booking-form-btn" class="w-full py-3 px-4 rounded-xl bg-gray-900 text-white font-bold text-sm hover:bg-amber-700 transition-colors shadow-md flex items-center justify-center gap-2 cursor-pointer">
+        Submit Booking Request
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+      </button>
+    {% endform %}
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const modal = document.getElementById('service-booking-modal');
+  const closeBtn = document.getElementById('close-service-modal-btn');
+  const modalTitle = document.getElementById('modal-service-name-title');
+  const serviceSelect = document.getElementById('booking-service-select');
+  const dateInput = document.getElementById('booking-performance-date');
+  const form = document.getElementById('EliteServiceBookingForm');
+
+  {% if form.posted_successfully? %}
+    if (modal) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+  {% endif %}
+
+  // Calculate 48-hour advance date minimum
+  const now = new Date();
+  const min48hDate = new Date(now.getTime() + 48 * 60 * 60 * 1000);
+  const minISO = min48hDate.getFullYear() + '-' + String(min48hDate.getMonth() + 1).padStart(2, '0') + '-' + String(min48hDate.getDate()).padStart(2, '0');
+
+  if (dateInput) {
+    dateInput.min = minISO;
+    dateInput.value = minISO;
+  }
+
+  // Open modal on "Book Service" button click
+  document.querySelectorAll('.open-service-booking-modal').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const serviceName = this.dataset.service || 'Musician on Call';
+      if (modalTitle) modalTitle.textContent = serviceName;
+      if (serviceSelect) serviceSelect.value = serviceName;
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    });
+  });
+
+  // Keep modal title in sync if customer changes the service dropdown inside form
+  if (serviceSelect) {
+    serviceSelect.addEventListener('change', function() {
+      if (modalTitle) modalTitle.textContent = this.value;
+    });
+  }
+
+  // Close modal
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function() {
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    });
+  }
+
+  // Close on outer backdrop click
+  if (modal) {
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    });
+  }
+
+  // Enforce 48-hour validation and aggregate contact[body] on form submission
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      const selectedVal = dateInput ? dateInput.value : '';
+      if (selectedVal && selectedVal < minISO) {
+        e.preventDefault();
+        alert('⚠️ Mandatory Policy: Advance booking of at least 48 hours or later is required. Please select a date on or after ' + minISO + '.');
+        if (dateInput) dateInput.focus();
+        return false;
+      }
+
+      // Aggregate custom booking details into contact[body] for Shopify mail servers
+      const bodyInput = document.getElementById('booking-email-body');
+      const venueText = document.getElementById('booking-venue-textarea') ? document.getElementById('booking-venue-textarea').value : '';
+      const chosenService = serviceSelect ? serviceSelect.value : 'Musician on Call';
+      const custName = form.querySelector('[name="contact[name]"]') ? form.querySelector('[name="contact[name]"]').value : '';
+      const custPhone = form.querySelector('[name="contact[phone]"]') ? form.querySelector('[name="contact[phone]"]').value : '';
+
+      if (bodyInput) {
+        bodyInput.value = 'ELITE CONCIERGE BOOKING REQUEST:\n\n' +
+                          '• Service Requested: ' + chosenService + '\n' +
+                          '• Customer Name: ' + custName + '\n' +
+                          '• Mobile Phone: ' + custPhone + '\n' +
+                          '• Performance Date: ' + selectedVal + '\n' +
+                          '• Venue & Special Requests: ' + venueText + '\n' +
+                          '• Agreed to 48h Advance & Non-cancellable Policy: Yes';
+      }
+    });
+  }
+});
+</script>
+
+{% schema %}
+{
+  "name": "Elite Services",
+  "settings": [],
+  "presets": [{ "name": "Elite Services" }]
+}
+{% endschema %}

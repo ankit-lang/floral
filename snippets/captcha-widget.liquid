@@ -1,0 +1,213 @@
+{% comment %}
+  Custom Math CAPTCHA Widget — No external service or key required.
+  Usage: {% render 'captcha-widget', widget_id: 'unique-id' %}
+
+  How it works:
+  - Generates a random math question (e.g. "What is 7 + 4?") in the browser
+  - User must type the correct answer
+  - Form submission is blocked if answer is wrong
+  - New question generated on each page load / on refresh click
+  - Obfuscated slightly with CSS canvas so bots can't easily scrape the answer
+{% endcomment %}
+
+<div class="captcha-math-widget" data-widget-id="{{ widget_id }}" id="captcha-math-{{ widget_id }}">
+  <div class="captcha-math-inner">
+    <!-- Question rendered here by JS -->
+    <div class="captcha-math-question" id="captcha-q-{{ widget_id }}">
+      <canvas id="captcha-canvas-{{ widget_id }}" width="200" height="44" style="border-radius:8px;background:#f3f4f6;display:block;"></canvas>
+    </div>
+
+    <div class="captcha-math-row" style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+      <input type="text"
+        id="captcha-input-{{ widget_id }}"
+        placeholder="Type your answer"
+        autocomplete="off"
+        inputmode="numeric"
+        maxlength="4"
+        style="flex:1;padding:8px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:14px;font-family:inherit;outline:none;transition:border-color 0.2s;"
+        aria-label="CAPTCHA answer"
+      >
+      <button type="button"
+        id="captcha-refresh-{{ widget_id }}"
+        title="New question"
+        style="width:36px;height:36px;border:none;background:#f3f4f6;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.2s;"
+        aria-label="Refresh CAPTCHA">
+        <svg width="16" height="16" fill="none" stroke="#6b7280" stroke-width="2.2" viewBox="0 0 24 24">
+          <path d="M1 4v6h6"/><path d="M23 20v-6h-6"/>
+          <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+        </svg>
+      </button>
+    </div>
+
+    <p id="captcha-error-{{ widget_id }}" style="display:none;color:#ef4444;font-size:12px;font-weight:600;margin-top:5px;">
+      ⚠️ Incorrect answer. Please try again.
+    </p>
+  </div>
+</div>
+
+<style>
+  .captcha-math-widget {
+    margin: 12px 0;
+    padding: 12px;
+    background: #fafafa;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 12px;
+  }
+  .captcha-math-widget label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+    margin-bottom: 8px;
+  }
+  #captcha-refresh-{{ widget_id }}:hover {
+    background: #e5e7eb;
+  }
+  #captcha-input-{{ widget_id }}:focus {
+    border-color: #0e7040;
+    box-shadow: 0 0 0 3px rgba(14,112,64,0.1);
+  }
+  #captcha-input-{{ widget_id }}.captcha-success {
+    border-color: #22c55e;
+    background: #f0fdf4;
+  }
+  #captcha-input-{{ widget_id }}.captcha-fail {
+    border-color: #ef4444;
+    background: #fef2f2;
+    animation: captchaShake 0.4s ease;
+  }
+  @keyframes captchaShake {
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-5px)}
+    40%{transform:translateX(5px)}
+    60%{transform:translateX(-4px)}
+    80%{transform:translateX(4px)}
+  }
+</style>
+
+<script>
+(function() {
+  var widgetId = {{ widget_id | json }};
+  var canvas   = document.getElementById('captcha-canvas-' + widgetId);
+  var input    = document.getElementById('captcha-input-' + widgetId);
+  var errEl    = document.getElementById('captcha-error-' + widgetId);
+  var refreshBtn = document.getElementById('captcha-refresh-' + widgetId);
+  var correctAnswer = 0;
+
+  if (!canvas || !input) return;
+
+  var ops = ['+', '+', '+', '-', '×'];
+
+  function randInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function generateQuestion() {
+    var op  = ops[randInt(0, ops.length - 1)];
+    var a, b;
+    if (op === '+') { a = randInt(2, 18); b = randInt(2, 18); correctAnswer = a + b; }
+    else if (op === '-') { a = randInt(8, 20); b = randInt(1, a); correctAnswer = a - b; }
+    else { a = randInt(2, 9); b = randInt(2, 9); correctAnswer = a * b; }
+
+    drawOnCanvas(a + ' ' + op + ' ' + b + ' = ?');
+    input.value = '';
+    input.classList.remove('captcha-success', 'captcha-fail');
+    if (errEl) errEl.style.display = 'none';
+  }
+
+  function drawOnCanvas(text) {
+    var ctx = canvas.getContext('2d');
+    var w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Background
+    ctx.fillStyle = '#f3f4f6';
+    ctx.fillRect(0, 0, w, h);
+
+    // Noise dots
+    for (var i = 0; i < 30; i++) {
+      ctx.fillStyle = 'rgba(' + randInt(100,200) + ',' + randInt(100,200) + ',' + randInt(100,200) + ',0.3)';
+      ctx.beginPath();
+      ctx.arc(randInt(0,w), randInt(0,h), randInt(1,3), 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    // Noise lines
+    for (var j = 0; j < 3; j++) {
+      ctx.strokeStyle = 'rgba(' + randInt(150,200) + ',' + randInt(150,200) + ',' + randInt(150,200) + ',0.4)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(randInt(0,w), randInt(0,h));
+      ctx.lineTo(randInt(0,w), randInt(0,h));
+      ctx.stroke();
+    }
+
+    // Text — slightly wavy
+    ctx.font = 'bold 22px "Courier New", monospace';
+    ctx.textBaseline = 'middle';
+    var chars = text.split('');
+    var startX = 18;
+    var spacing = (w - startX * 2) / chars.length;
+    chars.forEach(function(ch, idx) {
+      var x = startX + idx * spacing;
+      var y = h / 2 + Math.sin(idx * 1.1) * 4;
+      var angle = (Math.random() - 0.5) * 0.25;
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+      ctx.fillStyle = idx % 2 === 0 ? '#1a2421' : '#0e7040';
+      ctx.fillText(ch, 0, 0);
+      ctx.restore();
+    });
+  }
+
+  // Validate on input
+  input.addEventListener('input', function() {
+    var val = parseInt(input.value.trim(), 10);
+    if (!isNaN(val)) {
+      if (val === correctAnswer) {
+        input.classList.add('captcha-success');
+        input.classList.remove('captcha-fail');
+        if (errEl) errEl.style.display = 'none';
+      } else {
+        input.classList.remove('captcha-success');
+      }
+    }
+  });
+
+  // Refresh button
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', function() {
+      generateQuestion();
+      input.focus();
+    });
+  }
+
+  // Block form submit if wrong
+  document.addEventListener('DOMContentLoaded', function() {
+    var widgetEl = document.getElementById('captcha-math-' + widgetId);
+    if (!widgetEl) return;
+    var form = widgetEl.closest('form');
+    if (!form) return;
+
+    form.addEventListener('submit', function(e) {
+      var val = parseInt(input.value.trim(), 10);
+      if (isNaN(val) || val !== correctAnswer) {
+        e.preventDefault();
+        e.stopPropagation();
+        input.classList.add('captcha-fail');
+        input.classList.remove('captcha-success');
+        if (errEl) errEl.style.display = 'block';
+        input.focus();
+        // Regenerate after 1.5s to prevent brute force
+        setTimeout(generateQuestion, 1500);
+      }
+    }, true);
+  });
+
+  // Init
+  generateQuestion();
+})();
+</script>

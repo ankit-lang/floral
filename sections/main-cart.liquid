@@ -1,0 +1,2235 @@
+{% style %}
+  .cart-item-enter {
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .cart-item-stagger-1 { animation-delay: 0.1s; }
+  .cart-item-stagger-2 { animation-delay: 0.2s; }
+  .cart-item-stagger-3 { animation-delay: 0.3s; }
+  .cart-item-stagger-4 { animation-delay: 0.4s; }
+  .cart-item-stagger-5 { animation-delay: 0.5s; }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+  }
+
+  .btn-gradient {
+    background-size: 200% auto;
+    transition: 0.5s;
+  }
+  .btn-gradient:hover {
+    background-position: right center;
+  }
+{% endstyle %}
+
+<section id="cart-container" class="max-w-7xl mx-auto px-4 py-12 md:py-20 relative">
+  <!-- Decorative background blobs -->
+  <div class="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none opacity-30">
+    <div class="absolute -top-24 -left-24 w-96 h-96 bg-primary/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+    <div class="absolute top-1/4 -right-24 w-96 h-96 bg-pink-300/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+  </div>
+
+  <div class="flex flex-col md:flex-row items-baseline justify-between mb-12 cart-item-enter">
+    <h1 class="text-4xl md:text-6xl font-serif font-bold text-gray-900 tracking-tight">Your Cart</h1>
+    <a href="/collections/all" class="mt-4 md:mt-0 text-sm font-semibold text-primary hover:text-primary-600 transition-all duration-300 flex items-center gap-2 group">
+      <svg class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Continue Shopping
+    </a>
+  </div>
+
+  {% if cart.item_count > 0 %}
+    <form action="{{ routes.cart_url }}" method="post" novalidate class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      
+      <!-- Cart Items List -->
+      <div class="lg:col-span-8 space-y-6">
+        <div class="hidden md:grid grid-cols-12 gap-6 text-xs font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-4 cart-item-enter">
+          <div class="col-span-6">Product</div>
+          <div class="col-span-3 text-center">Quantity</div>
+          <div class="col-span-3 text-right">Total</div>
+        </div>
+
+        {% for item in cart.items %}
+          {%- assign item_tags_lc = item.product.tags | join: ',' | downcase -%}
+          <div class="glass-panel rounded-2xl p-4 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-6 items-center cart-item-enter cart-item-stagger-{{ forloop.index | at_most: 5 }} hover:-translate-y-1 transition-all duration-300 hover:shadow-xl cart-country-item"
+            {% if item.product.handle == 'peak-season-delivery-surcharge' %}style="display: none !important;"{% endif %}
+            data-line="{{ forloop.index }}"
+            data-variant-id="{{ item.variant_id }}"
+            data-product-title="{{ item.product.title | escape }}"
+            data-handle="{{ item.product.handle }}"
+            data-tags="{{ item.product.tags | join: ',' | escape }}">
+            
+            <!-- Product Info -->
+            <div class="col-span-1 md:col-span-6 flex items-center gap-6">
+              <a href="{{ item.url }}" class="w-28 h-28 rounded-2xl overflow-hidden bg-gray-50 flex-shrink-0 shadow-inner group relative">
+                {% if item.image %}
+                  <img src="{{ item.image | img_url: 'medium' }}" alt="{{ item.title | escape }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+                {% else %}
+                  <span class="w-full h-full flex items-center justify-center text-3xl"></span>
+                {% endif %}
+                <div class="absolute inset-0 ring-1 ring-inset ring-black/5 rounded-2xl pointer-events-none"></div>
+              </a>
+              <div>
+                <a href="{{ item.url }}" class="text-lg font-bold text-gray-900 hover:text-primary transition-colors block mb-1 leading-tight">{{ item.product.title }}</a>
+                {% unless item.product.has_only_default_variant %}
+                  <p class="text-sm text-gray-500 mb-3">{{ item.variant.title }}</p>
+                {% endunless %}
+                <p class="text-base font-semibold text-gray-900" data-base-price="{{ item.price }}">{{ item.price | money }}</p>
+                {% if item.properties.size > 0 %}
+                  <div class="mt-2 space-y-1 text-xs text-gray-600 bg-gray-50/80 p-2 rounded-lg border border-gray-100">
+                    {% for property in item.properties %}
+                      {% assign first_char = property.first | slice: 0 %}
+                      {% unless property.last == blank or first_char == '_' %}
+                        <p class="flex items-center gap-1.5">
+                          <span class="font-bold text-gray-700">{{ property.first }}:</span>
+                          <span>{{ property.last }}</span>
+                        </p>
+                      {% endunless %}
+                    {% endfor %}
+                  </div>
+                {% endif %}
+                <!-- Cart Expiry Countdown Badge -->
+                <span data-cart-expiry-variant="{{ item.variant_id }}"
+                  class="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-600 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5 mt-1"
+                  style="display:none;">
+                </span>
+              </div>
+            </div>
+
+            <!-- Quantity -->
+            <div class="col-span-1 md:col-span-3 flex items-center md:justify-center">
+              {% if item.product.handle == 'peak-season-delivery-surcharge' %}
+                <span class="text-sm font-bold text-gray-500 bg-gray-50 px-3 py-1 rounded-full border border-gray-100">Fee applied</span>
+                <input type="hidden" name="updates[]" id="updates_{{ item.key }}" value="{{ item.quantity }}">
+              {% else %}
+                <div class="flex items-center bg-gray-50/80 rounded-full h-12 w-36 border border-gray-100 p-1">
+                  <button type="button" data-line="{{ forloop.index }}" data-quantity="{{ item.quantity | minus: 1 }}" class="js-qty-btn w-10 h-10 rounded-full flex items-center justify-center text-gray-500 hover:bg-white hover:text-primary hover:shadow-sm transition-all">-</button>
+                  <input type="number" name="updates[]" id="updates_{{ item.key }}" value="{{ item.quantity }}" min="0" class="w-full h-full text-center text-base font-bold text-gray-900 focus:outline-none bg-transparent appearance-none" readonly>
+                  <button type="button" data-line="{{ forloop.index }}" data-quantity="{{ item.quantity | plus: 1 }}" class="js-qty-btn w-10 h-10 rounded-full flex items-center justify-center text-gray-500 hover:bg-white hover:text-primary hover:shadow-sm transition-all">+</button>
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- Total & Remove -->
+            <div class="col-span-1 md:col-span-3 flex items-center justify-between md:justify-end">
+              <span class="text-base font-bold text-gray-900 md:hidden">Total: </span>
+              <span class="text-lg font-bold text-gray-900 mr-6" data-base-price="{{ item.final_line_price }}">{{ item.final_line_price | money }}</span>
+              {% if item.product.handle == 'peak-season-delivery-surcharge' %}
+                <div class="w-10 h-10"></div>
+              {% else %}
+                <button type="button" data-line="{{ forloop.index }}" data-quantity="0" class="js-qty-btn w-10 h-10 rounded-full bg-red-50/50 flex items-center justify-center text-gray-400 hover:bg-red-500 hover:text-white hover:shadow-md transition-all group" title="Remove Item">
+                  <svg class="w-4 h-4 transform group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              {% endif %}
+            </div>
+            
+          </div>
+        {% endfor %}
+
+        {%- assign max_cart_advance_days = 0 -%}
+        {%- assign max_cart_no_sunday = false -%}
+        {%- assign max_cart_no_weekend = false -%}
+        {%- for item in cart.items -%}
+          {%- assign i_desc = item.product.description | strip_html | downcase -%}
+          {%- if i_desc contains 'advance' or i_desc contains 'process' -%}
+            {%- if i_desc contains '4-5 advance' or i_desc contains '4 to 5 advance' or i_desc contains '4-5 days advance' or i_desc contains '5 days advance' or i_desc contains '5-day advance' -%}
+              {%- assign max_cart_advance_days = 5 -%}
+            {%- elsif i_desc contains '3-4 advance' or i_desc contains '3 to 4 advance' or i_desc contains '4 days advance' or i_desc contains '4-day advance' -%}
+              {%- if max_cart_advance_days < 4 -%}{%- assign max_cart_advance_days = 4 -%}{%- endif -%}
+            {%- elsif i_desc contains '2-3 advance' or i_desc contains '2 to 3 advance' or i_desc contains '2-3 days advance' or i_desc contains '3 days advance' or i_desc contains '3-day advance' or i_desc contains '3 days process' -%}
+              {%- if max_cart_advance_days < 2 -%}{%- assign max_cart_advance_days = 2 -%}{%- endif -%}
+            {%- elsif i_desc contains '1-2 advance' or i_desc contains '1 to 2 advance' or i_desc contains '2 days advance' or i_desc contains '2-day advance' or i_desc contains '2 days process' -%}
+              {%- if max_cart_advance_days < 2 -%}{%- assign max_cart_advance_days = 2 -%}{%- endif -%}
+            {%- elsif i_desc contains '1 day advance' or i_desc contains '1-day advance' or i_desc contains '1 day process' -%}
+              {%- if max_cart_advance_days < 1 -%}{%- assign max_cart_advance_days = 1 -%}{%- endif -%}
+            {%- endif -%}
+          {%- endif -%}
+
+          {%- assign has_choc = false -%}
+          {%- assign has_gifting = false -%}
+          {%- assign is_exotic = false -%}
+          {%- for tag in item.product.tags -%}
+            {%- assign tag_lc = tag | downcase | strip -%}
+            {%- if tag_lc == 'chocolate' or tag_lc == 'chocolates' -%}
+              {%- assign has_choc = true -%}
+            {%- endif -%}
+            {%- if tag_lc == 'gifting' -%}
+              {%- assign has_gifting = true -%}
+            {%- endif -%}
+            {%- if tag_lc contains 'exotic' -%}
+              {%- assign is_exotic = true -%}
+            {%- endif -%}
+            {%- if tag_lc == '2-days-advance' or tag_lc == '2 days advance' or tag_lc == '2-advance' -%}
+              {%- if max_cart_advance_days < 2 -%}{%- assign max_cart_advance_days = 2 -%}{%- endif -%}
+            {%- elsif tag_lc == '3-days-advance' or tag_lc == '3 days advance' or tag_lc == '3-advance' -%}
+              {%- if max_cart_advance_days < 3 -%}{%- assign max_cart_advance_days = 3 -%}{%- endif -%}
+            {%- elsif tag_lc == '4-days-advance' or tag_lc == '4 days advance' or tag_lc == '4-advance' -%}
+              {%- if max_cart_advance_days < 4 -%}{%- assign max_cart_advance_days = 4 -%}{%- endif -%}
+            {%- elsif tag_lc == 'usa' or tag_lc == 'us' or tag_lc == 'united states' or tag_lc == 'london' or tag_lc == 'uk' or tag_lc == 'united kingdom' -%}
+              {%- assign max_cart_no_weekend = true -%}
+            {%- endif -%}
+          {%- endfor -%}
+
+          {%- if has_choc and has_gifting -%}
+            {%- if max_cart_advance_days < 1 -%}{%- assign max_cart_advance_days = 1 -%}{%- endif -%}
+          {%- endif -%}
+          {%- if is_exotic -%}
+            {%- if max_cart_advance_days < 2 -%}{%- assign max_cart_advance_days = 2 -%}{%- endif -%}
+          {%- endif -%}
+
+          {%- if i_desc contains 'sunday delivery not possible' or i_desc contains 'sundays non-delivery' or i_desc contains 'no sunday' -%}
+            {%- assign max_cart_no_sunday = true -%}
+          {%- endif -%}
+        {%- endfor -%}
+
+        {% assign first_item = cart.items.first %}
+        <div class="glass-panel rounded-2xl p-6 md:p-8 mt-6 delivery-address-form" data-line="all" data-existing-properties="{{ first_item.properties | json | escape }}" data-advance-days="{{ max_cart_advance_days }}" data-no-sunday="{{ max_cart_no_sunday }}" data-no-weekend="{{ max_cart_no_weekend }}">
+          <div class="flex items-center justify-between mb-4 border-b border-gray-100 pb-3">
+            <h3 class="text-base font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
+              <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              Delivery Address & Customization
+            </h3>
+            <span class="text-xs text-gray-400 font-medium">Applied to all items in cart</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-4 address-fields-container">
+            <div class="md:col-span-2">
+              <select class="w-full rounded-md border-gray-200 shadow-sm focus:border-primary focus:ring-primary text-sm p-2 bg-white addr-field" data-prop="Delivery_Title">
+                <option value="Mr." {% if first_item.properties.Delivery_Title == 'Mr.' %}selected{% endif %}>Mr.</option>
+                <option value="Mrs." {% if first_item.properties.Delivery_Title == 'Mrs.' %}selected{% endif %}>Mrs.</option>
+                <option value="Ms." {% if first_item.properties.Delivery_Title == 'Ms.' %}selected{% endif %}>Ms.</option>
+              </select>
+            </div>
+            <div class="md:col-span-5">
+              <input type="text" placeholder="First Name *" class="w-full rounded-md border-gray-200 shadow-sm focus:border-primary focus:ring-primary text-sm p-2 bg-white addr-field" required data-prop="Delivery_FirstName" value="{{ cart.attributes.Delivery_FirstName | default: first_item.properties.Delivery_FirstName | escape }}">
+            </div>
+            <div class="md:col-span-5">
+              <input type="text" placeholder="Last Name *" class="w-full rounded-md border-gray-200 shadow-sm focus:border-primary focus:ring-primary text-sm p-2 bg-white addr-field" required data-prop="Delivery_LastName" value="{{ cart.attributes.Delivery_LastName | default: first_item.properties.Delivery_LastName | escape }}">
+            </div>
+
+            <div class="md:col-span-12">
+              <input type="text" placeholder="Address *" class="w-full rounded-md border-gray-200 shadow-sm focus:border-primary focus:ring-primary text-sm p-2 bg-white addr-field" required data-prop="Delivery_Address" value="{{ cart.attributes.Delivery_Address | default: first_item.properties.Delivery_Address | default: first_item.properties['_Exact Location'] | escape }}">
+            </div>
+
+            <div class="md:col-span-12">
+              <textarea placeholder="Gift Message *" required class="w-full rounded-md border-gray-200 shadow-sm focus:border-primary focus:ring-primary text-sm p-2 bg-white addr-field" rows="2" data-prop="Delivery_GiftMessage">{{ cart.attributes.Delivery_GiftMessage | default: first_item.properties.Delivery_GiftMessage | escape }}</textarea>
+            </div>
+
+            <div class="md:col-span-4">
+              <input type="text" placeholder="Landmark *" class="w-full rounded-md border-gray-200 shadow-sm focus:border-primary focus:ring-primary text-sm p-2 bg-white addr-field" required data-prop="Delivery_Landmark" value="{{ cart.attributes.Delivery_Landmark | default: first_item.properties.Delivery_Landmark | escape }}">
+            </div>
+            <div class="md:col-span-3">
+              <input type="text" placeholder="City *" class="w-full rounded-md border-gray-200 shadow-sm focus:border-primary focus:ring-primary text-sm p-2 bg-white addr-field" required data-prop="Delivery_City" value="{{ cart.attributes.Delivery_City | default: first_item.properties.Delivery_City | default: first_item.properties._City | escape }}">
+            </div>
+            <div class="md:col-span-3">
+              <input type="text" placeholder="State *" class="w-full rounded-md border-gray-200 shadow-sm focus:border-primary focus:ring-primary text-sm p-2 bg-white addr-field" required data-prop="Delivery_State" value="{{ cart.attributes.Delivery_State | default: first_item.properties.Delivery_State | escape }}">
+            </div>
+            <div class="md:col-span-2">
+              <input type="text" placeholder="Postcode *" class="w-full rounded-md border-gray-200 shadow-sm focus:border-primary focus:ring-primary text-sm p-2 bg-white addr-field" required data-prop="Delivery_Postcode" value="{{ cart.attributes.Delivery_Postcode | default: first_item.properties.Delivery_Postcode | default: first_item.properties['_Pincode'] | escape }}">
+            </div>
+            <div class="md:col-span-4">
+              <input type="text" placeholder="Country *" class="w-full rounded-md border-gray-200 shadow-sm focus:border-primary focus:ring-primary text-sm p-2 bg-white addr-field" required data-prop="Delivery_Country" value="{{ cart.attributes.Delivery_Country | default: first_item.properties.Delivery_Country | escape }}">
+            </div>
+
+            <div class="md:col-span-4">
+              <div class="phone-field-group">
+                <div class="relative flex items-center shadow-2xs rounded-md">
+                  <div class="phone-dial-badge relative shrink-0 border border-r-0 border-gray-200 rounded-l-md bg-gray-100 transition-colors">
+                    <div class="flex items-center gap-1 px-2.5 py-2 text-xs font-bold text-gray-700 pointer-events-none">
+                      <span class="flag-icon">🇬🇧</span>
+                      <span class="dial-code">+44</span>
+                    </div>
+                    <select disabled class="phone-country-select absolute inset-0 w-full h-full opacity-0 pointer-events-none">
+                      <option value="GB">🇬🇧 UK (+44)</option>
+                      <option value="IN">🇮🇳 India (+91)</option>
+                      <option value="US">🇺🇸 USA (+1)</option>
+                      <option value="CA">🇨🇦 Canada (+1)</option>
+                      <option value="AE">🇦🇪 UAE (+971)</option>
+                      <option value="AU">🇦🇺 Australia (+61)</option>
+                      <option value="SG">🇸🇬 Singapore (+65)</option>
+                      <option value="DE">🇩🇪 Germany (+49)</option>
+                    </select>
+                  </div>
+                  <input type="tel" placeholder="Mobile No *" class="w-full rounded-r-md rounded-l-none border-gray-200 shadow-sm focus:border-primary focus:ring-primary text-sm p-2 bg-white addr-field tel-input" required data-prop="Delivery_Mobile" value="{{ cart.attributes.Delivery_Mobile | default: first_item.properties.Delivery_Mobile | escape }}" inputmode="numeric">
+                </div>
+              </div>
+            </div>
+            <div class="md:col-span-4">
+              <div class="phone-field-group">
+                <div class="relative flex items-center shadow-2xs rounded-md">
+                  <div class="phone-dial-badge relative shrink-0 border border-r-0 border-gray-200 rounded-l-md bg-gray-100 transition-colors">
+                    <div class="flex items-center gap-1 px-2.5 py-2 text-xs font-bold text-gray-700 pointer-events-none">
+                      <span class="flag-icon">🇬🇧</span>
+                      <span class="dial-code">+44</span>
+                    </div>
+                    <select disabled class="phone-country-select absolute inset-0 w-full h-full opacity-0 pointer-events-none">
+                      <option value="GB">🇬🇧 UK (+44)</option>
+                      <option value="IN">🇮🇳 India (+91)</option>
+                      <option value="US">🇺🇸 USA (+1)</option>
+                      <option value="CA">🇨🇦 Canada (+1)</option>
+                      <option value="AE">🇦🇪 UAE (+971)</option>
+                      <option value="AU">🇦🇺 Australia (+61)</option>
+                      <option value="SG">🇸🇬 Singapore (+65)</option>
+                      <option value="DE">🇩🇪 Germany (+49)</option>
+                    </select>
+                  </div>
+                  <input type="tel" placeholder="Alternate No" class="w-full rounded-r-md rounded-l-none border-gray-200 shadow-sm focus:border-primary focus:ring-primary text-sm p-2 bg-white addr-field tel-input" data-prop="Delivery_AlternateMobile" value="{{ cart.attributes.Delivery_AlternateMobile | default: first_item.properties.Delivery_AlternateMobile | escape }}" inputmode="numeric">
+                </div>
+              </div>
+            </div>
+            <div class="md:col-span-4 flex items-center">
+              <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                <input type="checkbox" value="Yes" class="addr-field rounded border-gray-300 text-primary focus:ring-primary" data-prop="Delivery_Contactless" {% assign c_val = cart.attributes.Delivery_Contactless | default: first_item.properties.Delivery_Contactless %}{% if c_val == 'Yes' %}checked{% endif %}>
+                Opt for Contact less Delivery
+              </label>
+            </div>
+
+            <!-- Delivery Date & Delivery Time -->
+            {% assign p_date = cart.attributes['Delivery Date'] | default: first_item.properties['Delivery Date'] | default: first_item.properties['Delivery_Date'] %}
+            {% assign p_time = cart.attributes['Delivery Time'] | default: first_item.properties['Delivery Time'] | default: first_item.properties['Delivery_Time'] %}
+            <div class="md:col-span-12 mt-2 cart-date-picker-block" data-line="all">
+
+              <div class="flex items-center justify-between mb-3">
+                <label class="text-xs font-bold text-gray-500 uppercase tracking-widest">Date and Time of Delivery</label>
+                <span class="delivery-countdown text-xs font-semibold text-secondary"></span>
+              </div>
+
+              <!-- Quick-Select Date Tabs -->
+              <div class="flex gap-2 mb-4 delivery-date-tabs">
+                <button type="button"
+                  class="date-tab date-tab-today flex-1 py-2.5 px-2 rounded-lg bg-white border border-gray-200 text-gray-700 text-center text-xs font-bold transition-all hover:border-primary hover:shadow-md cursor-pointer"
+                  data-date="today">
+                  <span class="block font-bold today-label">Today</span>
+                  <span class="block text-[10px] opacity-90 today-date-display"></span>
+                </button>
+                <button type="button"
+                  class="date-tab date-tab-tomorrow flex-1 py-2.5 px-2 rounded-lg bg-white border border-gray-200 text-gray-700 text-center text-xs font-bold transition-all hover:border-primary hover:shadow-md cursor-pointer"
+                  data-date="tomorrow">
+                  <span class="block font-bold">Tomorrow</span>
+                  <span class="block text-[10px] text-gray-400 tomorrow-date-display"></span>
+                </button>
+                <button type="button"
+                  class="date-tab date-tab-dayafter flex-1 py-2.5 px-2 rounded-lg bg-white border border-gray-200 text-gray-700 text-center text-xs font-bold transition-all hover:border-primary hover:shadow-md cursor-pointer"
+                  data-date="dayafter">
+                  <span class="block font-bold">Day After</span>
+                  <span class="block text-[10px] text-gray-400 dayafter-date-display"></span>
+                </button>
+                <button type="button"
+                  class="date-tab custom-date-btn flex-1 py-2.5 px-2 rounded-lg bg-white border border-gray-200 text-gray-700 text-center text-xs font-bold transition-all hover:border-primary hover:shadow-md cursor-pointer"
+                  title="Choose your own date">
+                  <span class="block font-bold custom-date-label">Pick Date</span>
+                  <span class="block text-[10px] text-gray-400 custom-date-display"></span>
+                </button>
+              </div>
+
+              <!-- Hidden date value -->
+              <input type="hidden" class="addr-field cart-date-input" required data-prop="Delivery Date" value="{{ p_date | escape }}">
+              <input type="text" class="custom-calendar-picker sr-only" tabindex="-1">
+
+              <!-- Time Slot Info Notice -->
+              <div class="cart-delivery-notice hidden mb-3 px-3 py-2 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold rounded-lg flex items-center gap-2">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                <span class="cart-delivery-notice-text"></span>
+              </div>
+
+              <!-- Time Slot Dropdown Container -->
+              <div class="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2.5 bg-white transition-all focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary">
+                <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                </svg>
+                <select class="addr-field delivery-time-select flex-1 text-sm text-gray-700 bg-transparent border-none outline-none cursor-pointer font-medium" required data-prop="Delivery Time">
+                  <option value="" disabled {% if p_time == blank %}selected{% endif %}>Select favourable time of delivery</option>
+                  <option value="08:00 AM - 10:00 AM" data-start="8" {% if p_time == '08:00 AM - 10:00 AM' %}selected{% endif %}>08:00 AM - 10:00 AM</option>
+                  <option value="10:00 AM - 1:00 PM" data-start="10" {% if p_time == '10:00 AM - 1:00 PM' %}selected{% endif %}>10:00 AM - 1:00 PM</option>
+                  <option value="1:00 PM - 4:00 PM" data-start="13" {% if p_time == '1:00 PM - 4:00 PM' %}selected{% endif %}>1:00 PM - 4:00 PM</option>
+                  <option value="4:00 PM - 7:00 PM" data-start="16" {% if p_time == '4:00 PM - 7:00 PM' %}selected{% endif %}>4:00 PM - 7:00 PM</option>
+                  <option value="7:00 PM - 10:00 PM" data-start="19" {% if p_time == '7:00 PM - 10:00 PM' %}selected{% endif %}>7:00 PM - 10:00 PM</option>
+                  <option value="10:00 PM - 12:00 AM (Midnight)" data-start="22" data-midnight="true" {% if p_time == '10:00 PM - 12:00 AM (Midnight)' %}selected{% endif %}>10:00 PM - 12:00 AM (Midnight)</option>
+                </select>
+                <svg class="w-4 h-4 text-gray-400 flex-shrink-0 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="m6 9 6 6 6-6"/>
+                </svg>
+              </div>
+
+            </div>
+
+            <!-- Sender Details Section -->
+            <div class="md:col-span-12 mt-2 pt-4 border-t border-dashed border-gray-200">
+              <h4 class="text-xs font-bold text-gray-600 uppercase tracking-wider mb-3">Sender Details</h4>
+              <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                <div class="md:col-span-4">
+                  <input type="text" placeholder="Sender's Name *" class="w-full rounded-md border-gray-200 shadow-sm focus:border-primary focus:ring-primary text-sm p-2 bg-white addr-field" required data-prop="Sender_Name" value="{{ first_item.properties.Sender_Name | escape }}">
+                </div>
+                <div class="md:col-span-4">
+                  <div class="phone-field-group">
+                    <div class="relative flex items-center shadow-2xs rounded-md">
+                      <div class="phone-dial-badge relative shrink-0 border border-r-0 border-gray-200 rounded-l-md bg-gray-100 transition-colors">
+                        <div class="flex items-center gap-1 px-2.5 py-2 text-xs font-bold text-gray-700 pointer-events-none">
+                          <span class="flag-icon">🇬🇧</span>
+                          <span class="dial-code">+44</span>
+                        </div>
+                        <select disabled class="phone-country-select absolute inset-0 w-full h-full opacity-0 pointer-events-none">
+                          <option value="GB">🇬🇧 UK (+44)</option>
+                          <option value="IN">🇮🇳 India (+91)</option>
+                          <option value="US">🇺🇸 USA (+1)</option>
+                          <option value="CA">🇨🇦 Canada (+1)</option>
+                          <option value="AE">🇦🇪 UAE (+971)</option>
+                          <option value="AU">🇦🇺 Australia (+61)</option>
+                          <option value="SG">🇸🇬 Singapore (+65)</option>
+                          <option value="DE">🇩🇪 Germany (+49)</option>
+                        </select>
+                      </div>
+                      <input type="tel" placeholder="Sender's Mobile Number *" class="w-full rounded-r-md rounded-l-none border-gray-200 shadow-sm focus:border-primary focus:ring-primary text-sm p-2 bg-white addr-field tel-input" required data-prop="Sender_Mobile" value="{{ first_item.properties.Sender_Mobile | escape }}" inputmode="numeric">
+                    </div>
+                  </div>
+                </div>
+                <div class="md:col-span-4">
+                  <input type="email" placeholder="Sender's Email Address *" class="w-full rounded-md border-gray-200 shadow-sm focus:border-primary focus:ring-primary text-sm p-2 bg-white addr-field" required data-prop="Sender_Email" value="{{ first_item.properties.Sender_Email | escape }}">
+                </div>
+              </div>
+            </div>
+
+            <!-- Save Details Option -->
+            <div class="md:col-span-12 mt-3 pt-3 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2">
+              <label class="flex items-center gap-2 text-xs font-semibold text-gray-700 cursor-pointer select-none">
+                <input type="checkbox" id="save-delivery-details-cb" class="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4" checked>
+                <span>Save my delivery & sender details for future visits</span>
+              </label>
+              <span id="saved-details-badge" class="text-[11px] text-emerald-600 font-bold hidden flex items-center gap-1 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                ✓ Saved automatically
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex justify-end pt-4 cart-item-enter cart-item-stagger-5">
+          <button type="submit" name="update" class="group flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-primary transition-colors">
+            <svg class="w-4 h-4 transform group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            Update Cart
+          </button>
+        </div>
+      </div>
+
+      <!-- Order Summary Sidebar -->
+      <div class="lg:col-span-4">
+        <div class="glass-panel rounded-3xl p-8 sticky top-24 cart-item-enter cart-item-stagger-3">
+          <h2 class="text-2xl font-serif font-bold text-gray-900 mb-8">Order Summary</h2>
+          
+          <div class="space-y-5 text-sm mb-8 border-b border-gray-200/60 pb-8">
+            <div class="flex justify-between items-center">
+              <span class="text-gray-500 font-medium">Subtotal</span>
+              <span class="font-bold text-gray-900 text-base" data-base-price="{{ cart.total_price }}">{{ cart.total_price | money }}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-500 font-medium">Shipping</span>
+              <span class="font-semibold text-primary text-xs uppercase tracking-wider bg-primary/5 px-2 py-1 rounded-md">Calculated at checkout</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-500 font-medium">Taxes</span>
+              <span class="font-medium text-gray-500">Calculated at checkout</span>
+            </div>
+          </div>
+          
+          <div class="flex justify-between items-end mb-2">
+            <span class="text-lg font-bold text-gray-900">Estimated Total</span>
+            <span class="text-3xl font-serif font-bold text-primary" data-base-price="{{ cart.total_price }}">{{ cart.total_price | money }}</span>
+          </div>
+
+          <!-- Peak Surcharge Notice (hidden by default) -->
+          <div id="cart-peak-surcharge-notice" class="hidden mb-6 p-3 bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold rounded-xl flex items-center gap-2">
+            <span>⚡</span>
+            <span id="cart-surcharge-notice-text">Peak season surcharge applied for this delivery date.</span>
+          </div>
+
+          <!-- Shipment Status Notice (Single Shipment by Default for matching addresses) -->
+          <div id="shipment-status-box" class="mb-6">
+            <div id="single-shipment-notice" class="flex items-start gap-3 text-emerald-900 bg-emerald-50 border border-emerald-200/80 p-4 rounded-2xl text-xs font-medium leading-relaxed shadow-2xs">
+              <svg class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <div>
+                <span class="font-bold text-emerald-950 block text-sm mb-0.5">Single Shipment Guaranteed</span>
+                <span>All items in your order share the same delivery details and will arrive together in <strong>1 single shipment</strong>.</span>
+              </div>
+            </div>
+            
+            <div id="multi-shipment-notice" class="hidden flex items-start gap-3 text-amber-900 bg-amber-50 border border-amber-200/80 p-4 rounded-2xl text-xs font-medium leading-relaxed shadow-2xs">
+              <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+              </svg>
+              <div>
+                <span class="font-bold text-amber-950 block text-sm mb-0.5">Multiple Shipments</span>
+                <span>Items will arrive in separate shipments based on different delivery addresses or dates selected.</span>
+              </div>
+            </div>
+          </div>
+
+          {% unless customer %}
+            <div class="mb-4 p-3.5 bg-amber-50 border border-amber-200/80 text-amber-900 text-xs font-medium rounded-2xl flex items-center justify-between gap-3 shadow-2xs">
+              <div class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-amber-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+                <span>Login required to place order</span>
+              </div>
+              <button type="button" onclick="if(typeof window.saveCartDeliveryDetailsToStorage==='function'){window.saveCartDeliveryDetailsToStorage();} const p=window.location.pathname+window.location.search; if(typeof openLoginModal==='function'){openLoginModal(p);}else{window.location.href='/account/login?return_to='+encodeURIComponent(p);}" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl transition-all shadow-xs text-xs shrink-0">
+                Sign In
+              </button>
+            </div>
+          {% endunless %}
+
+          <button type="submit" name="checkout" id="js-checkout-btn" class="w-full h-16 rounded-2xl bg-gradient-to-r from-primary via-primary-600 to-primary text-white text-lg font-bold hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 flex items-center justify-center gap-3 mb-6 btn-gradient group relative">
+            <span class="btn-text flex items-center gap-3">Proceed to Checkout</span>
+            <span class="btn-loading hidden absolute inset-0 flex items-center justify-center bg-primary rounded-2xl">
+              <svg class="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            </span>
+            <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+          </button>
+
+          <div class="flex items-center justify-center gap-2 text-xs text-gray-500 font-medium">
+            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            Secure 256-bit Encrypted Checkout
+          </div>
+
+         
+        </div>
+      </div>
+      
+    </form>
+  {% else %}
+    <!-- Empty Cart -->
+    <div class="glass-panel rounded-3xl p-16 text-center mt-8 cart-item-enter border-dashed border-2 border-gray-200 bg-gray-50/30">
+      <div class="w-32 h-32 bg-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl shadow-primary/5 border border-gray-100" style="animation: float 6s ease-in-out infinite;">
+        <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+      </div>
+      <h2 class="text-3xl font-serif font-bold text-gray-900 mb-4">Your cart is feeling light</h2>
+      <p class="text-gray-500 mb-10 max-w-md mx-auto text-lg">Looks like you haven't added any beautiful flowers or gifts to your cart yet.</p>
+      <a href="/collections/all" class="inline-flex items-center gap-3 bg-gradient-to-r from-gray-900 to-gray-800 text-white px-10 py-4 rounded-full font-bold hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+        Explore Collection
+        <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+      </a>
+    </div>
+  {% endif %}
+</section>
+
+<!-- Flatpickr CDN for Cart Page Date Picker -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<!-- libphonenumber-js for International Phone Number Validation & E.164 Formatting -->
+<script src="https://cdn.jsdelivr.net/npm/libphonenumber-js@1.10.51/bundle/libphonenumber-js.min.js"></script>
+
+<script>
+  (function initCartPhoneEngine() {
+    window.PhoneCountryMap = {
+      'GB': { name: 'UK', iso: 'GB', dialCode: '+44', flag: '🇬🇧' },
+      'IN': { name: 'India', iso: 'IN', dialCode: '+91', flag: '🇮🇳' },
+      'US': { name: 'USA', iso: 'US', dialCode: '+1', flag: '🇺🇸' },
+      'CA': { name: 'Canada', iso: 'CA', dialCode: '+1', flag: '🇨🇦' },
+      'AE': { name: 'UAE', iso: 'AE', dialCode: '+971', flag: '🇦🇪' },
+      'AU': { name: 'Australia', iso: 'AU', dialCode: '+61', flag: '🇦🇺' },
+      'SG': { name: 'Singapore', iso: 'SG', dialCode: '+65', flag: '🇸🇬' },
+      'DE': { name: 'Germany', iso: 'DE', dialCode: '+49', flag: '🇩🇪' },
+      'FR': { name: 'France', iso: 'FR', dialCode: '+33', flag: '🇫🇷' },
+      'IT': { name: 'Italy', iso: 'IT', dialCode: '+39', flag: '🇮🇹' },
+      'ES': { name: 'Spain', iso: 'ES', dialCode: '+34', flag: '🇪🇸' },
+      'NL': { name: 'Netherlands', iso: 'NL', dialCode: '+31', flag: '🇳🇱' },
+      'NZ': { name: 'New Zealand', iso: 'NZ', dialCode: '+64', flag: '🇳🇿' },
+      'IE': { name: 'Ireland', iso: 'IE', dialCode: '+353', flag: '🇮🇪' }
+    };
+
+    function resolveCountryISO(formEl, overrideISO) {
+      if (overrideISO && window.PhoneCountryMap[overrideISO.toUpperCase()]) {
+        return overrideISO.toUpperCase();
+      }
+
+      const countryInput = formEl ? formEl.querySelector('[data-prop="Delivery_Country"]') : null;
+      const text = (countryInput ? countryInput.value : '').trim().toUpperCase();
+
+      if (text) {
+        if (text.includes('INDIA') || text.includes('BHARAT') || text === 'IN') return 'IN';
+        if (text.includes('UK') || text.includes('UNITED KINGDOM') || text.includes('GREAT BRITAIN') || text.includes('ENGLAND') || text.includes('SCOTLAND') || text.includes('WALES') || text.includes('NORTHERN IRELAND') || text === 'GB') return 'GB';
+        if (text.includes('US') || text.includes('USA') || text.includes('UNITED STATES') || text.includes('AMERICA')) return 'US';
+        if (text.includes('UAE') || text.includes('EMIRATES') || text.includes('DUBAI') || text.includes('ABU DHABI') || text === 'AE') return 'AE';
+        if (text.includes('CANADA') || text === 'CA') return 'CA';
+        if (text.includes('AUSTRALIA') || text === 'AU') return 'AU';
+        if (text.includes('SINGAPORE') || text === 'SG') return 'SG';
+        if (text.includes('GERMANY') || text.includes('DEUTSCHLAND') || text === 'DE') return 'DE';
+        if (text.includes('FRANCE') || text === 'FR') return 'FR';
+        if (text.includes('ITALY') || text === 'IT') return 'IT';
+        if (text.includes('SPAIN') || text === 'ES') return 'ES';
+        if (text.includes('NETHERLANDS') || text === 'NL') return 'NL';
+        if (text.includes('NEW ZEALAND') || text === 'NZ') return 'NZ';
+        if (text.includes('IRELAND') || text === 'IE') return 'IE';
+      }
+
+      const storeCode = (localStorage.getItem('user_country_code') || 'US').toUpperCase();
+      if (['UK', 'GB'].includes(storeCode)) return 'GB';
+      if (['IN', 'INDIA'].includes(storeCode)) return 'IN';
+      if (['US', 'USA'].includes(storeCode)) return 'US';
+      if (['AE', 'UAE'].includes(storeCode)) return 'AE';
+      if (['CA'].includes(storeCode)) return 'CA';
+      if (['AU'].includes(storeCode)) return 'AU';
+      if (['SG'].includes(storeCode)) return 'SG';
+      if (['DE'].includes(storeCode)) return 'DE';
+
+      return 'US';
+    }
+
+    function fallbackPhoneValidation(digits, iso) {
+      if (iso === 'GB') {
+        return (digits.startsWith('07') && digits.length === 11) ||
+               (digits.startsWith('7') && digits.length === 10) ||
+               (/^0[123]/.test(digits) && (digits.length === 10 || digits.length === 11)) ||
+               (/^[123]/.test(digits) && digits.length === 10);
+      }
+      if (iso === 'IN') {
+        return digits.length === 10 && /^[6-9]/.test(digits);
+      }
+      if (iso === 'US' || iso === 'CA') {
+        return digits.length === 10 && /^[2-9]/.test(digits) && /^[2-9]/.test(digits.charAt(3));
+      }
+      if (iso === 'AE') {
+        return digits.length === 9 && /^5/.test(digits);
+      }
+      if (iso === 'AU') {
+        return (digits.startsWith('04') && digits.length === 10) || (digits.startsWith('4') && digits.length === 9);
+      }
+      return digits.length >= 8 && digits.length <= 12;
+    }
+
+    function validateSinglePhoneField(inputEl, forceISO) {
+      if (!inputEl) return true;
+      const formEl = inputEl.closest('.delivery-address-form') || document;
+      const groupEl = inputEl.closest('.phone-field-group') || inputEl.parentNode;
+      const selectEl = groupEl ? groupEl.querySelector('.phone-country-select') : null;
+
+      const currentISO = resolveCountryISO(formEl, forceISO);
+      const countryInfo = window.PhoneCountryMap[currentISO] || { name: currentISO, iso: currentISO, dialCode: '+1', flag: '🌐' };
+
+      if (selectEl && selectEl.value !== currentISO) {
+        selectEl.value = currentISO;
+      }
+
+      const flagEl = groupEl ? groupEl.querySelector('.flag-icon') : null;
+      const dialEl = groupEl ? groupEl.querySelector('.dial-code') : null;
+      if (flagEl) flagEl.textContent = countryInfo.flag;
+      if (dialEl) dialEl.textContent = countryInfo.dialCode;
+
+      const raw = inputEl.value;
+      const cleanDigits = raw.replace(/[^\d+]/g, '');
+
+      const lib = window.libphonenumber;
+      
+      // Apply As-You-Type formatting to give users visual feedback on how their number is interpreted
+      if (lib && typeof lib.AsYouType === 'function' && cleanDigits) {
+        const formatter = new lib.AsYouType(currentISO);
+        const formattedVal = formatter.input(cleanDigits);
+        
+        if (inputEl.value !== formattedVal) {
+          inputEl.value = formattedVal;
+          // Move cursor to the end after formatting so typing isn't interrupted
+          if (document.activeElement === inputEl) {
+            inputEl.setSelectionRange(formattedVal.length, formattedVal.length);
+          }
+        }
+      }
+
+      let parentContainer = groupEl.parentNode;
+      let hintEl = parentContainer ? parentContainer.querySelector('.tel-input-hint') : null;
+      if (!hintEl && parentContainer) {
+        hintEl = document.createElement('p');
+        hintEl.className = 'tel-input-hint text-[11px] font-semibold mt-1 transition-all';
+        parentContainer.appendChild(hintEl);
+      }
+
+      const isRequired = inputEl.hasAttribute('required');
+
+      if (!raw) {
+        if (isRequired) {
+          if (hintEl) {
+            hintEl.textContent = `Please enter a valid ${countryInfo.name} phone number.`;
+            hintEl.style.color = '#dc2626';
+            hintEl.style.display = 'block';
+          }
+          inputEl.classList.add('border-red-500', 'ring-2', 'ring-red-500');
+          delete inputEl.dataset.e164;
+          return false;
+        } else {
+          if (hintEl) {
+            hintEl.textContent = '';
+            hintEl.style.display = 'none';
+          }
+          inputEl.classList.remove('border-red-500', 'ring-2', 'ring-red-500', 'border-emerald-500');
+          delete inputEl.dataset.e164;
+          return true;
+        }
+      }
+
+      let isValid = false;
+      let e164 = '';
+      let isMismatch = false;
+
+      if (lib && typeof lib.parsePhoneNumber === 'function') {
+        try {
+          const parsed = lib.parsePhoneNumber(cleanDigits, currentISO);
+          if (parsed && parsed.isValid()) {
+            if (parsed.country && parsed.country !== currentISO) {
+              isMismatch = true;
+              isValid = false;
+            } else {
+              isValid = true;
+              e164 = parsed.format('E.164');
+            }
+          }
+        } catch (e) {
+          isValid = false;
+        }
+      } else {
+        isValid = fallbackPhoneValidation(cleanDigits.replace(/[^0-9]/g, ''), currentISO);
+      }
+
+      if (isValid) {
+        if (hintEl) {
+          hintEl.textContent = `✓ Valid ${countryInfo.name} phone number`;
+          hintEl.style.color = '#059669';
+          hintEl.style.display = 'block';
+        }
+        inputEl.classList.remove('border-red-500', 'ring-2', 'ring-red-500', 'border-amber-400');
+        inputEl.classList.add('border-emerald-500');
+        inputEl.dataset.e164 = e164 || `${countryInfo.dialCode}${cleanDigits.replace(/[^0-9]/g, '').replace(/^0/, '')}`;
+        return true;
+      } else {
+        if (hintEl) {
+          hintEl.textContent = isMismatch ? `Invalid phone number for ${countryInfo.name}.` : `Please enter a valid ${countryInfo.name} phone number.`;
+          hintEl.style.color = '#dc2626';
+          hintEl.style.display = 'block';
+        }
+        inputEl.classList.add('border-red-500', 'ring-2', 'ring-red-500');
+        inputEl.classList.remove('border-emerald-500');
+        delete inputEl.dataset.e164;
+        return false;
+      }
+    }
+
+    function syncAllTelInputs(formEl) {
+      const scope = formEl || document;
+      scope.querySelectorAll('input[type="tel"]').forEach(input => {
+        validateSinglePhoneField(input);
+      });
+    }
+
+    window.validateSinglePhoneField = validateSinglePhoneField;
+    window.syncAllTelInputs = syncAllTelInputs;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.target.matches && e.target.matches('input[type="tel"]')) {
+        const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Home', 'End'];
+        if (allowedKeys.includes(e.key) || e.ctrlKey || e.metaKey) return;
+      }
+    });
+
+    ['input', 'change', 'blur', 'keyup'].forEach(eventType => {
+      document.addEventListener(eventType, (e) => {
+        if (e.target.matches && e.target.matches('input[type="tel"]')) {
+          validateSinglePhoneField(e.target);
+        } else if (e.target.matches && e.target.matches('[data-prop="Delivery_Country"]')) {
+          const form = e.target.closest('.delivery-address-form');
+          syncAllTelInputs(form);
+        } else if (e.target.matches && e.target.matches('.phone-country-select')) {
+          const form = e.target.closest('.delivery-address-form') || document;
+          const iso = e.target.value;
+          const info = window.PhoneCountryMap[iso];
+          if (info) {
+            const countryInput = form.querySelector('[data-prop="Delivery_Country"]');
+            if (countryInput) {
+              countryInput.value = info.name;
+            }
+            localStorage.setItem('user_country_code', iso);
+            syncAllTelInputs(form);
+          }
+        }
+      });
+    });
+
+    setTimeout(() => syncAllTelInputs(), 100);
+    setInterval(() => syncAllTelInputs(), 1500);
+  })();
+    
+    // Qty update logic
+    document.addEventListener('click', async (e) => {
+      const btn = e.target.closest('.js-qty-btn');
+      if (!btn) return;
+      e.preventDefault();
+
+      if (typeof window.saveCartDeliveryDetailsToStorage === 'function') {
+        window.saveCartDeliveryDetailsToStorage();
+      }
+
+      const line = btn.dataset.line;
+      const quantity = btn.dataset.quantity;
+      const container = document.getElementById('cart-container');
+
+      if (container) {
+        container.style.opacity = '0.5';
+        container.style.pointerEvents = 'none';
+      }
+
+      try {
+        await fetch('/cart/change.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ line: line, quantity: quantity })
+        });
+
+        const response = await fetch(window.location.pathname + '?section_id=main-cart');
+        const text = await response.text();
+        const html = new DOMParser().parseFromString(text, 'text/html');
+        
+        const newContainer = html.getElementById('cart-container');
+        if (newContainer && container) {
+          container.innerHTML = newContainer.innerHTML;
+          if (typeof window.restoreCartDeliveryDetailsFromStorage === 'function') {
+            window.restoreCartDeliveryDetailsFromStorage();
+          }
+          if (window.initAllCartDatePickers) window.initAllCartDatePickers();
+        } else {
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error('Error updating cart:', error);
+        window.location.reload();
+      } finally {
+        if (container) {
+          container.style.opacity = '1';
+          container.style.pointerEvents = 'auto';
+        }
+      }
+    });
+
+    function updateShipmentNotice() {
+      const forms = Array.from(document.querySelectorAll('.delivery-address-form'));
+      const singleNotice = document.getElementById('single-shipment-notice');
+      const multiNotice = document.getElementById('multi-shipment-notice');
+
+      if (!singleNotice || !multiNotice) return;
+
+      if (forms.length <= 1) {
+        singleNotice.classList.remove('hidden');
+        multiNotice.classList.add('hidden');
+        return;
+      }
+
+      const addresses = forms.map(f => {
+        const addr = (f.querySelector('[data-prop="Delivery_Address"]')?.value || '').trim().toLowerCase();
+        const city = (f.querySelector('[data-prop="Delivery_City"]')?.value || '').trim().toLowerCase();
+        const pin = (f.querySelector('[data-prop="Delivery_Postcode"]')?.value || '').trim().toLowerCase();
+        return `${addr}|${city}|${pin}`;
+      });
+
+      const firstAddr = addresses[0];
+      const allMatch = addresses.every(a => a === firstAddr || a === '||');
+
+      if (allMatch) {
+        singleNotice.classList.remove('hidden');
+        multiNotice.classList.add('hidden');
+      } else {
+        singleNotice.classList.add('hidden');
+        multiNotice.classList.remove('hidden');
+      }
+    }
+
+    document.addEventListener('change', (e) => {
+      if (e.target.classList.contains('use-same-address-cb')) {
+        const form = e.target.closest('.delivery-address-form');
+        if (e.target.checked) {
+          const allForms = Array.from(document.querySelectorAll('.delivery-address-form'));
+          const index = allForms.indexOf(form);
+          if (index > 0) {
+            const prevForm = allForms[index - 1];
+            const prevFields = prevForm.querySelectorAll('.addr-field');
+            const currFields = form.querySelectorAll('.addr-field');
+            
+            currFields.forEach((field, i) => {
+              if (field.type === 'checkbox') {
+                field.checked = prevFields[i].checked;
+              } else {
+                field.value = prevFields[i].value;
+              }
+            });
+          }
+        }
+      }
+      updateShipmentNotice();
+    });
+
+    document.addEventListener('input', (e) => {
+      if (e.target.classList.contains('addr-field')) {
+        updateShipmentNotice();
+      }
+    });
+
+    // ---- Date & Time Picker Logic (Matching Product Page Functionality) ----
+    const PREP_HOURS     = 3;   // 3-hour processing time
+    const MIDNIGHT_HOURS = 6;   // 6-hour advance notice for midnight delivery
+    const SAMEDAY_CUTOFF = 16;  // 4 PM same-day cutoff hour
+
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const days   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+    function formatTabDate(d) {
+      return days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate();
+    }
+    function formatISODate(d) {
+      return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    }
+
+    function normalizeToISODate(dateVal) {
+      if (!dateVal) return '';
+      dateVal = dateVal.trim();
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dateVal)) return dateVal;
+
+      const parts = dateVal.split(/[\/\-\.]/);
+      if (parts.length === 3) {
+        let p1 = parseInt(parts[0], 10);
+        let p2 = parseInt(parts[1], 10);
+        let p3 = parseInt(parts[2], 10);
+
+        if (p3 > 1000) {
+          let day = p1, month = p2, year = p3;
+          if (p1 <= 12 && p2 > 12) {
+            month = p1; day = p2;
+          }
+          return year + '-' + String(month).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+        } else if (p1 > 1000) {
+          return p1 + '-' + String(p2).padStart(2, '0') + '-' + String(p3).padStart(2, '0');
+        }
+      }
+
+      const d = new Date(dateVal);
+      if (!isNaN(d.getTime())) {
+        return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      }
+      return dateVal;
+    }
+
+    window.initCartDatePicker = function(block) {
+      if (!block) return;
+
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
+      const dayAfter = new Date(today); dayAfter.setDate(dayAfter.getDate() + 2);
+
+      const currentHour = now.getHours() + now.getMinutes() / 60;
+      const todayAvailable = currentHour < SAMEDAY_CUTOFF;
+
+      const todayIso = formatISODate(today);
+      const tomorrowIso = formatISODate(tomorrow);
+      const dayAfterIso = formatISODate(dayAfter);
+
+      // Populate Tab Labels
+      const todayDisplay = block.querySelector('.today-date-display');
+      const tomorrowDisplay = block.querySelector('.tomorrow-date-display');
+      const dayAfterDisplay = block.querySelector('.dayafter-date-display');
+
+      if (todayDisplay) todayDisplay.textContent = formatTabDate(today);
+      if (tomorrowDisplay) tomorrowDisplay.textContent = formatTabDate(tomorrow);
+      if (dayAfterDisplay) dayAfterDisplay.textContent = formatTabDate(dayAfter);
+
+      const tabToday = block.querySelector('.date-tab-today');
+      const tabTomorrow = block.querySelector('.date-tab-tomorrow');
+      const tabDayAfter = block.querySelector('.date-tab-dayafter');
+      const customBtn = block.querySelector('.custom-date-btn');
+      const hiddenInput = block.querySelector('.cart-date-input');
+      const timeSelect = block.querySelector('.delivery-time-select');
+      const noticeBox = block.querySelector('.cart-delivery-notice');
+      const noticeText = block.querySelector('.cart-delivery-notice-text');
+      const calendarPicker = block.querySelector('.custom-calendar-picker');
+
+      if (!tabToday || !tabTomorrow || !tabDayAfter || !hiddenInput || !timeSelect) return;
+
+      const sundayAllowedCountries = [
+        'AE', 'UAE', 'UNITED ARAB EMIRATES', 'DUBAI',
+        'ID', 'INDONESIA',
+        'SA', 'SAUDI ARABIA', 'SAUDI',
+        'QA', 'QATAR',
+        'OM', 'OMAN',
+        'KW', 'KUWAIT',
+        'BH', 'BAHRAIN'
+      ];
+
+      const deliveryMode = localStorage.getItem('delivery_mode') || 'india';
+      const userCountry = (localStorage.getItem('user_country') || 'India').trim();
+      const userCountryCode = (localStorage.getItem('user_country_code') || 'IN').toUpperCase().trim();
+      const isIntl = (deliveryMode === 'international') && (userCountry.toUpperCase() !== 'INDIA' && userCountry.toUpperCase() !== 'IN');
+      const isSundayAllowed = sundayAllowedCountries.includes(userCountryCode) || sundayAllowedCountries.includes(userCountry.toUpperCase());
+
+      const timeSelectContainer = timeSelect ? timeSelect.closest('.flex.items-center.gap-2.rounded-lg') : null;
+      if (isIntl) {
+        if (timeSelectContainer) timeSelectContainer.style.display = 'none';
+        if (timeSelect) {
+          timeSelect.removeAttribute('required');
+          timeSelect.value = 'Standard Full Day Delivery';
+        }
+      } else {
+        if (timeSelectContainer) timeSelectContainer.style.display = 'flex';
+        if (timeSelect) timeSelect.setAttribute('required', 'required');
+      }
+
+      // Handle 5 PM Cutoff & International Same-Day Disable
+      if (isIntl || !todayAvailable) {
+        tabToday.disabled = true;
+        tabToday.classList.add('opacity-40', 'cursor-not-allowed');
+        tabToday.title = isIntl ? 'Same-day delivery is not available for International Shipping' : 'Same-day delivery cutoff (5 PM) has passed';
+      }
+
+      const allTabs = [tabToday, tabTomorrow, tabDayAfter];
+
+      function activateTab(tab) {
+        allTabs.forEach(t => {
+          t.classList.remove('active', 'bg-primary', 'text-white');
+          t.classList.add('bg-white', 'border', 'border-gray-200', 'text-gray-700');
+        });
+        if (customBtn) {
+          customBtn.classList.remove('bg-primary', 'text-white');
+          customBtn.classList.add('bg-white', 'border', 'border-gray-200', 'text-gray-500');
+        }
+
+        if (tab) {
+          tab.classList.add('active', 'bg-primary', 'text-white');
+          tab.classList.remove('bg-white', 'border', 'border-gray-200', 'text-gray-700', 'text-gray-500');
+        }
+      }
+
+      function filterTimeSlots(selectedDateISO) {
+        if (isIntl) {
+          if (noticeBox) noticeBox.classList.add('hidden');
+          return;
+        }
+
+        const isToday = (selectedDateISO === todayIso);
+        const options = timeSelect.querySelectorAll('option');
+        let allDisabled = true;
+        let selectedOptionDisabled = false;
+
+        options.forEach(opt => {
+          if (!opt.value) return;
+
+          const slotStart = parseInt(opt.dataset.start, 10);
+          const isMidnight = opt.dataset.midnight === 'true';
+
+          let disabled = false;
+
+          if (slotStart === 8 || opt.value.indexOf('08:00 AM') !== -1) {
+            const parts = selectedDateISO.split('-');
+            if (parts.length === 3) {
+              const selY = parseInt(parts[0], 10);
+              const selM = parseInt(parts[1], 10) - 1;
+              const selD = parseInt(parts[2], 10);
+              const morningCutoff = new Date(selY, selM, selD - 1, 19, 0, 0, 0);
+              if (new Date() >= morningCutoff) {
+                disabled = true;
+              }
+            }
+          }
+
+          if (isIntl && isMidnight) {
+            disabled = true;
+          }
+
+          if (isToday) {
+            if (isMidnight) {
+              if (currentHour >= (22 - MIDNIGHT_HOURS)) disabled = true;
+            } else {
+              if (currentHour + PREP_HOURS > slotStart) disabled = true;
+            }
+          }
+
+          opt.disabled = disabled;
+          opt.style.color = disabled ? '#bbb' : '';
+
+          if (!disabled) allDisabled = false;
+          if (timeSelect.value === opt.value && disabled) selectedOptionDisabled = true;
+        });
+
+        if (selectedOptionDisabled) {
+          timeSelect.value = '';
+        }
+
+        if (noticeBox && noticeText) {
+          const morningOpt = timeSelect.querySelector('option[data-start="8"]');
+          const morningBlocked = morningOpt && morningOpt.disabled;
+
+          if (isToday) {
+            noticeBox.classList.remove('hidden');
+            const midnightOpt = timeSelect.querySelector('option[data-midnight="true"]');
+            const midnightBlocked = midnightOpt && midnightOpt.disabled;
+
+            if (allDisabled) {
+              noticeText.textContent = "⚠️ No delivery slots available today. Please select Tomorrow or a future date.";
+              noticeBox.className = "cart-delivery-notice mb-3 px-3 py-2 text-xs font-semibold rounded-lg flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-800";
+            } else if (midnightBlocked && currentHour >= (22 - MIDNIGHT_HOURS)) {
+              noticeText.textContent = "🌙 Midnight slot unavailable — must be ordered 6 hrs in advance (by 4 PM). Select tomorrow for midnight delivery.";
+              noticeBox.className = "cart-delivery-notice mb-3 px-3 py-2 text-xs font-semibold rounded-lg flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700";
+            } else {
+              noticeText.textContent = "⏱️ Showing slots with 3-hour preparation time. Earlier slots are unavailable.";
+              noticeBox.className = "cart-delivery-notice mb-3 px-3 py-2 text-xs font-semibold rounded-lg flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700";
+            }
+          } else if (morningBlocked && currentHour >= 19 && selectedDateISO === tomorrowIso) {
+            noticeBox.classList.remove('hidden');
+            noticeText.textContent = "🌅 Morning slot (8:00 AM – 10:00 AM) closed — must be ordered before 7:00 PM on the previous day.";
+            noticeBox.className = "cart-delivery-notice mb-3 px-3 py-2 text-xs font-semibold rounded-lg flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700";
+          } else {
+            noticeBox.classList.add('hidden');
+          }
+        }
+      }
+
+      function selectDate(dateObj, tabEl) {
+        const isoDate = formatISODate(dateObj);
+        hiddenInput.value = isoDate;
+        activateTab(tabEl);
+        filterTimeSlots(isoDate);
+      }
+
+      // Advance processing lead time check for cart items
+      const cartFormEl = document.querySelector('.delivery-address-form');
+      const cartAdvDays = cartFormEl ? (parseInt(cartFormEl.dataset.advanceDays, 10) || 0) : 0;
+      const cartNoSun = cartFormEl ? (cartFormEl.dataset.noSunday === 'true') : false;
+      const cartNoWeekend = cartFormEl ? (cartFormEl.dataset.noWeekend === 'true') : false;
+
+      let minCartDate = new Date(today);
+      if (cartAdvDays > 0) {
+        minCartDate.setDate(today.getDate() + cartAdvDays);
+      } else if (isIntl || !todayAvailable) {
+        minCartDate.setDate(today.getDate() + 1);
+      }
+
+      const disallowCartSunday = (!isSundayAllowed || cartNoSun || cartNoWeekend);
+      const disallowCartSaturday = cartNoWeekend;
+
+      while ((disallowCartSunday && minCartDate.getDay() === 0) || (disallowCartSaturday && minCartDate.getDay() === 6)) {
+        minCartDate.setDate(minCartDate.getDate() + 1);
+      }
+
+      const minCartIso = formatISODate(minCartDate);
+
+      if (todayIso < minCartIso) {
+        tabToday.disabled = true;
+        tabToday.classList.add('opacity-40', 'cursor-not-allowed');
+      }
+      if (tomorrowIso < minCartIso || (disallowCartSunday && tomorrow.getDay() === 0) || (disallowCartSaturday && tomorrow.getDay() === 6)) {
+        tabTomorrow.disabled = true;
+        tabTomorrow.classList.add('opacity-40', 'cursor-not-allowed');
+      }
+      if (dayAfterIso < minCartIso || (disallowCartSunday && dayAfter.getDay() === 0) || (disallowCartSaturday && dayAfter.getDay() === 6)) {
+        tabDayAfter.disabled = true;
+        tabDayAfter.classList.add('opacity-40', 'cursor-not-allowed');
+      }
+
+      // Resolution of selected cart date
+      // Priority: 1) localStorage from product page, 2) line item properties (initialIso), 3) auto-select earliest
+      let pdpSavedDate = '';
+      let pdpSavedTime = '';
+      try {
+        pdpSavedDate = localStorage.getItem('floral_pdp_delivery_date') || '';
+        pdpSavedTime = localStorage.getItem('floral_pdp_delivery_time') || '';
+        // Clear them so they don't linger after being read
+        localStorage.removeItem('floral_pdp_delivery_date');
+        localStorage.removeItem('floral_pdp_delivery_time');
+      } catch(e) {}
+
+      let initialIso = normalizeToISODate(pdpSavedDate) || normalizeToISODate(hiddenInput.value);
+
+      // Pre-fill time slot from product page selection if available
+      if (pdpSavedTime && timeSelect) {
+        for (let opt of timeSelect.options) {
+          if (opt.value === pdpSavedTime) {
+            timeSelect.value = pdpSavedTime;
+            break;
+          }
+        }
+      }
+
+      function updateCustomBtnLabel(isoDate) {
+        const customLabel = customBtn ? customBtn.querySelector('.custom-date-label') : null;
+        const customDisplay = customBtn ? customBtn.querySelector('.custom-date-display') : null;
+        if (!customLabel || !customDisplay || !isoDate) return;
+        const parts = isoDate.split('-');
+        if (parts.length !== 3) return;
+        const d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+        const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        customLabel.textContent = dayNames[d.getDay()];
+        customDisplay.textContent = monthNames[d.getMonth()] + ' ' + d.getDate();
+      }
+
+      // Flatpickr Integration — init BEFORE date resolution so fp.setDate() works on load
+      const maxDate = new Date(today);
+      maxDate.setMonth(maxDate.getMonth() + 12);
+
+      let fp = null;
+      if (calendarPicker && typeof flatpickr !== 'undefined') {
+        const disableRules = [];
+        if (disallowCartSunday || disallowCartSaturday) {
+          disableRules.push(function(date) {
+            if (disallowCartSunday && date.getDay() === 0) return true;
+            if (disallowCartSaturday && date.getDay() === 6) return true;
+            return false;
+          });
+        }
+
+        fp = flatpickr(calendarPicker, {
+          minDate: minCartIso,
+          maxDate: maxDate,
+          dateFormat: 'Y-m-d',
+          defaultDate: (initialIso && initialIso >= minCartIso) ? initialIso : minCartIso,
+          disableMobile: true,
+          disable: disableRules,
+          onChange: function(selectedDates, dateStr) {
+            if (selectedDates.length > 0) {
+              hiddenInput.value = dateStr;
+              activateTab(customBtn);
+              updateCustomBtnLabel(dateStr);
+              filterTimeSlots(dateStr);
+            }
+          }
+        });
+      }
+
+      if (initialIso && initialIso >= minCartIso) {
+        if (initialIso === todayIso && !tabToday.disabled) {
+          selectDate(today, tabToday);
+        } else if (initialIso === tomorrowIso && !tabTomorrow.disabled) {
+          selectDate(tomorrow, tabTomorrow);
+        } else if (initialIso === dayAfterIso && !tabDayAfter.disabled) {
+          selectDate(dayAfter, tabDayAfter);
+        } else {
+          hiddenInput.value = initialIso;
+          activateTab(customBtn);
+          updateCustomBtnLabel(initialIso);
+          filterTimeSlots(initialIso);
+          if (fp) fp.setDate(initialIso, false);
+        }
+      } else {
+        if (minCartIso === todayIso && !tabToday.disabled) {
+          selectDate(today, tabToday);
+        } else if (minCartIso === tomorrowIso && !tabTomorrow.disabled) {
+          selectDate(tomorrow, tabTomorrow);
+        } else if (minCartIso === dayAfterIso && !tabDayAfter.disabled) {
+          selectDate(dayAfter, tabDayAfter);
+        } else {
+          hiddenInput.value = minCartIso;
+          activateTab(customBtn);
+          updateCustomBtnLabel(minCartIso);
+          filterTimeSlots(minCartIso);
+          if (fp) fp.setDate(minCartIso, false);
+        }
+      }
+
+      // Event Listeners for Date Tabs
+      tabToday.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!tabToday.disabled) selectDate(today, tabToday);
+      });
+
+      tabTomorrow.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!tabTomorrow.disabled) selectDate(tomorrow, tabTomorrow);
+      });
+
+      tabDayAfter.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!tabDayAfter.disabled) selectDate(dayAfter, tabDayAfter);
+      });
+
+      if (customBtn) {
+        customBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (fp) {
+            fp.open();
+          } else if (calendarPicker) {
+            calendarPicker.type = 'date';
+            calendarPicker.focus();
+            if (typeof calendarPicker.showPicker === 'function') calendarPicker.showPicker();
+          }
+        });
+      }
+
+      timeSelect.addEventListener('change', () => {
+        filterTimeSlots(hiddenInput.value);
+      });
+    };
+
+    window.initAllCartDatePickers = function() {
+      document.querySelectorAll('.cart-date-picker-block').forEach(block => {
+        window.initCartDatePicker(block);
+      });
+    };
+
+    // Auto Pre-fill from line item properties
+    document.querySelectorAll('.delivery-address-form').forEach(form => {
+      let existingProps = {};
+      try {
+        if (form.dataset.existingProperties) {
+          existingProps = JSON.parse(form.dataset.existingProperties);
+        }
+      } catch(e) {}
+
+      const dateVal = existingProps['Delivery Date'] || existingProps['Delivery_Date'] || existingProps['Date'];
+      const timeVal = existingProps['Delivery Time'] || existingProps['Delivery_Time'] || existingProps['Time'];
+
+      if (dateVal) {
+        const dateInput = form.querySelector('.cart-date-input');
+        if (dateInput) dateInput.value = normalizeToISODate(dateVal);
+      }
+      if (timeVal) {
+        const timeSelect = form.querySelector('.delivery-time-select');
+        if (timeSelect) {
+          for (let i = 0; i < timeSelect.options.length; i++) {
+            const optVal = timeSelect.options[i].value;
+            if (optVal && (optVal === timeVal || optVal.toLowerCase().includes(timeVal.toLowerCase()) || timeVal.toLowerCase().includes(optVal.toLowerCase()))) {
+              timeSelect.selectedIndex = i;
+              break;
+            }
+          }
+        }
+      }
+    });
+
+    // Run Initialization
+    window.initAllCartDatePickers();
+
+    // Live Countdown Timer
+    function updateCartCountdowns() {
+      const now = new Date();
+      const cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate(), SAMEDAY_CUTOFF, 0, 0);
+      const diff   = cutoff - now;
+
+      document.querySelectorAll('.cart-date-picker-block').forEach(block => {
+        const el = block.querySelector('.delivery-countdown');
+        const tabToday = block.querySelector('.date-tab-today');
+        if (!el) return;
+
+        const mode = localStorage.getItem('delivery_mode') || 'india';
+        if (mode === 'international' || (tabToday && tabToday.disabled)) {
+          el.style.display = 'none';
+          return;
+        }
+
+        el.style.display = 'inline';
+        if (diff > 0) {
+          const h = Math.floor(diff / 3600000);
+          const m = Math.floor((diff % 3600000) / 60000);
+          const s = Math.floor((diff % 60000) / 1000);
+          el.innerHTML = '<span class="text-secondary font-bold">' + h + 'h ' + m + 'm ' + s + 's</span> left for today';
+        } else {
+          el.innerHTML = '<span class="text-rose-600 font-bold">Today\'s delivery closed</span>';
+        }
+      });
+    }
+    updateCartCountdowns();
+    setInterval(updateCartCountdowns, 1000);
+
+    // Run on initial load
+    updateShipmentNotice();
+
+    // Live sync address fields to hidden form inputs so discount apps (Scala) cannot wipe attributes
+    function syncLiveCartAttributes() {
+      const forms = document.querySelectorAll('.delivery-address-form');
+      const mainCartForm = document.querySelector('form[action^="/cart"]') || document.querySelector('form#cart');
+      if (!mainCartForm) return;
+
+      forms.forEach((form, idx) => {
+        const fields = form.querySelectorAll('.addr-field');
+        const properties = {};
+        fields.forEach(field => {
+          const val = field.type === 'checkbox' ? (field.checked ? field.value : '') : (field.type === 'tel' && field.dataset.e164 ? field.dataset.e164 : field.value);
+          if (val) properties[field.dataset.prop] = val;
+        });
+
+        const title = properties['Delivery_Title'] || '';
+        const fName = properties['Delivery_FirstName'] || '';
+        const lName = properties['Delivery_LastName'] || '';
+        const address = properties['Delivery_Address'] || '';
+        const landmark = properties['Delivery_Landmark'] || '';
+        const city = properties['Delivery_City'] || properties['City'] || '';
+        const state = properties['Delivery_State'] || '';
+        const postcode = properties['Delivery_Postcode'] || '';
+        const mobile = properties['Delivery_Mobile'] || '';
+        const giftMsg = properties['Delivery_GiftMessage'] || '';
+        const senderName = properties['Sender_Name'] || '';
+        const senderMobile = properties['Sender_Mobile'] || '';
+        const senderEmail = properties['Sender_Email'] || '';
+        const delDate = properties['Delivery Date'] || properties['Delivery_Date'] || '';
+        const delTime = properties['Delivery Time'] || properties['Delivery_Time'] || '';
+
+        const prefix = forms.length > 1 ? `Item ${idx + 1} ` : '';
+        const attrs = {};
+        if (fName || lName) attrs[`${prefix}Recipient Name`] = `${title} ${fName} ${lName}`.trim();
+        if (address) attrs[`${prefix}Delivery Address`] = `${address}${landmark ? ', ' + landmark : ''}${city ? ', ' + city : ''}${state ? ', ' + state : ''}${postcode ? ' - ' + postcode : ''}`;
+        if (mobile) attrs[`${prefix}Recipient Phone`] = mobile;
+        if (giftMsg) attrs[`${prefix}Gift Message`] = giftMsg;
+        if (senderName) attrs[`${prefix}Sender Name`] = senderName;
+        if (senderMobile) attrs[`${prefix}Sender Phone`] = senderMobile;
+        if (senderEmail) attrs[`${prefix}Sender Email`] = senderEmail;
+        if (delDate) attrs[`${prefix}Delivery Date`] = delDate;
+        if (delTime) attrs[`${prefix}Delivery Time`] = delTime;
+
+        Object.keys(attrs).forEach(attrKey => {
+          let hiddenInput = mainCartForm.querySelector(`input[name="attributes[${CSS.escape(attrKey)}]"]`);
+          if (!hiddenInput) {
+            hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = `attributes[${attrKey}]`;
+            mainCartForm.appendChild(hiddenInput);
+          }
+          hiddenInput.value = attrs[attrKey];
+        });
+      });
+    }
+
+    document.querySelectorAll('.addr-field').forEach(field => {
+      field.addEventListener('input', syncLiveCartAttributes);
+      field.addEventListener('change', syncLiveCartAttributes);
+    });
+    syncLiveCartAttributes();
+
+    window.saveCartDeliveryDetailsToStorage = function() {
+      const saveCb = document.getElementById('save-delivery-details-cb');
+      if (saveCb && !saveCb.checked) {
+        localStorage.removeItem('floral_saved_delivery_details');
+        return;
+      }
+      const formData = {};
+      document.querySelectorAll('.delivery-address-form .addr-field').forEach(field => {
+        const key = field.dataset.prop;
+        if (!key) return;
+        if (field.type === 'checkbox') {
+          formData[key] = field.checked ? field.value : '';
+        } else {
+          formData[key] = field.value || '';
+        }
+      });
+
+      const dateInput = document.querySelector('.cart-date-input');
+      if (dateInput) formData['Delivery Date'] = dateInput.value;
+
+      localStorage.setItem('floral_saved_delivery_details', JSON.stringify(formData));
+
+      const badge = document.getElementById('saved-details-badge');
+      if (badge) {
+        badge.classList.remove('hidden');
+        setTimeout(() => badge.classList.add('hidden'), 2500);
+      }
+    };
+
+    window.lockCartLocationFields = function() {
+      const mode = localStorage.getItem('delivery_mode') || 'india';
+      const uCity = localStorage.getItem('user_city') || '';
+      const uState = localStorage.getItem('user_state') || '';
+      const uPin = localStorage.getItem('user_pincode') || '';
+      const uCountry = (localStorage.getItem('user_country') || 'India').trim();
+
+      document.querySelectorAll('.delivery-address-form').forEach(form => {
+        const cityField = form.querySelector('[data-prop="Delivery_City"]');
+        const stateField = form.querySelector('[data-prop="Delivery_State"]');
+        const pinField = form.querySelector('[data-prop="Delivery_Postcode"]');
+        const countryField = form.querySelector('[data-prop="Delivery_Country"]');
+
+        const applyLock = (el, val) => {
+          if (!el) return;
+          if (val) {
+            el.value = val;
+            el.readOnly = true;
+            el.classList.add('bg-gray-50', 'text-gray-500', 'cursor-not-allowed');
+            el.classList.remove('bg-white');
+            
+            let wrapper = el.parentNode;
+            if (!wrapper.classList.contains('locked-wrapper')) {
+              const newWrapper = document.createElement('div');
+              newWrapper.className = 'relative locked-wrapper w-full';
+              wrapper.insertBefore(newWrapper, el);
+              newWrapper.appendChild(el);
+              
+              const lockIcon = document.createElement('div');
+              lockIcon.className = 'absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-help';
+              lockIcon.title = 'Locked from Pincode lookup.';
+              lockIcon.innerHTML = '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>';
+              newWrapper.appendChild(lockIcon);
+            }
+          } else {
+            el.readOnly = false;
+            el.classList.remove('bg-gray-50', 'text-gray-500', 'cursor-not-allowed');
+            el.classList.add('bg-white');
+            let wrapper = el.parentNode;
+            if (wrapper.classList.contains('locked-wrapper')) {
+              const icon = wrapper.querySelector('div:last-child');
+              if (icon) icon.remove();
+              wrapper.outerHTML = wrapper.innerHTML; // Unwrap
+            }
+          }
+        };
+
+        if (mode === 'india') {
+          applyLock(countryField, 'India');
+          applyLock(cityField, uCity);
+          applyLock(stateField, uState);
+          applyLock(pinField, uPin);
+        } else {
+          const uIntlZip = localStorage.getItem('user_intl_zip') || '';
+          const uIntlLocality = localStorage.getItem('user_intl_locality') || '';
+          
+          let iCity = uIntlLocality;
+          let iState = '';
+          if (uIntlLocality.includes(',')) {
+            const parts = uIntlLocality.split(',').map(p => p.trim());
+            iState = parts.pop();
+            iCity = parts.join(', ');
+          }
+
+          applyLock(countryField, uCountry);
+          applyLock(cityField, iCity);
+          applyLock(stateField, iState);
+          applyLock(pinField, uIntlZip);
+        }
+      });
+      syncLiveCartAttributes();
+    };
+
+    window.restoreCartDeliveryDetailsFromStorage = function() {
+      const savedJSON = localStorage.getItem('floral_saved_delivery_details');
+      if (!savedJSON) return;
+
+      try {
+        const formData = JSON.parse(savedJSON);
+        if (!formData || typeof formData !== 'object') return;
+
+        let restoredAny = false;
+        document.querySelectorAll('.delivery-address-form').forEach(form => {
+          form.querySelectorAll('.addr-field').forEach(field => {
+            const key = field.dataset.prop;
+            if (key && formData[key] !== undefined && formData[key] !== null && formData[key] !== '') {
+              if (field.type === 'checkbox') {
+                field.checked = (formData[key] === field.value || formData[key] === 'Yes');
+                restoredAny = true;
+              } else {
+                if (!field.value || field.value.trim() === '' || field.value === 'Mr.') {
+                  field.value = formData[key];
+                  restoredAny = true;
+                }
+              }
+            }
+          });
+        });
+
+        if (formData['Delivery Date']) {
+          const dateInput = document.querySelector('.cart-date-input');
+          if (dateInput) {
+            // Only restore if dateInput is empty, otherwise trust the product page line item properties
+            if (!dateInput.value || dateInput.value.trim() === '') {
+              dateInput.value = formData['Delivery Date'];
+              restoredAny = true;
+            }
+          }
+        }
+
+        if (restoredAny) {
+          syncLiveCartAttributes();
+          if (window.initAllCartDatePickers) window.initAllCartDatePickers();
+        }
+      } catch (err) {
+        console.error('Error restoring saved cart delivery details:', err);
+      }
+    };
+
+    // Restore on load
+    restoreCartDeliveryDetailsFromStorage();
+    if (window.lockCartLocationFields) window.lockCartLocationFields();
+    if (window.syncAllTelInputs) window.syncAllTelInputs();
+
+    // Auto save on input change (delegated to document for dynamic cart re-renders)
+    document.addEventListener('input', (e) => {
+      if (e.target.classList && e.target.classList.contains('addr-field')) {
+        syncLiveCartAttributes();
+        saveCartDeliveryDetailsToStorage();
+      }
+    });
+    document.addEventListener('change', (e) => {
+      if (e.target.classList && e.target.classList.contains('addr-field')) {
+        syncLiveCartAttributes();
+        saveCartDeliveryDetailsToStorage();
+      } else if (e.target.id === 'save-delivery-details-cb') {
+        if (e.target.checked) {
+          saveCartDeliveryDetailsToStorage();
+        } else {
+          localStorage.removeItem('floral_saved_delivery_details');
+        }
+      }
+    });
+
+    const isCustomerLoggedIn = {% if customer %}true{% else %}false{% endif %};
+
+    // Reusable delivery address form validator
+    function validateCartFormFields() {
+      if (typeof window.saveCartDeliveryDetailsToStorage === 'function') {
+        window.saveCartDeliveryDetailsToStorage();
+      }
+
+      if (!isCustomerLoggedIn) {
+        const currentUrl = window.location.pathname + window.location.search;
+        if (typeof window.openLoginModal === 'function') {
+          window.openLoginModal(currentUrl);
+        } else {
+          window.location.href = `/account/login?return_to=${encodeURIComponent(currentUrl)}&checkout_url=${encodeURIComponent(currentUrl)}`;
+        }
+        return false;
+      }
+
+      const mode = localStorage.getItem('delivery_mode') || 'india';
+      const uCountryCode = localStorage.getItem('user_country_code') || 'US';
+      const forms = document.querySelectorAll('.delivery-address-form');
+      let isValid = true;
+      let firstInvalidField = null;
+      let invalidPincode = false;
+
+      forms.forEach(form => {
+        const requiredFields = form.querySelectorAll('[required]');
+        requiredFields.forEach(field => {
+          if (!field.value.trim()) {
+            field.classList.add('border-red-500', 'ring-2', 'ring-red-500');
+            isValid = false;
+            if (!firstInvalidField) firstInvalidField = field;
+          } else {
+            field.classList.remove('border-red-500', 'ring-2', 'ring-red-500');
+            
+            // Validate Postcode
+            if (field.dataset && field.dataset.prop === 'Delivery_Postcode') {
+              const val = field.value.trim();
+              if (mode === 'india') {
+                if (val.length !== 6 || isNaN(val)) invalidPincode = true;
+              } else if (mode === 'international' && uCountryCode === 'US') {
+                if (!/^\d{5}$/.test(val)) invalidPincode = true;
+              }
+            }
+          }
+        });
+
+        // Validate all phone fields according to country rules using libphonenumber-js
+        const telFields = form.querySelectorAll('input[type="tel"]');
+        telFields.forEach(field => {
+          const isPhoneValid = validateSinglePhoneField(field);
+          if (!isPhoneValid) {
+            isValid = false;
+            if (!firstInvalidField) firstInvalidField = field;
+          }
+        });
+      });
+
+      if (invalidPincode) {
+        window.location.href = '/search?view=invalid-pincode';
+        return false;
+      }
+
+      if (!isValid) {
+        alert('Please fill out all required address fields and enter a valid phone number for the selected country.');
+        if (firstInvalidField) {
+          firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          firstInvalidField.focus();
+        }
+        return false;
+      }
+      return true;
+    }
+
+    // Capture phase click interceptor for ALL checkout buttons (including Scala Discount button)
+    document.addEventListener('click', function(e) {
+      const checkoutTarget = e.target.closest('button[name="checkout"], input[name="checkout"], [data-checkout-btn], .scala-discount-btn, [class*="scala"], [id*="scala"], [class*="discount-btn"]');
+      if (checkoutTarget) {
+        if (!validateCartFormFields()) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          return false;
+        }
+      }
+    }, true);
+
+    // Capture phase submit interceptor on cart form
+    const cartFormElement = document.querySelector('form[action^="/cart"]') || document.querySelector('form#cart');
+    if (cartFormElement) {
+      cartFormElement.addEventListener('submit', function(e) {
+        if (!validateCartFormFields()) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          return false;
+        }
+      }, true);
+    }
+
+    // Intercept checkout to save properties
+    const checkoutBtn = document.getElementById('js-checkout-btn');
+    if (checkoutBtn) {
+      checkoutBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        
+        const btnText = checkoutBtn.querySelector('.btn-text');
+        const btnLoading = checkoutBtn.querySelector('.btn-loading');
+
+        function resetCheckoutButtonState() {
+          if (btnText) btnText.style.opacity = '1';
+          if (btnLoading) btnLoading.classList.add('hidden');
+          checkoutBtn.style.pointerEvents = 'auto';
+        }
+
+        if (!validateCartFormFields()) {
+          resetCheckoutButtonState();
+          return;
+        }
+
+        // Ensure live cart hidden attributes are synced
+        syncLiveCartAttributes();
+        
+        // Show loading state
+        if (btnText) btnText.style.opacity = '0';
+        if (btnLoading) btnLoading.classList.remove('hidden');
+        checkoutBtn.style.pointerEvents = 'none';
+
+        const mainCartForm = checkoutBtn.closest('form') || document.querySelector('form[action^="/cart"]') || document.querySelector('form#cart');
+
+        // Fallback safety timeout (forces checkout submit if network is slow)
+        const safetyTimeout = setTimeout(() => {
+          console.warn('Checkout submission timing out, forcing direct form submission...');
+          if (mainCartForm) {
+            let hiddenInput = mainCartForm.querySelector('input[name="checkout"]');
+            if (!hiddenInput) {
+              hiddenInput = document.createElement('input');
+              hiddenInput.type = 'hidden';
+              hiddenInput.name = 'checkout';
+              hiddenInput.value = 'Checkout';
+              mainCartForm.appendChild(hiddenInput);
+            }
+            mainCartForm.submit();
+          } else {
+            window.location.href = '/checkout';
+          }
+        }, 3500);
+
+        try {
+          const updates = [];
+          const allCartAttributes = {};
+
+          forms.forEach((form, idx) => {
+            const lineAttr = form.dataset.line;
+            const fields = form.querySelectorAll('.addr-field');
+            
+            let existingProperties = {};
+            try {
+              if (form.dataset.existingProperties) {
+                existingProperties = JSON.parse(form.dataset.existingProperties);
+              }
+            } catch(err) {}
+
+            const properties = Object.assign({}, existingProperties);
+            
+            let hasData = false;
+            fields.forEach(field => {
+              const val = field.type === 'checkbox' ? (field.checked ? field.value : '') : field.value;
+              if (val) {
+                properties[field.dataset.prop] = val;
+                hasData = true;
+              }
+            });
+
+            const title = properties['Delivery_Title'] || '';
+            const fName = properties['Delivery_FirstName'] || '';
+            const lName = properties['Delivery_LastName'] || '';
+            const address = properties['Delivery_Address'] || '';
+            const landmark = properties['Delivery_Landmark'] || '';
+            const city = properties['Delivery_City'] || properties['City'] || properties['_City'] || '';
+            const state = properties['Delivery_State'] || '';
+            const postcode = properties['Delivery_Postcode'] || properties['_Pincode'] || '';
+            const delMobileInput = form.querySelector('[data-prop="Delivery_Mobile"]');
+            const senderMobileInput = form.querySelector('[data-prop="Sender_Mobile"]');
+
+            const mobile = (delMobileInput && delMobileInput.dataset.e164) ? delMobileInput.dataset.e164 : (properties['Delivery_Mobile'] || '');
+            const senderMobile = (senderMobileInput && senderMobileInput.dataset.e164) ? senderMobileInput.dataset.e164 : (properties['Sender_Mobile'] || '');
+            const giftMsg = properties['Delivery_GiftMessage'] || '';
+            const senderName = properties['Sender_Name'] || '';
+            const senderEmail = properties['Sender_Email'] || '';
+            const delDate = properties['Delivery Date'] || properties['Delivery_Date'] || '';
+            const delTime = properties['Delivery Time'] || properties['Delivery_Time'] || '';
+
+            if (fName || lName) properties['Recipient Name'] = `${title} ${fName} ${lName}`.trim();
+            if (address) properties['Delivery Address'] = `${address}${landmark ? ', ' + landmark : ''}${city ? ', ' + city : ''}${state ? ', ' + state : ''}${postcode ? ' - ' + postcode : ''}`;
+            if (mobile) properties['Recipient Phone'] = mobile;
+            if (giftMsg) properties['Gift Message'] = giftMsg;
+            if (senderName) properties['Sender Name'] = senderName;
+            if (senderMobile) properties['Sender Phone'] = senderMobile;
+            if (senderEmail) properties['Sender Email'] = senderEmail;
+            if (delDate) properties['Delivery Date'] = delDate;
+            if (delTime) properties['Delivery Time'] = delTime;
+
+            if (fName || lName) allCartAttributes['Recipient Name'] = `${title} ${fName} ${lName}`.trim();
+            if (address) allCartAttributes['Delivery Address'] = `${address}${landmark ? ', ' + landmark : ''}${city ? ', ' + city : ''}${state ? ', ' + state : ''}${postcode ? ' - ' + postcode : ''}`;
+            if (mobile) allCartAttributes['Recipient Phone'] = mobile;
+            if (giftMsg) allCartAttributes['Gift Message'] = giftMsg;
+            if (senderName) allCartAttributes['Sender Name'] = senderName;
+            if (senderMobile) allCartAttributes['Sender Phone'] = senderMobile;
+            if (senderEmail) allCartAttributes['Sender Email'] = senderEmail;
+            if (delDate) allCartAttributes['Delivery Date'] = delDate;
+            if (delTime) allCartAttributes['Delivery Time'] = delTime;
+
+            if (hasData || Object.keys(properties).length > 0) {
+              if (lineAttr === 'all') {
+                const qtyButtons = document.querySelectorAll('.js-qty-btn[data-line]');
+                const lineNumbers = new Set();
+                qtyButtons.forEach(b => { if (b.dataset.line) lineNumbers.add(parseInt(b.dataset.line, 10)); });
+                if (lineNumbers.size === 0) lineNumbers.add(1);
+
+                lineNumbers.forEach(lineNum => {
+                  const qtyInput = document.getElementById(`updates_${lineNum}`);
+                  const qty = qtyInput ? parseInt(qtyInput.value || '1', 10) : 1;
+                  updates.push({
+                    line: lineNum,
+                    quantity: qty,
+                    properties: properties
+                  });
+                });
+              } else {
+                const line = parseInt(lineAttr || '1', 10);
+                const qty = parseInt(form.dataset.quantity || '1', 10);
+                if (!isNaN(line)) {
+                  updates.push({
+                    line: line,
+                    quantity: qty,
+                    properties: properties
+                  });
+                }
+              }
+            }
+          });
+
+          // Parallel fetch to update line items & attributes faster
+          const updatePromises = updates.map(u => fetch('/cart/change.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ line: u.line, quantity: u.quantity, properties: u.properties })
+          }).catch(err => console.error('Error updating line property', err)));
+
+          if (Object.keys(allCartAttributes).length > 0) {
+            updatePromises.push(fetch('/cart/update.js', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ attributes: allCartAttributes })
+            }).catch(err => console.error('Error updating attributes', err)));
+          }
+
+          await Promise.race([
+            Promise.all(updatePromises),
+            new Promise(r => setTimeout(r, 2500))
+          ]);
+
+          clearTimeout(safetyTimeout);
+
+          if (mainCartForm) {
+            let hiddenInput = mainCartForm.querySelector('input[name="checkout"]');
+            if (!hiddenInput) {
+              hiddenInput = document.createElement('input');
+              hiddenInput.type = 'hidden';
+              hiddenInput.name = 'checkout';
+              hiddenInput.value = 'Checkout';
+              mainCartForm.appendChild(hiddenInput);
+            }
+            mainCartForm.submit();
+          } else {
+            window.location.href = '/checkout';
+          }
+        } catch (checkoutErr) {
+          console.error('Error during checkout preparation:', checkoutErr);
+          clearTimeout(safetyTimeout);
+          if (mainCartForm) {
+            mainCartForm.submit();
+          } else {
+            window.location.href = '/checkout';
+          }
+        }
+      });
+    }
+</script>
+
+<script>
+/* ============================================================
+   CART COUNTRY FILTER
+   Removes cart items unavailable for the selected delivery country
+   when the page loads or when the delivery mode changes.
+============================================================ */
+(function() {
+  function getCookieVal(name) {
+    const v = '; ' + document.cookie;
+    const parts = v.split('; ' + name + '=');
+    if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
+    return '';
+  }
+
+  function showRemovedBanner(names) {
+    if (!names || names.length === 0) return;
+    let banner = document.getElementById('cart-country-removed-banner');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'cart-country-removed-banner';
+      banner.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;max-width:480px;width:90%;';
+      document.body.appendChild(banner);
+    }
+    banner.innerHTML = '<div style="background:linear-gradient(135deg,#7c3aed,#db2777);color:#fff;border-radius:16px;padding:16px 20px;box-shadow:0 8px 32px rgba(0,0,0,0.18);display:flex;align-items:flex-start;gap:12px;font-family:system-ui,sans-serif;">' +
+      '<span style="font-size:22px;flex-shrink:0;">&#128683;</span>' +
+      '<div>' +
+        '<div style="font-weight:700;font-size:14px;margin-bottom:4px;">Items Removed from Cart</div>' +
+        '<div style="font-size:12px;opacity:0.92;">The following items are not available for your selected delivery destination and were removed:<br><b>' + names.join(', ') + '</b></div>' +
+      '</div>' +
+      '<button onclick="this.parentElement.parentElement.remove()" style="margin-left:auto;background:rgba(255,255,255,0.2);border:none;border-radius:8px;color:#fff;font-size:18px;cursor:pointer;padding:2px 8px;flex-shrink:0;">&times;</button>' +
+    '</div>';
+    setTimeout(() => { if (banner && banner.parentNode) banner.remove(); }, 8000);
+  }
+
+  async function removeUnavailableCartItems() {
+    const mode = localStorage.getItem('delivery_mode') || getCookieVal('delivery_mode') || 'india';
+    if (mode !== 'international') return; // Only filter on international mode
+
+    const userCountry = (localStorage.getItem('user_country') || getCookieVal('user_country') || '').toLowerCase().trim();
+    const userCountryCode = (localStorage.getItem('user_country_code') || getCookieVal('user_country_code') || '').toLowerCase().trim();
+
+    const isUsaMode = userCountry.includes('usa') || userCountry.includes('united states') || userCountry === 'us' || userCountryCode === 'us';
+    const isLondonMode = userCountry.includes('london') || userCountry.includes('united kingdom') || userCountry === 'uk' || userCountryCode === 'gb';
+    const isUaeMode = userCountry.includes('uae') || userCountry.includes('dubai') || userCountryCode === 'ae';
+    const isCanadaMode = userCountry.includes('canada') || userCountryCode === 'ca';
+    const isAusMode = userCountry.includes('australia') || userCountryCode === 'au';
+
+    // Specific country mode: only matched-tag products allowed
+    const isSpecificCountryMode = isUsaMode || isLondonMode || isUaeMode || isCanadaMode || isAusMode;
+    if (!isSpecificCountryMode) return; // Generic intl, no strict filtering needed
+
+    const items = document.querySelectorAll('.cart-country-item');
+    if (!items.length) return;
+
+    const toRemove = [];
+    items.forEach(item => {
+      const rawTags = (item.dataset.tags || '').toLowerCase();
+      const tagsList = rawTags.split(',').map(t => t.trim()).filter(Boolean);
+      const title = item.dataset.productTitle || 'Product';
+      const handle = item.dataset.handle || '';
+      const lineIndex = item.dataset.line;
+
+      // Never remove the Peak Season Delivery Surcharge product due to country mismatch
+      if (handle === 'peak-season-delivery-surcharge') return;
+
+      const isUsaProd = tagsList.includes('usa') || tagsList.includes('us') || tagsList.includes('united states');
+      const isLondonProd = tagsList.includes('london') || tagsList.includes('uk') || tagsList.includes('united kingdom');
+      const isUaeProd = tagsList.includes('uae') || tagsList.includes('dubai') || tagsList.includes('ae');
+      const isCanadaProd = tagsList.includes('canada') || tagsList.includes('ca');
+      const isAusProd = tagsList.includes('australia') || tagsList.includes('au');
+
+      let shouldRemove = false;
+      if (isUsaMode && !isUsaProd) shouldRemove = true;
+      else if (isLondonMode && !isLondonProd) shouldRemove = true;
+      else if (isUaeMode && !isUaeProd) shouldRemove = true;
+      else if (isCanadaMode && !isCanadaProd) shouldRemove = true;
+      else if (isAusMode && !isAusProd) shouldRemove = true;
+
+      if (shouldRemove) {
+        toRemove.push({ line: parseInt(lineIndex, 10), title: title });
+      }
+    });
+
+    if (toRemove.length === 0) return;
+
+    // Build updates object: set quantity to 0 for all items to remove
+    // We need to use /cart/update.js with the full updates array
+    let cartRes = await fetch('/cart.js');
+    let cart = await cartRes.json();
+
+    const updates = {};
+    toRemove.forEach(r => {
+      // Find by line index (1-based) in the live cart
+      const cartItem = cart.items[r.line - 1];
+      if (cartItem) updates[cartItem.key] = 0;
+    });
+
+    if (Object.keys(updates).length === 0) return;
+
+    await fetch('/cart/update.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ updates })
+    });
+
+    // Show notification and reload page
+    const removedNames = toRemove.map(r => r.title);
+    showRemovedBanner(removedNames);
+
+    setTimeout(() => { window.location.reload(); }, 1800);
+  }
+
+  // Run on page load
+  document.addEventListener('DOMContentLoaded', removeUnavailableCartItems);
+
+  // Also run when delivery mode changes
+  document.addEventListener('deliveryModeChanged', function() {
+    setTimeout(removeUnavailableCartItems, 300);
+  });
+})();
+</script>
+
+<!-- Peak Season Surcharge on Cart Page -->
+<script>
+  {% capture raw_festivals_list %}{% render 'festivals-list' %}{% endcapture %}
+  {% assign all_festivals_list = raw_festivals_list | strip | split: ',' %}
+  window.__peakSeasonDates = [
+    {% for entry in all_festivals_list %}
+      {% assign f_parts = entry | split: ':' %}
+      { "date": "{{ f_parts[0] }}", "region": "{{ f_parts[5] | default: 'ALL' }}" }{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  ];
+  window.__peakProductSurcharge = {{ settings.peak_product_surcharge | default: 15 }};
+
+  {%- assign surcharge_product = all_products['peak-season-delivery-surcharge'] -%}
+  {%- if surcharge_product and surcharge_product.available -%}
+    window.__surchargeVariantId = {{ surcharge_product.variants.first.id }};
+  {%- else -%}
+    window.__surchargeVariantId = null;
+  {%- endif -%}
+</script>
+<script>
+(function() {
+  'use strict';
+
+  const PEAK_DATES = window.__peakSeasonDates || [];
+  const SURCHARGE_PCT = window.__peakProductSurcharge || 15;
+
+  if (PEAK_DATES.length === 0) return;
+
+  function isPeakDate(dateStr) {
+    if (!dateStr) return false;
+    const normalized = dateStr.trim();
+    const deliveryMode = localStorage.getItem('delivery_mode') || 'india';
+    
+    const peakMatch = PEAK_DATES.find(p => p.date === normalized);
+    if (!peakMatch) return false;
+
+    let isMatch = false;
+    if (peakMatch.region === 'ALL') isMatch = true;
+    else if (deliveryMode === 'india' && peakMatch.region === 'IN') isMatch = true;
+    else if (deliveryMode === 'international') {
+      const intlCountry = localStorage.getItem('intl_country');
+      if (peakMatch.region === 'INTL') isMatch = true;
+      else if (intlCountry && peakMatch.region === intlCountry) isMatch = true;
+    }
+    
+    return isMatch;
+  }
+
+  async function syncSurchargeProduct() {
+    try {
+      const res = await fetch(window.Shopify.routes.root + 'cart.js?v=' + new Date().getTime(), {
+        cache: 'no-store',
+        headers: {
+          'Pragma': 'no-cache',
+          'Cache-Control': 'no-cache'
+        }
+      });
+      const cart = await res.json();
+      
+      const hiddenInput = document.querySelector('.cart-date-input');
+      const selectedDate = hiddenInput ? hiddenInput.value : '';
+      const isPeak = isPeakDate(selectedDate);
+      
+      let expectedSurchargeQty = 0;
+      let currentSurchargeQty = 0;
+      let surchargeKey = null;
+
+      // Find surcharge product and calculate expected total surcharge quantity
+      cart.items.forEach(item => {
+        if (item.handle === 'peak-season-delivery-surcharge') {
+          currentSurchargeQty = item.quantity;
+          surchargeKey = item.key;
+        } else {
+          if (isPeak) {
+             // current item price is in cents/paise
+             const baseRupees = item.price >= 100 ? item.price / 100 : item.price;
+             const itemSurchargeUnit = Math.round(baseRupees * (SURCHARGE_PCT / 100));
+             expectedSurchargeQty += (itemSurchargeUnit * item.quantity);
+          }
+        }
+      });
+
+      // If the quantity does not match what the cart should have
+      // GUARD: If the date input is empty we can't be sure - don't remove surcharge
+      if (!selectedDate && currentSurchargeQty > 0) {
+        console.log('[Surcharge Sync] Date not yet loaded, skipping sync to avoid false removal.');
+        return;
+      }
+      if (currentSurchargeQty !== expectedSurchargeQty) {
+        
+        // Disable cart temporarily to prevent other clicks
+        const container = document.getElementById('cart-container');
+        if (container) {
+          container.style.opacity = '0.5';
+          container.style.pointerEvents = 'none';
+        }
+        
+        if (surchargeKey) {
+          // It's already in the cart, just update its quantity using its unique KEY
+          // Save the current date to localStorage BEFORE reloading so it survives the page refresh
+          const currentDateBeforeReload = document.querySelector('.cart-date-input');
+          if (currentDateBeforeReload && currentDateBeforeReload.value) {
+            try {
+              const savedData = JSON.parse(localStorage.getItem('floral_saved_delivery_details') || '{}');
+              savedData['Delivery Date'] = currentDateBeforeReload.value;
+              localStorage.setItem('floral_saved_delivery_details', JSON.stringify(savedData));
+            } catch(e) {}
+          }
+          const res = await fetch(window.Shopify.routes.root + 'cart/change.js', {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({ id: surchargeKey, quantity: expectedSurchargeQty })
+          });
+          if (res.ok) window.location.href = window.location.pathname + '?_v=' + new Date().getTime();
+          else throw new Error(await res.text());
+        } else if (expectedSurchargeQty > 0) {
+          // It's NOT in the cart, but we need it. Use the pre-injected variant ID
+          const surchargeVariantId = window.__surchargeVariantId;
+          // Save the current date to localStorage BEFORE reloading so it survives the page refresh
+          const currentDateBeforeAdd = document.querySelector('.cart-date-input');
+          if (currentDateBeforeAdd && currentDateBeforeAdd.value) {
+            try {
+              const savedData = JSON.parse(localStorage.getItem('floral_saved_delivery_details') || '{}');
+              savedData['Delivery Date'] = currentDateBeforeAdd.value;
+              localStorage.setItem('floral_saved_delivery_details', JSON.stringify(savedData));
+            } catch(e) {}
+          }
+          if (surchargeVariantId) {
+             const addRes = await fetch(window.Shopify.routes.root + 'cart/add.js', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ items: [{
+                  id: surchargeVariantId,
+                  quantity: expectedSurchargeQty,
+                  properties: { '_For Surcharge': 'True' }
+                }]})
+             });
+             if (addRes.ok) window.location.href = window.location.pathname + '?_v=' + new Date().getTime();
+             else throw new Error(await addRes.text());
+          } else {
+             // Product not found, re-enable cart
+             if (container) {
+               container.style.opacity = '1';
+               container.style.pointerEvents = 'auto';
+             }
+          }
+        }
+      }
+    } catch (err) {
+      console.error('[Surcharge Sync Error]', err);
+      const container = document.getElementById('cart-container');
+      if (container) {
+        container.style.opacity = '1';
+        container.style.pointerEvents = 'auto';
+      }
+      
+      const notice = document.getElementById('cart-peak-surcharge-notice');
+      if (notice) {
+        notice.classList.remove('hidden');
+        notice.classList.remove('bg-amber-50', 'border-amber-200', 'text-amber-800');
+        notice.classList.add('bg-red-50', 'border-red-200', 'text-red-800');
+        notice.innerHTML = '⚠️ Failed to apply surcharge. Please check if the surcharge product exists and has "Track quantity" unchecked in Shopify Admin.';
+      }
+    }
+  }
+
+  // Helper to setup the interval and listener on a block
+  function setupPeakSurchargeListener(block) {
+    const hiddenInput = block.querySelector('.cart-date-input');
+    if (hiddenInput && !hiddenInput.dataset.surchargeAttached) {
+      hiddenInput.dataset.surchargeAttached = 'true';
+      
+      // Wait for the date picker to restore a real date (polls up to 3s)
+      let waited = 0;
+      const MAX_WAIT = 3000;
+      const POLL_INTERVAL = 100;
+      function waitForDate() {
+        waited += POLL_INTERVAL;
+        const initialDate = hiddenInput.value;
+        // If we have a real date, or we've waited too long, run the sync
+        if (initialDate || waited >= MAX_WAIT) {
+          const notice = document.getElementById('cart-peak-surcharge-notice');
+          if (notice) {
+            if (isPeakDate(initialDate)) notice.classList.remove('hidden');
+            else notice.classList.add('hidden');
+          }
+          // Only sync to backend if we have a real date (avoid erasing surcharge on empty state)
+          if (initialDate) syncSurchargeProduct();
+        } else {
+          setTimeout(waitForDate, POLL_INTERVAL);
+        }
+      }
+      setTimeout(waitForDate, POLL_INTERVAL);
+
+      let lastValue = hiddenInput.value;
+      setInterval(function() {
+        if (hiddenInput.value !== lastValue) {
+          lastValue = hiddenInput.value;
+          
+          // Only toggle notice visually before sync happens (sync reloads page)
+          const notice = document.getElementById('cart-peak-surcharge-notice');
+          if (notice) {
+            if (isPeakDate(lastValue)) notice.classList.remove('hidden');
+            else notice.classList.add('hidden');
+          }
+
+          // Sync the surcharge product to the backend cart (only if date is known)
+          if (lastValue) syncSurchargeProduct();
+        }
+      }, 500);
+    }
+  }
+
+  // Hook into the cart date picker's selectDate function for future renders
+  const origInitCartDatePicker = window.initCartDatePicker;
+  if (origInitCartDatePicker) {
+    window.initCartDatePicker = function(block) {
+      origInitCartDatePicker(block);
+      setupPeakSurchargeListener(block);
+    };
+  }
+
+  // Attach to already rendered blocks on initial load
+  document.querySelectorAll('.cart-date-picker-block').forEach(setupPeakSurchargeListener);
+
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Cart Page",
+  "settings": []
+}
+{% endschema %}

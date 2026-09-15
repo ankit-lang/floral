@@ -1,0 +1,229 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Floral India Custom",
+    "theme_author": "Antigravity IDE",
+    "theme_version": "1.0.0",
+    "theme_documentation_url": "https:\/\/shopify.com\/",
+    "theme_support_url": "https:\/\/support.shopify.com\/"
+  },
+  {
+    "name": "Peak Season Surcharge",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Surcharge Percentages"
+      },
+      {
+        "type": "range",
+        "id": "peak_product_surcharge",
+        "label": "Product Price Surcharge (%)",
+        "info": "Percentage increase applied to product base price on peak dates",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "default": 15,
+        "unit": "%"
+      },
+      {
+        "type": "range",
+        "id": "peak_delivery_surcharge",
+        "label": "Delivery Fee Surcharge (%)",
+        "info": "Percentage increase applied to delivery charges on peak dates",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "default": 20,
+        "unit": "%"
+      },
+      {
+        "type": "header",
+        "content": "Peak Season Dates"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_1",
+        "label": "Peak Date 1",
+        "info": "Format: YYYY-MM-DD (e.g., 2026-02-14 for Valentine's Day)",
+        "default": "2026-02-14"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_2",
+        "label": "Peak Date 2",
+        "info": "Format: YYYY-MM-DD (e.g., 2026-05-10 for Mother's Day)",
+        "default": "2026-05-10"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_3",
+        "label": "Peak Date 3",
+        "info": "Format: YYYY-MM-DD (e.g., 2026-06-21 for Father's Day)",
+        "default": "2026-06-21"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_4",
+        "label": "Peak Date 4",
+        "info": "Format: YYYY-MM-DD",
+        "default": "2026-09-11"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_5",
+        "label": "Peak Date 5",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_6",
+        "label": "Peak Date 6",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_7",
+        "label": "Peak Date 7",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_8",
+        "label": "Peak Date 8",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_9",
+        "label": "Peak Date 9",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_10",
+        "label": "Peak Date 10",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_11",
+        "label": "Peak Date 11",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_12",
+        "label": "Peak Date 12",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_13",
+        "label": "Peak Date 13",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_14",
+        "label": "Peak Date 14",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_15",
+        "label": "Peak Date 15",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_16",
+        "label": "Peak Date 16",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_17",
+        "label": "Peak Date 17",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_18",
+        "label": "Peak Date 18",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_19",
+        "label": "Peak Date 19",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_20",
+        "label": "Peak Date 20",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_21",
+        "label": "Peak Date 21",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_22",
+        "label": "Peak Date 22",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_23",
+        "label": "Peak Date 23",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_24",
+        "label": "Peak Date 24",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_25",
+        "label": "Peak Date 25",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_26",
+        "label": "Peak Date 26",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_27",
+        "label": "Peak Date 27",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_28",
+        "label": "Peak Date 28",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_29",
+        "label": "Peak Date 29",
+        "info": "Format: YYYY-MM-DD"
+      },
+      {
+        "type": "text",
+        "id": "peak_date_30",
+        "label": "Peak Date 30",
+        "info": "Format: YYYY-MM-DD"
+      }
+    ]
+  }
+]

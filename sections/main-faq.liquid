@@ -1,0 +1,312 @@
+<section class="min-h-screen bg-[#FDFBF7] text-gray-900 pb-24 relative overflow-hidden">
+  
+  <!-- Subtle Botanical Background Overlay -->
+  <div class="absolute inset-0 pointer-events-none opacity-[0.03]">
+    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+      <pattern id="floral-pattern" x="0" y="0" width="400" height="400" patternUnits="userSpaceOnUse">
+        <path d="M200 50 Q 250 100 200 200 Q 150 100 200 50 Z" fill="currentColor" />
+        <path d="M100 250 Q 150 200 200 250 Q 150 300 100 250 Z" fill="currentColor" />
+      </pattern>
+      <rect x="0" y="0" width="100%" height="100%" fill="url(#floral-pattern)"></rect>
+    </svg>
+  </div>
+
+  <!-- Hero Section -->
+  <div class="bg-gradient-to-b from-[#EAEFE9] to-[#FDFBF7] pt-24 pb-16 text-center px-4 relative z-10">
+    <span class="text-sm font-bold text-[#E07A5F] uppercase tracking-widest mb-4 block">Help Center</span>
+    <h1 class="text-4xl md:text-5xl font-serif font-bold text-[#1D3557] mb-6">Frequently Asked Questions</h1>
+    <p class="text-gray-600 max-w-2xl mx-auto text-lg mb-10">Everything you need to know about flowers, gifts, and deliveries.</p>
+    
+    <!-- Search Bar -->
+    <div class="max-w-xl mx-auto relative group">
+      <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#E07A5F] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+      <input type="text" id="faqSearch" placeholder="Search for answers..." class="w-full bg-white border border-gray-200 rounded-full py-4 pl-12 pr-6 text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#E07A5F]/50 focus:border-[#E07A5F] transition-all">
+    </div>
+  </div>
+
+  <!-- Filter Pills -->
+  <div class="max-w-4xl mx-auto px-4 mb-12 relative z-10 flex flex-wrap justify-center gap-3" id="faqFilters">
+    <button data-filter="all" class="filter-btn active px-6 py-2.5 rounded-full text-sm font-bold bg-[#E07A5F] text-white shadow-md transition-all">All</button>
+    <button data-filter="orders" class="filter-btn px-6 py-2.5 rounded-full text-sm font-bold bg-white text-gray-600 border border-gray-200 hover:border-[#E07A5F] hover:text-[#E07A5F] transition-all">Orders & Delivery</button>
+    <button data-filter="products" class="filter-btn px-6 py-2.5 rounded-full text-sm font-bold bg-white text-gray-600 border border-gray-200 hover:border-[#E07A5F] hover:text-[#E07A5F] transition-all">Products & Gifts</button>
+    <button data-filter="corporate" class="filter-btn px-6 py-2.5 rounded-full text-sm font-bold bg-white text-gray-600 border border-gray-200 hover:border-[#E07A5F] hover:text-[#E07A5F] transition-all">Customization & Corporate</button>
+    <button data-filter="policies" class="filter-btn px-6 py-2.5 rounded-full text-sm font-bold bg-white text-gray-600 border border-gray-200 hover:border-[#E07A5F] hover:text-[#E07A5F] transition-all">Payments & Policies</button>
+  </div>
+
+  <!-- FAQ Accordion List -->
+  <div class="max-w-3xl mx-auto px-4 relative z-10 space-y-4" id="faqList">
+    
+    <!-- GROUP: Products & Gifts -->
+    <div class="faq-item group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300" data-category="products">
+      <button class="faq-toggle w-full px-6 py-5 flex items-center justify-between text-left focus:outline-none">
+        <span class="font-serif font-bold text-lg text-[#1D3557] group-hover:text-[#E07A5F] transition-colors pr-8">What services does Floral India offer?</span>
+        <svg class="w-6 h-6 text-gray-400 shrink-0 transform transition-transform duration-300 group-hover:text-[#E07A5F]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      </button>
+      <div class="faq-content grid grid-rows-[0fr] transition-all duration-300 ease-in-out">
+        <div class="overflow-hidden">
+          <p class="px-6 pb-6 text-gray-600 leading-relaxed pt-2 border-t border-gray-50">Floral India offers online flower delivery, cakes, premium gift hampers, plants, personalized gifts, and luxury gifting solutions. We provide both domestic and international flower delivery for birthdays, anniversaries, weddings, festivals, and special occasions.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300" data-category="products">
+      <button class="faq-toggle w-full px-6 py-5 flex items-center justify-between text-left focus:outline-none">
+        <span class="font-serif font-bold text-lg text-[#1D3557] group-hover:text-[#E07A5F] transition-colors pr-8">What products can I send through Floral India?</span>
+        <svg class="w-6 h-6 text-gray-400 shrink-0 transform transition-transform duration-300 group-hover:text-[#E07A5F]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      </button>
+      <div class="faq-content grid grid-rows-[0fr] transition-all duration-300 ease-in-out">
+        <div class="overflow-hidden">
+          <p class="px-6 pb-6 text-gray-600 leading-relaxed pt-2 border-t border-gray-50">You can send fresh flower bouquets, floral arrangements, cakes, premium gift hampers, plants, chocolates, personalized gifts, and luxury gifting collections through Floral India.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300" data-category="products">
+      <button class="faq-toggle w-full px-6 py-5 flex items-center justify-between text-left focus:outline-none">
+        <span class="font-serif font-bold text-lg text-[#1D3557] group-hover:text-[#E07A5F] transition-colors pr-8">Why choose Floral India for online flower and gift delivery?</span>
+        <svg class="w-6 h-6 text-gray-400 shrink-0 transform transition-transform duration-300 group-hover:text-[#E07A5F]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      </button>
+      <div class="faq-content grid grid-rows-[0fr] transition-all duration-300 ease-in-out">
+        <div class="overflow-hidden">
+          <p class="px-6 pb-6 text-gray-600 leading-relaxed pt-2 border-t border-gray-50">Floral India combines worldwide flower delivery, premium-quality flowers and gifts, personalized customer support, secure payments, timely delivery, and customized gifting solutions for both individual and corporate customers.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP: Orders & Delivery -->
+    <div class="faq-item group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300" data-category="orders">
+      <button class="faq-toggle w-full px-6 py-5 flex items-center justify-between text-left focus:outline-none">
+        <span class="font-serif font-bold text-lg text-[#1D3557] group-hover:text-[#E07A5F] transition-colors pr-8">Do you deliver flowers internationally?</span>
+        <svg class="w-6 h-6 text-gray-400 shrink-0 transform transition-transform duration-300 group-hover:text-[#E07A5F]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      </button>
+      <div class="faq-content grid grid-rows-[0fr] transition-all duration-300 ease-in-out">
+        <div class="overflow-hidden">
+          <p class="px-6 pb-6 text-gray-600 leading-relaxed pt-2 border-t border-gray-50">Yes. Floral India specializes in international flower delivery and delivers flowers, cakes, and gifts to destinations across the world through our trusted florist and logistics network.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300" data-category="orders">
+      <button class="faq-toggle w-full px-6 py-5 flex items-center justify-between text-left focus:outline-none">
+        <span class="font-serif font-bold text-lg text-[#1D3557] group-hover:text-[#E07A5F] transition-colors pr-8">Can I schedule a flower delivery for a future date?</span>
+        <svg class="w-6 h-6 text-gray-400 shrink-0 transform transition-transform duration-300 group-hover:text-[#E07A5F]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      </button>
+      <div class="faq-content grid grid-rows-[0fr] transition-all duration-300 ease-in-out">
+        <div class="overflow-hidden">
+          <p class="px-6 pb-6 text-gray-600 leading-relaxed pt-2 border-t border-gray-50">Yes. You can choose your preferred delivery date while placing your order. We offer scheduled flower delivery for birthdays, anniversaries, weddings, corporate events, and other special occasions.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300" data-category="orders">
+      <button class="faq-toggle w-full px-6 py-5 flex items-center justify-between text-left focus:outline-none">
+        <span class="font-serif font-bold text-lg text-[#1D3557] group-hover:text-[#E07A5F] transition-colors pr-8">Do you offer same-day flower delivery?</span>
+        <svg class="w-6 h-6 text-gray-400 shrink-0 transform transition-transform duration-300 group-hover:text-[#E07A5F]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      </button>
+      <div class="faq-content grid grid-rows-[0fr] transition-all duration-300 ease-in-out">
+        <div class="overflow-hidden">
+          <p class="px-6 pb-6 text-gray-600 leading-relaxed pt-2 border-t border-gray-50">Yes, same-day flower delivery is available for select cities and products, subject to product availability and order cut-off times. Availability may vary for cakes, gift hampers, and international deliveries.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300" data-category="orders">
+      <button class="faq-toggle w-full px-6 py-5 flex items-center justify-between text-left focus:outline-none">
+        <span class="font-serif font-bold text-lg text-[#1D3557] group-hover:text-[#E07A5F] transition-colors pr-8">How can I track my flower or gift order?</span>
+        <svg class="w-6 h-6 text-gray-400 shrink-0 transform transition-transform duration-300 group-hover:text-[#E07A5F]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      </button>
+      <div class="faq-content grid grid-rows-[0fr] transition-all duration-300 ease-in-out">
+        <div class="overflow-hidden">
+          <p class="px-6 pb-6 text-gray-600 leading-relaxed pt-2 border-t border-gray-50">Once your order is confirmed, we will share order confirmation and delivery updates through email, phone, or WhatsApp, depending on the order details and destination.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300" data-category="orders">
+      <button class="faq-toggle w-full px-6 py-5 flex items-center justify-between text-left focus:outline-none">
+        <span class="font-serif font-bold text-lg text-[#1D3557] group-hover:text-[#E07A5F] transition-colors pr-8">What if the recipient is unavailable at the time of delivery?</span>
+        <svg class="w-6 h-6 text-gray-400 shrink-0 transform transition-transform duration-300 group-hover:text-[#E07A5F]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      </button>
+      <div class="faq-content grid grid-rows-[0fr] transition-all duration-300 ease-in-out">
+        <div class="overflow-hidden">
+          <p class="px-6 pb-6 text-gray-600 leading-relaxed pt-2 border-t border-gray-50">If the recipient is unavailable, our delivery partner may attempt to contact the recipient, leave the order with a suitable person at the delivery address, or arrange re-delivery depending on the local delivery policy and product type.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP: Customization & Corporate -->
+    <div class="faq-item group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300" data-category="corporate">
+      <button class="faq-toggle w-full px-6 py-5 flex items-center justify-between text-left focus:outline-none">
+        <span class="font-serif font-bold text-lg text-[#1D3557] group-hover:text-[#E07A5F] transition-colors pr-8">Can I customize my flower bouquet or gift hamper?</span>
+        <svg class="w-6 h-6 text-gray-400 shrink-0 transform transition-transform duration-300 group-hover:text-[#E07A5F]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      </button>
+      <div class="faq-content grid grid-rows-[0fr] transition-all duration-300 ease-in-out">
+        <div class="overflow-hidden">
+          <p class="px-6 pb-6 text-gray-600 leading-relaxed pt-2 border-t border-gray-50">Yes. Floral India offers customized flower bouquets, personalized gift hampers, and bespoke gifting solutions. Please contact our team for special customization requests.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300" data-category="corporate">
+      <button class="faq-toggle w-full px-6 py-5 flex items-center justify-between text-left focus:outline-none">
+        <span class="font-serif font-bold text-lg text-[#1D3557] group-hover:text-[#E07A5F] transition-colors pr-8">Do you provide corporate gifting services?</span>
+        <svg class="w-6 h-6 text-gray-400 shrink-0 transform transition-transform duration-300 group-hover:text-[#E07A5F]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      </button>
+      <div class="faq-content grid grid-rows-[0fr] transition-all duration-300 ease-in-out">
+        <div class="overflow-hidden">
+          <p class="px-6 pb-6 text-gray-600 leading-relaxed pt-2 border-t border-gray-50">Yes. Floral India provides corporate gifting solutions for businesses, financial institutions, concierge services, employee gifting, client gifting, festive gifting, and premium customer programs.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP: Payments & Policies -->
+    <div class="faq-item group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300" data-category="policies">
+      <button class="faq-toggle w-full px-6 py-5 flex items-center justify-between text-left focus:outline-none">
+        <span class="font-serif font-bold text-lg text-[#1D3557] group-hover:text-[#E07A5F] transition-colors pr-8">How can I place an order with Floral India?</span>
+        <svg class="w-6 h-6 text-gray-400 shrink-0 transform transition-transform duration-300 group-hover:text-[#E07A5F]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      </button>
+      <div class="faq-content grid grid-rows-[0fr] transition-all duration-300 ease-in-out">
+        <div class="overflow-hidden">
+          <p class="px-6 pb-6 text-gray-600 leading-relaxed pt-2 border-t border-gray-50">You can place an order through our website, by email, or by contacting our customer support team by phone. We also assist with corporate gifting orders and premium concierge requests.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300" data-category="policies">
+      <button class="faq-toggle w-full px-6 py-5 flex items-center justify-between text-left focus:outline-none">
+        <span class="font-serif font-bold text-lg text-[#1D3557] group-hover:text-[#E07A5F] transition-colors pr-8">What payment methods do you accept?</span>
+        <svg class="w-6 h-6 text-gray-400 shrink-0 transform transition-transform duration-300 group-hover:text-[#E07A5F]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      </button>
+      <div class="faq-content grid grid-rows-[0fr] transition-all duration-300 ease-in-out">
+        <div class="overflow-hidden">
+          <p class="px-6 pb-6 text-gray-600 leading-relaxed pt-2 border-t border-gray-50">Floral India accepts secure online payments through trusted payment gateways. Available payment options may include debit cards, credit cards, net banking, UPI, and international payment methods where applicable.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300" data-category="policies">
+      <button class="faq-toggle w-full px-6 py-5 flex items-center justify-between text-left focus:outline-none">
+        <span class="font-serif font-bold text-lg text-[#1D3557] group-hover:text-[#E07A5F] transition-colors pr-8">Can I modify or cancel my order after placing it?</span>
+        <svg class="w-6 h-6 text-gray-400 shrink-0 transform transition-transform duration-300 group-hover:text-[#E07A5F]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      </button>
+      <div class="faq-content grid grid-rows-[0fr] transition-all duration-300 ease-in-out">
+        <div class="overflow-hidden">
+          <p class="px-6 pb-6 text-gray-600 leading-relaxed pt-2 border-t border-gray-50">Modification or cancellation requests can be considered before the order is processed or dispatched. Because flowers and cakes are perishable products, changes may not always be possible once preparation or delivery has begun.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300" data-category="policies">
+      <button class="faq-toggle w-full px-6 py-5 flex items-center justify-between text-left focus:outline-none">
+        <span class="font-serif font-bold text-lg text-[#1D3557] group-hover:text-[#E07A5F] transition-colors pr-8">What is your refund and replacement policy?</span>
+        <svg class="w-6 h-6 text-gray-400 shrink-0 transform transition-transform duration-300 group-hover:text-[#E07A5F]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      </button>
+      <div class="faq-content grid grid-rows-[0fr] transition-all duration-300 ease-in-out">
+        <div class="overflow-hidden">
+          <p class="px-6 pb-6 text-gray-600 leading-relaxed pt-2 border-t border-gray-50">If there is an issue with the delivered product, such as damage, incorrect item, or quality concern, please contact Floral India customer support as soon as possible with relevant details and photos, where applicable. Eligible cases may be reviewed for replacement, refund, or store credit according to our policy.</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- No Results Message -->
+    <div id="noResults" class="hidden text-center py-12">
+      <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <p class="text-gray-500 font-medium">We couldn't find any questions matching your search.</p>
+    </div>
+
+  </div>
+
+  <!-- Footer CTA -->
+  <div class="max-w-4xl mx-auto mt-20 px-4">
+    <div class="bg-[#1D3557] rounded-3xl p-10 md:p-12 text-center text-white relative overflow-hidden shadow-2xl">
+      <div class="absolute inset-0 bg-[#E07A5F] opacity-10 mix-blend-overlay"></div>
+      <h3 class="text-3xl font-serif font-bold mb-4 relative z-10">Still have questions?</h3>
+      <p class="text-gray-300 mb-8 max-w-md mx-auto relative z-10">Our concierge team is available round the clock to assist you with any inquiries or custom requests.</p>
+      <a href="/pages/contact" class="inline-block bg-white text-[#1D3557] font-bold px-8 py-4 rounded-full hover:bg-gray-100 transition-colors shadow-lg relative z-10">Reach Out To Us</a>
+    </div>
+  </div>
+
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const faqItems = document.querySelectorAll('.faq-item');
+  const searchInput = document.getElementById('faqSearch');
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const noResults = document.getElementById('noResults');
+
+  // Accordion Logic
+  faqItems.forEach(item => {
+    const btn = item.querySelector('.faq-toggle');
+    const content = item.querySelector('.faq-content');
+    const icon = item.querySelector('svg');
+
+    btn.addEventListener('click', () => {
+      const isOpen = content.style.gridTemplateRows === '1fr';
+      
+      // Close all others
+      document.querySelectorAll('.faq-content').forEach(c => c.style.gridTemplateRows = '0fr');
+      document.querySelectorAll('.faq-toggle svg').forEach(i => i.style.transform = 'rotate(0deg)');
+
+      // Toggle current
+      if (!isOpen) {
+        content.style.gridTemplateRows = '1fr';
+        icon.style.transform = 'rotate(45deg)';
+      }
+    });
+  });
+
+  // Filter Logic
+  function applyFilters() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+    let visibleCount = 0;
+
+    faqItems.forEach(item => {
+      const text = item.innerText.toLowerCase();
+      const category = item.dataset.category;
+      
+      const matchesSearch = text.includes(searchTerm);
+      const matchesCategory = activeFilter === 'all' || category === activeFilter;
+
+      if (matchesSearch && matchesCategory) {
+        item.style.display = 'block';
+        // Add a slight fade in animation
+        item.style.opacity = '0';
+        setTimeout(() => item.style.opacity = '1', 50);
+        visibleCount++;
+      } else {
+        item.style.display = 'none';
+      }
+    });
+
+    noResults.classList.toggle('hidden', visibleCount > 0);
+  }
+
+  // Bind Search
+  searchInput.addEventListener('input', applyFilters);
+
+  // Bind Category Buttons
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      // Update active state
+      filterBtns.forEach(b => {
+        b.classList.remove('active', 'bg-[#E07A5F]', 'text-white');
+        b.classList.add('bg-white', 'text-gray-600');
+      });
+      e.target.classList.remove('bg-white', 'text-gray-600');
+      e.target.classList.add('active', 'bg-[#E07A5F]', 'text-white');
+      
+      applyFilters();
+    });
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "FAQ Content",
+  "settings": [],
+  "presets": [{ "name": "FAQ Content" }]
+}
+{% endschema %}

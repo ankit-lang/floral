@@ -1,0 +1,81 @@
+<!-- Gift Finder Widget -->
+<section class="max-w-7xl mx-auto px-4 py-14 anim-up">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-0 rounded-3xl overflow-hidden shadow-xl border border-gray-100">
+    
+    <!-- Left Side: Interactive Filters -->
+    <div class="bg-white p-8 md:p-12 flex flex-col justify-center">
+      <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-3">Personalized For You</span>
+      <h2 class="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-3 leading-tight">Find the Perfect Gift</h2>
+      <p class="text-gray-500 text-sm mb-8">Answer a few questions and we'll curate the ideal gift for your occasion.</p>
+      
+      <form class="space-y-5" action="/collections/all" method="get">
+        <!-- Occasion -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Occasion</label>
+          <div class="flex flex-wrap gap-2">
+            {%- assign occasions = 'Birthday,Anniversary,Wedding,Thank You,Get Well' | split: ',' -%}
+            {% for occ in occasions %}
+              <label class="cursor-pointer">
+                <input type="radio" name="occasion" value="{{ occ | handleize }}" class="peer sr-only">
+                <span class="inline-block px-4 py-2 rounded-full border-2 border-gray-200 text-sm font-medium text-gray-600 peer-checked:border-secondary peer-checked:bg-secondary peer-checked:text-white transition-colors hover:border-gray-300">{{ occ }}</span>
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+        
+        <!-- Recipient -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">For Whom</label>
+          <select class="w-full h-11 px-4 rounded-xl border-2 border-gray-200 text-sm text-gray-700 bg-white focus:outline-none focus:border-primary transition-colors appearance-none" style="background-image:url('data:image/svg+xml;utf8,<svg fill=\"gray\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M7 10l5 5 5-5z\"/></svg>');background-repeat:no-repeat;background-position:right 12px center;background-size:20px;">
+            <option>Her</option>
+            <option>Him</option>
+            <option>Kids</option>
+            <option>Parents</option>
+            <option>Friends</option>
+          </select>
+        </div>
+
+        <!-- Budget -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Budget</label>
+          <div class="flex flex-wrap gap-2">
+            {%- assign budgets = 'Under ₹500,₹500 - ₹1000,₹1000 - ₹2000,₹2000+' | split: ',' -%}
+            {% for b in budgets %}
+              <label class="cursor-pointer">
+                <input type="radio" name="budget" value="{{ b | handleize }}" class="peer sr-only">
+                <span class="inline-block px-4 py-2 rounded-full border-2 border-gray-200 text-sm font-medium text-gray-600 peer-checked:border-primary peer-checked:bg-primary peer-checked:text-white transition-colors hover:border-gray-300">{{ b }}</span>
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <button type="submit" class="w-full md:w-auto h-12 px-8 rounded-full bg-secondary text-white font-semibold text-sm hover:bg-secondary-600 transition-colors shadow-lg shadow-secondary/20 flex items-center justify-center gap-2 mt-2">
+          Find My Gift
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+        </button>
+      </form>
+    </div>
+
+    <!-- Right Side: Lifestyle Image -->
+    <div class="relative hidden md:block bg-gradient-to-br from-blush to-champagne">
+      <img src="{{ 'hero-banner.png' | asset_url }}" alt="Gift Finder" class="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-70">
+      <div class="absolute inset-0 bg-gradient-to-l from-transparent to-white/20"></div>
+      <div class="absolute bottom-8 right-8 bg-white/90 backdrop-blur-md rounded-2xl p-5 shadow-lg max-w-[220px]">
+        <div class="flex gap-1 mb-2">
+          {% for s in (1..5) %}<svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>{% endfor %}
+        </div>
+        <p class="text-xs text-gray-700 leading-relaxed">"The gift finder helped me choose the perfect anniversary bouquet!"</p>
+        <span class="text-[10px] font-bold text-gray-500 mt-2 block">— Sneha R.</span>
+      </div>
+    </div>
+    
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Gift Finder",
+  "settings": [],
+  "presets": [{ "name": "Gift Finder" }]
+}
+{% endschema %}

@@ -1,0 +1,113 @@
+{% paginate search.results by 24 %}
+{% assign clean_terms = search.terms | remove: ' AND tag:usa' | remove: ' AND tag:london' %}
+<div class="bg-gradient-to-br from-cream via-white to-blush pt-16 pb-12 mb-10 border-b border-gray-100 anim-fade">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <h1 class="text-3xl md:text-5xl font-serif font-bold text-primary mb-4">
+      {%- if search.performed -%}
+        Search Results
+      {%- else -%}
+        What are you looking for?
+      {%- endif -%}
+    </h1>
+    {%- if search.performed -%}
+      <p class="text-gray-600 mb-8 font-medium">Showing {{ search.results_count }} result{% if search.results_count != 1 %}s{% endif %} for "<span class="text-secondary">{{ clean_terms | escape }}</span>"</p>
+    {%- endif -%}
+
+    <form action="{{ routes.search_url }}" method="get" role="search" class="max-w-2xl mx-auto relative group">
+      <input type="hidden" name="type" value="product">
+      <input 
+        class="w-full h-14 pl-6 pr-14 rounded-full border border-gray-200 bg-white text-base text-gray-800 focus:outline-none focus:border-gold focus:ring-4 focus:ring-gold/20 shadow-sm transition-all duration-300"
+        type="search" 
+        name="q" 
+        value="{{ clean_terms | escape }}" 
+        placeholder="Search flowers, cakes, gifts..."
+      >
+      <button type="submit" class="absolute right-2 top-2 bottom-2 w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary-600 transition-colors shadow-sm">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      </button>
+    </form>
+  </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 pb-20">
+  {%- if search.performed -%}
+    {%- if search.results_count == 0 -%}
+      <div class="text-center py-20 anim-up stagger-1">
+        <div class="w-24 h-24 mx-auto bg-gray-50 rounded-full flex items-center justify-center mb-6 shadow-inner">
+          <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </div>
+        <h2 class="text-2xl font-serif font-bold text-gray-800 mb-2">No results found</h2>
+        <p class="text-gray-500 mb-8 max-w-md mx-auto">We couldn't find any products matching "<span class="text-gray-800 font-medium">{{ clean_terms | escape }}</span>". Try using more general terms or browse our collections.</p>
+        <a href="/collections/all" class="inline-flex items-center justify-center h-12 px-8 rounded-full bg-secondary text-white font-semibold hover:bg-secondary-600 transition-colors shadow-lg shadow-secondary/20 hover:-translate-y-0.5">
+          Browse All Products
+        </a>
+      </div>
+    {%- else -%}
+      <div class="flex items-center justify-between gap-4 mb-6 border-b border-gray-100 pb-4">
+        <h2 class="text-xl font-serif font-bold text-gray-900">Found {{ search.results_count }} Results</h2>
+        {% render 'sort-by-box', target_grid_id: 'search-product-grid' %}
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 tier-product-grid product-grid" id="search-product-grid" data-limit="9999">
+        {%- for item in search.results -%}
+          {%- if item.object_type == 'product' -%}
+            <div class="anim-up stagger-{{ forloop.index | modulo: 10 | plus: 1 }}">
+              {% render 'product-card', product_card_product: item %}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      {% if paginate.pages > 1 %}
+        <div class="mt-16 flex justify-center anim-up stagger-5">
+          <nav class="inline-flex items-center gap-2 bg-white rounded-full px-4 py-2 border border-gray-200 shadow-sm" aria-label="Search Pagination">
+            {% if paginate.previous %}
+              <a href="{{ paginate.previous.url }}" class="px-3.5 py-1.5 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-primary transition-colors flex items-center gap-1">
+                « Prev
+              </a>
+            {% endif %}
+
+            {% for part in paginate.parts %}
+              {% if part.is_link %}
+                <a href="{{ part.url }}" class="w-9 h-9 flex items-center justify-center rounded-full text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-primary transition-colors">
+                  {{ part.title }}
+                </a>
+              {% else %}
+                {% if part.title == paginate.current_page %}
+                  <span class="w-9 h-9 flex items-center justify-center rounded-full text-sm font-semibold bg-primary text-white shadow-xs">
+                    {{ part.title }}
+                  </span>
+                {% else %}
+                  <span class="w-9 h-9 flex items-center justify-center rounded-full text-sm font-medium text-gray-400">
+                    {{ part.title }}
+                  </span>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+
+            {% if paginate.next %}
+              <a href="{{ paginate.next.url }}" class="px-3.5 py-1.5 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-primary transition-colors flex items-center gap-1">
+                Next »
+              </a>
+            {% endif %}
+          </nav>
+        </div>
+      {% endif %}
+    {%- endif -%}
+  {%- else -%}
+    <!-- Empty state before search -->
+    <div class="text-center py-10 anim-up stagger-1">
+      <div class="w-24 h-24 mx-auto bg-gray-50 rounded-full flex items-center justify-center mb-6">
+        <span class="text-4xl opacity-50">🌸</span>
+      </div>
+      <p class="text-gray-500 font-medium">Enter a search term above to find beautiful floral arrangements, cakes, and gifts.</p>
+    </div>
+  {%- endif -%}
+</div>
+{% endpaginate %}
+
+{% schema %}
+{
+  "name": "Search Results",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,50 @@
+<!-- Video Stories / Reels Section -->
+<section class="max-w-7xl mx-auto px-4 py-10 anim-right">
+  <div class="flex items-end justify-between mb-6">
+    <div>
+      <h2 class="text-2xl font-serif font-bold text-gray-900">Watch & Shop</h2>
+      <p class="text-sm text-gray-500 mt-1">Explore trending products in short video stories</p>
+    </div>
+  </div>
+  
+  <div class="flex overflow-x-auto hide-scrollbar gap-4 pb-4 drag-scroll" style="cursor:grab;">
+    {%- assign reel_titles = 'Rose Bouquet Unbox,Birthday Cake Reveal,Plant Care Tips,Hamper Preview,Custom Gift Wrap,Festive Décor' | split: ',' -%}
+    {%- assign reel_colors = 'from-pink-200 to-rose-300,from-amber-200 to-orange-300,from-green-200 to-emerald-300,from-purple-200 to-violet-300,from-sky-200 to-blue-300,from-red-200 to-pink-300' | split: ',' -%}
+    
+    {% for i in (0..5) %}
+      <div class="min-w-[160px] w-[160px] flex-shrink-0 anim-scale stagger-{{ forloop.index }}">
+        <div class="relative aspect-[9/16] rounded-2xl overflow-hidden group cursor-pointer shadow-md hover:shadow-xl transition-shadow duration-300">
+          <!-- Gradient placeholder for video thumbnail -->
+          <div class="absolute inset-0 bg-gradient-to-b {{ reel_colors[i] }}"></div>
+          
+          <!-- Play button -->
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="w-12 h-12 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center group-hover:bg-white/50 group-hover:scale-110 transition-all duration-300">
+              <svg class="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+          
+          <!-- Bottom label -->
+          <div class="absolute bottom-0 inset-x-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
+            <p class="text-white text-xs font-semibold leading-tight">{{ reel_titles[i] }}</p>
+          </div>
+          
+          <!-- Reel indicator dots -->
+          <div class="absolute top-3 inset-x-0 flex justify-center gap-1">
+            <div class="w-8 h-1 rounded-full bg-white/80"></div>
+            <div class="w-8 h-1 rounded-full bg-white/30"></div>
+            <div class="w-8 h-1 rounded-full bg-white/30"></div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Video Stories",
+  "settings": [],
+  "presets": [{ "name": "Video Stories" }]
+}
+{% endschema %}

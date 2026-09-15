@@ -1,0 +1,64 @@
+<!-- Asymmetric Banner Collage -->
+<section class="max-w-7xl mx-auto px-4 py-8 anim-left">
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 auto-rows-[210px] sm:auto-rows-[235px] md:auto-rows-[265px]">
+    
+    <!-- Large: Spans 2 cols on mobile and desktop for balanced grid -->
+    <a href="/collections/birthday" class="col-span-2 md:col-span-2 md:row-span-2 relative rounded-2xl overflow-hidden group block shadow-sm border border-gray-100 bg-gray-900 min-h-[210px]">
+      <img src="{{ 'hero-banner.png' | asset_url }}" alt="Birthday Surprises" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+      <div class="absolute bottom-0 left-0 right-0 p-4 md:p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10">
+        <span class="inline-block bg-white text-secondary px-2.5 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] font-bold uppercase tracking-wider mb-1.5 md:mb-2 shadow-sm">⭐ Top Rated</span>
+        <h3 class="text-xl md:text-3xl font-serif font-bold text-white leading-tight">Birthday Surprises</h3>
+        <p class="text-white/90 text-xs md:text-sm mt-0.5 md:mt-1">Make their day unforgettable</p>
+      </div>
+    </a>
+
+    <!-- Top Right 1: Anniversary (home3.jpg - 1024x919) -->
+    <a href="/collections/anniversary" class="col-span-1 relative rounded-2xl overflow-hidden group block shadow-sm border border-gray-200 bg-slate-50">
+      <div class="absolute inset-0 pb-9 overflow-hidden">
+        <img src="{{ 'home3.jpg' | asset_url }}" alt="Anniversary" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
+      </div>
+      <div class="z-10 absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md py-2 px-2 md:py-2.5 md:px-3 rounded-b-2xl border-t border-gray-200/80 text-center">
+        <h3 class="text-xs md:text-sm font-bold text-gray-900 tracking-wide">Anniversary</h3>
+      </div>
+    </a>
+
+    <!-- Top Right 2: Thank You (home4.jpg - 1024x919) -->
+    <a href="/collections/all" class="col-span-1 relative rounded-2xl overflow-hidden group block shadow-sm border border-gray-200 bg-slate-50">
+      <div class="absolute inset-0 pb-9 overflow-hidden">
+        <img src="{{ 'home4.jpg' | asset_url }}" alt="Thank You" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
+      </div>
+      <div class="z-10 absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md py-2 px-2 md:py-2.5 md:px-3 rounded-b-2xl border-t border-gray-200/80 text-center">
+        <h3 class="text-xs md:text-sm font-bold text-gray-900 tracking-wide">Thank You</h3>
+      </div>
+    </a>
+
+    <!-- Bottom Right 1: Get Well Soon (jhome2.jpg - 1024x919) -->
+    <a href="/collections/all" class="col-span-1 relative rounded-2xl overflow-hidden group block shadow-sm border border-gray-200 bg-slate-50">
+      <div class="absolute inset-0 pb-9 overflow-hidden">
+        <img src="{{ 'jhome2.jpg' | asset_url }}" alt="Get Well Soon" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
+      </div>
+      <div class="z-10 absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md py-2 px-2 md:py-2.5 md:px-3 rounded-b-2xl border-t border-gray-200/80 text-center">
+        <h3 class="text-xs md:text-sm font-bold text-gray-900 tracking-wide">Get Well Soon</h3>
+      </div>
+    </a>
+
+    <!-- Bottom Right 2: Congratulations (home1.jpg - 1024x919) -->
+    <a href="/collections/all" class="col-span-1 relative rounded-2xl overflow-hidden group block shadow-sm border border-gray-200 bg-slate-50">
+      <div class="absolute inset-0 pb-9 overflow-hidden">
+        <img src="{{ 'home1.jpg' | asset_url }}" alt="Congratulations" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
+      </div>
+      <div class="z-10 absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md py-2 px-2 md:py-2.5 md:px-3 rounded-b-2xl border-t border-gray-200/80 text-center">
+        <h3 class="text-xs md:text-sm font-bold text-gray-900 tracking-wide">Congratulations</h3>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Banner Collage",
+  "settings": [],
+  "presets": [{ "name": "Banner Collage" }]
+}
+{% endschema %}

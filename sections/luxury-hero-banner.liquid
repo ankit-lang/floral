@@ -1,0 +1,241 @@
+<section id="luxury-hero-{{ section.id }}" class="relative w-full aspect-[16/9] md:aspect-[3.6/1] md:h-auto max-h-[480px] overflow-hidden group">
+  <div class="banner-carousel flex h-full transition-transform duration-500 ease-in-out" id="banner-carousel-{{ section.id }}">
+    {%- for block in section.blocks -%}
+      {%- capture bg_url_desktop -%}
+        {%- if block.settings.image_url != blank -%}
+          {%- if block.settings.image_url contains 'http://' or block.settings.image_url contains 'https://' -%}
+            {{ block.settings.image_url }}
+          {%- else -%}
+            {{ block.settings.image_url | asset_url }}
+          {%- endif -%}
+        {%- elsif block.settings.image != blank -%}
+          {{ block.settings.image | img_url: 'master' }}
+        {%- else -%}
+          {{ 'luxury_hero_banner.png' | asset_url }}
+        {%- endif -%}
+      {%- endcapture -%}
+      {%- capture bg_url_mobile -%}
+        {%- if block.settings.image_mobile_url != blank -%}
+          {%- if block.settings.image_mobile_url contains 'http://' or block.settings.image_mobile_url contains 'https://' -%}
+            {{ block.settings.image_mobile_url }}
+          {%- else -%}
+            {{ block.settings.image_mobile_url | asset_url }}
+          {%- endif -%}
+        {%- elsif block.settings.image_mobile != blank -%}
+          {{ block.settings.image_mobile | img_url: 'master' }}
+        {%- else -%}
+          {{ bg_url_desktop | strip }}
+        {%- endif -%}
+      {%- endcapture -%}
+      {%- comment -%} Professional Percentage-based Responsive Positioning {%- endcomment -%}
+      {%- assign desktop_style = 'style="left: 74.5%; bottom: 6%; transform: translateX(-50%);"' -%}
+      {%- assign mobile_style = 'style="left: 74.5%; bottom: 5%; transform: translateX(-50%);"' -%}
+      {%- if forloop.index == 1 -%}
+        {%- assign desktop_style = 'style="left: 74.5%; bottom: 6%; transform: translateX(-50%);"' -%}
+        {%- assign mobile_style = 'style="left: 74.5%; bottom: 5%; transform: translateX(-50%);"' -%}
+      {%- elsif forloop.index == 2 or block.settings.btn_alignment == 'left' -%}
+        {%- assign desktop_style = 'style="left: 25%; bottom: 6%; transform: translateX(-50%);"' -%}
+        {%- assign mobile_style = 'style="left: 25%; bottom: 5%; transform: translateX(-50%);"' -%}
+      {%- elsif block.settings.btn_alignment == 'center' -%}
+        {%- assign desktop_style = 'style="left: 50%; bottom: 6%; transform: translateX(-50%);"' -%}
+        {%- assign mobile_style = 'style="left: 50%; bottom: 5%; transform: translateX(-50%);"' -%}
+      {%- endif -%}
+
+      <div class="min-w-full h-full shrink-0 relative overflow-hidden" {{ block.shopify_attributes }}>
+        <picture class="absolute inset-0 w-full h-full">
+          <source media="(max-width: 767px)" srcset="{{ bg_url_mobile | strip }}">
+          <img src="{{ bg_url_desktop | strip }}" alt="{{ block.settings.heading | default: 'Banner' | escape }}" class="w-full h-full object-cover object-center" style="image-rendering: -webkit-optimize-contrast;">
+        </picture>
+        
+        <!-- DESKTOP OVERLAY (Percentage-anchored to heart artwork) -->
+        <div class="hidden md:flex absolute z-10 items-center justify-center pointer-events-none" {{ desktop_style }}>
+          {%- if block.settings.btn_text != blank -%}
+            <a href="{{ block.settings.btn_link | default: '/collections/all' }}" class="pointer-events-auto inline-block px-8 py-3 bg-white text-gray-900 text-xs md:text-sm font-bold uppercase tracking-widest rounded-full shadow-2xl hover:bg-primary hover:text-white hover:scale-105 transition-all duration-300 whitespace-nowrap">
+              {{ block.settings.btn_text }}
+            </a>
+          {%- endif -%}
+        </div>
+
+        <!-- MOBILE OVERLAY (Percentage-anchored to heart artwork) -->
+        <div class="flex md:hidden absolute z-10 items-center justify-center pointer-events-none" {{ mobile_style }}>
+          {%- if block.settings.btn_text != blank -%}
+            <a href="{{ block.settings.btn_link | default: '/collections/all' }}" class="pointer-events-auto inline-block px-6 py-2.5 bg-white text-gray-900 text-xs font-bold uppercase tracking-widest rounded-full shadow-2xl hover:bg-gray-100 transition-all duration-300 whitespace-nowrap">
+              {{ block.settings.btn_text }}
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- else -%}
+      <!-- Fallback if no blocks -->
+      {%- capture bg_url_desktop -%}
+        {%- if section.settings.image_url != blank -%}
+          {{ section.settings.image_url }}
+        {%- elsif section.settings.image != blank -%}
+          {{ section.settings.image | img_url: 'master' }}
+        {%- else -%}
+          {{ 'luxury_hero_banner.png' | asset_url }}
+        {%- endif -%}
+      {%- endcapture -%}
+      {%- capture bg_url_mobile -%}
+        {%- if section.settings.image_mobile_url != blank -%}
+          {{ section.settings.image_mobile_url }}
+        {%- elsif section.settings.image_mobile != blank -%}
+          {{ section.settings.image_mobile | img_url: 'master' }}
+        {%- else -%}
+          {{ bg_url_desktop | strip }}
+        {%- endif -%}
+      {%- endcapture -%}
+      <div class="min-w-full h-full shrink-0 relative overflow-hidden">
+        <picture class="absolute inset-0 w-full h-full">
+          <source media="(max-width: 767px)" srcset="{{ bg_url_mobile | strip }}">
+          <img src="{{ bg_url_desktop | strip }}" alt="{{ section.settings.heading | default: 'Banner' | escape }}" class="w-full h-full object-cover object-center">
+        </picture>
+        <div class="hidden md:flex absolute z-10 items-center justify-center pointer-events-none" style="left: 74.5%; bottom: 6%; transform: translateX(-50%);">
+          <a href="{{ section.settings.btn_link | default: '/collections/all' }}" class="pointer-events-auto inline-block px-8 py-3 bg-white text-gray-900 text-xs md:text-sm font-bold uppercase tracking-widest rounded-full shadow-2xl hover:bg-primary hover:text-white hover:scale-105 transition-all duration-300 whitespace-nowrap">
+            {{ section.settings.btn_text | default: 'Shop now' }}
+          </a>
+        </div>
+        <div class="flex md:hidden absolute z-10 items-center justify-center pointer-events-none" style="left: 74.5%; bottom: 5%; transform: translateX(-50%);">
+          <a href="{{ section.settings.btn_link | default: '/collections/all' }}" class="pointer-events-auto inline-block px-6 py-2.5 bg-white text-gray-900 text-xs font-bold uppercase tracking-widest rounded-full shadow-2xl hover:bg-gray-100 transition-all duration-300 whitespace-nowrap">
+            {{ section.settings.btn_text | default: 'Shop now' }}
+          </a>
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+
+  <!-- Carousel Controls -->
+  {%- if section.blocks.size > 1 -%}
+    <button id="banner-prev-{{ section.id }}" class="absolute top-1/2 left-4 -translate-y-1/2 z-20 w-10 h-10 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white backdrop-blur-sm transition-colors opacity-0 group-hover:opacity-100">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+    </button>
+    <button id="banner-next-{{ section.id }}" class="absolute top-1/2 right-4 -translate-y-1/2 z-20 w-10 h-10 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white backdrop-blur-sm transition-colors opacity-0 group-hover:opacity-100">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+    </button>
+    <div class="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+      {%- for block in section.blocks -%}
+        <button class="banner-dot-{{ section.id }} w-2.5 h-2.5 rounded-full bg-white/50 transition-colors {% if forloop.first %}bg-white{% endif %}" data-index="{{ forloop.index0 }}"></button>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</section>
+
+<style>
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const section = document.getElementById('luxury-hero-{{ section.id }}');
+    if (!section) return;
+
+    // Carousel logic
+    const carousel = document.getElementById('banner-carousel-{{ section.id }}');
+    if (!carousel) return;
+    const slides = carousel.children;
+    if (slides.length <= 1) return;
+    
+    let currentIndex = 0;
+    const prevBtn = document.getElementById('banner-prev-{{ section.id }}');
+    const nextBtn = document.getElementById('banner-next-{{ section.id }}');
+    const dots = document.querySelectorAll('.banner-dot-{{ section.id }}');
+    let autoSlideInterval;
+
+    function updateCarousel() {
+      carousel.style.transform = `translateX(-${currentIndex * 100}%)`;
+      dots.forEach((dot, index) => {
+        if (index === currentIndex) {
+          dot.classList.add('bg-white');
+          dot.classList.remove('bg-white/50');
+        } else {
+          dot.classList.remove('bg-white');
+          dot.classList.add('bg-white/50');
+        }
+      });
+    }
+
+    function nextSlide() {
+      currentIndex = (currentIndex + 1) % slides.length;
+      updateCarousel();
+    }
+
+    function prevSlide() {
+      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+      updateCarousel();
+    }
+
+    if (nextBtn) nextBtn.addEventListener('click', () => { nextSlide(); resetInterval(); });
+    if (prevBtn) prevBtn.addEventListener('click', () => { prevSlide(); resetInterval(); });
+    
+    dots.forEach(dot => {
+      dot.addEventListener('click', (e) => {
+        currentIndex = parseInt(e.target.getAttribute('data-index'));
+        updateCarousel();
+        resetInterval();
+      });
+    });
+
+    function startInterval() {
+      autoSlideInterval = setInterval(nextSlide, 5000);
+    }
+    
+    function resetInterval() {
+      clearInterval(autoSlideInterval);
+      startInterval();
+    }
+    
+    startInterval();
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Luxury Hero Banner",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Fallback Desktop Image" },
+    { "type": "image_picker", "id": "image_mobile", "label": "Fallback Mobile Image" },
+    { "type": "text", "id": "image_url", "label": "Fallback Desktop Image URL" },
+    { "type": "text", "id": "image_mobile_url", "label": "Fallback Mobile Image URL" },
+    { "type": "text", "id": "heading", "label": "Fallback Heading" },
+    { "type": "textarea", "id": "subheading", "label": "Fallback Subheading" },
+    { "type": "text", "id": "btn_text", "label": "Fallback Button Text", "default": "Shop now" },
+    { "type": "url", "id": "btn_link", "label": "Fallback Button Link" }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Desktop Banner Image" },
+        { "type": "image_picker", "id": "image_mobile", "label": "Mobile Banner Image" },
+        { "type": "text", "id": "image_url", "label": "Desktop Image URL" },
+        { "type": "text", "id": "image_mobile_url", "label": "Mobile Image URL" },
+        { "type": "text", "id": "heading", "label": "Heading" },
+        { "type": "textarea", "id": "subheading", "label": "Subheading" },
+        { "type": "text", "id": "btn_text", "label": "Button Text", "default": "Shop now" },
+        { "type": "url", "id": "btn_link", "label": "Button Link" },
+        {
+          "type": "select",
+          "id": "btn_alignment",
+          "label": "Button Alignment",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "center"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    { 
+      "name": "Luxury Hero Banner",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "slide" }
+      ]
+    }
+  ]
+}
+{% endschema %}

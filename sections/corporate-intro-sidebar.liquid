@@ -1,0 +1,51 @@
+<section class="max-w-7xl mx-auto px-4 py-20 overflow-hidden">
+  <div class="flex flex-col lg:flex-row gap-12 lg:gap-16">
+    <!-- Left Column (60%) -->
+    <div class="lg:w-3/5 anim-fade stagger-1">
+      <h1 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-8 leading-tight">Elevate Your Corporate & Personal Events</h1>
+      <div class="prose prose-lg text-gray-600 space-y-6 leading-relaxed">
+        <p>At FloraL IndiA we stretch ourselves beyond the offering of our products and services and curate an experience that fits your budget and requirements. We provide personalized and robust solutions for your corporate and personal event needs.</p>
+        <p>Our in-house experts curate bespoke customised gifting and branding solutions for your event. We will be your virtual event planners and take care of all your needs and double tick the checklists. All this while you sit back and relax, and sip a cup of nice coffee.</p>
+      </div>
+    </div>
+    
+    <!-- Right Column (40%) -->
+    <div class="lg:w-2/5 anim-left stagger-2">
+      <div class="relative bg-white rounded-2xl shadow-2xl p-8 border border-gray-100 overflow-hidden">
+        <!-- Botanical Corner Ornament -->
+        <svg class="absolute top-0 right-0 w-32 h-32 text-sage/40 -translate-y-4 translate-x-4 pointer-events-none" fill="currentColor" viewBox="0 0 24 24"><path d="M12 22s-8-4.5-8-11.8V5l8-3 8 3v5.2c0 7.3-8 11.8-8 11.8z"/></svg>
+
+        <div class="relative z-10">
+          <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6 inline-block relative pb-3">
+            Why Choose FloraL India
+            <!-- Gold dots underline -->
+            <div class="absolute bottom-0 left-0 flex gap-1.5">
+              {% for i in (1..6) %}<span class="w-1.5 h-1.5 rounded-full bg-gold"></span>{% endfor %}
+            </div>
+          </h2>
+
+          <div class="flex flex-col gap-3 mt-4">
+            {%- assign benefits = 'Wide network of vendors globally|Real time tracking of packages|No upper or lower limit for orders|Pampered for choices, wide range of products|Fits all wallets, regards all budgets|Order for items not listed via concierge|One person customer care service|Send e-gifts with one click|Ease of navigation, user friendly|Save the trouble of website hopping|Quick response time' | split: '|' -%}
+            {%- assign bgs = 'bg-blush,bg-sage,bg-cream' | split: ',' -%}
+            
+            {% for benefit in benefits %}
+              {%- assign bg_idx = forloop.index0 | modulo: 3 -%}
+              <div class="group flex items-start gap-3 p-3 rounded-lg {{ bgs[bg_idx] }} border-l-4 border-gold shadow-sm hover:shadow-[0_0_15px_rgba(201,168,108,0.4)] hover:-translate-y-0.5 transition-all duration-300 cursor-default anim-up" style="transition-delay: {{ forloop.index | times: 100 }}ms;">
+                <svg class="w-5 h-5 text-gold flex-shrink-0 mt-0.5 group-hover:scale-125 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                <span class="text-sm font-medium text-gray-800 leading-snug">{{ benefit }}</span>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Corporate Intro Sidebar",
+  "settings": [],
+  "presets": [{ "name": "Corporate Intro Sidebar" }]
+}
+{% endschema %}
