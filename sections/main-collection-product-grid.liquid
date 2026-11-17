@@ -6,14 +6,14 @@
 <div id="exotic-city-gate-notice" class="hidden text-center py-16 bg-rose-50/80 rounded-3xl border border-rose-200 mb-8">
   <div class="w-20 h-20 mx-auto bg-white rounded-full flex items-center justify-center mb-4 shadow-sm text-4xl">🌺</div>
   <h2 class="text-2xl font-serif font-bold text-rose-900 mb-2">Exotic Flowers — Metro Cities Only</h2>
-  <p class="text-sm text-rose-700 max-w-md mx-auto mb-6">Exotic flowers are currently available for delivery in <strong>Delhi, Mumbai, Kolkata, Pune, and Bangalore</strong> only. Please change your delivery city to view and order these products.</p>
+  <p class="text-sm text-rose-700 max-w-md mx-auto mb-6">Exotic flowers are currently available for delivery in <strong>Delhi NCR (Delhi, Noida, Gurgaon, Faridabad), Mumbai, Kolkata, Pune, and Bangalore</strong> only. Please change your delivery city to view and order these products.</p>
   <button type="button" onclick="if(window.openPincodeModal) window.openPincodeModal('india');" class="inline-flex items-center justify-center h-11 px-8 rounded-full bg-primary text-white font-bold hover:bg-primary/90 transition-colors shadow-md text-sm cursor-pointer">
     Change Delivery City
   </button>
 </div>
 <script>
 (function() {
-  var metroCities = ['delhi', 'new delhi', 'mumbai', 'kolkata', 'pune', 'bangalore', 'bengaluru'];
+  var metroCities = ['delhi', 'new delhi', 'noida', 'greater noida', 'gautam buddha nagar', 'gurgaon', 'gurugram', 'faridabad', 'mumbai', 'kolkata', 'pune', 'bangalore', 'bengaluru'];
   function getCookieVal(name) {
     var nameEQ = name + '=';
     var ca = document.cookie.split(';');
@@ -186,7 +186,7 @@
   <!-- Product Grid -->
   {% paginate collection.products by 100 %}
     {% if collection.products.size > 0 %}
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 tier-product-grid product-grid" id="collection-product-grid" data-limit="9999">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 tier-product-grid product-grid" id="collection-product-grid" data-limit="9999" data-section-id="{{ section.id }}" data-current-page="{{ paginate.current_page }}" data-total-pages="{{ paginate.pages }}">
         {% for product in collection.products %}
           <div class="anim-scale stagger-{{ forloop.index | modulo: 6 | plus: 1 }}">
             {% render 'product-card', product_card_product: product %}
@@ -195,7 +195,7 @@
       </div>
       
       {% if paginate.pages > 1 %}
-        <div class="mt-12 flex justify-center">
+        <div class="mt-12 flex justify-center" id="collection-pagination">
           <nav class="inline-flex items-center gap-2 bg-white rounded-full px-4 py-2 border border-gray-200 shadow-sm" aria-label="Pagination">
             {% if paginate.previous %}
               <a href="{{ paginate.previous.url }}" class="px-3.5 py-1.5 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-primary transition-colors flex items-center gap-1">
@@ -312,7 +312,13 @@
             item.wrapper.style.display = '';
             matchCount++;
           } else {
-            const isMatch = matchesKeywords.some(kw => item.fullText.includes(kw));
+            let isMatch = matchesKeywords.some(kw => item.fullText.includes(kw));
+            if (filterVal === 'gourmet') {
+              const isExcludedFromGourmet = ['jewel', 'purse', 'bangle', 'necklace', 'clutch', 'bracelet', 'earring', 'ring', 'pendant', 'handbag', 'wallet', 'potli'].some(kw => item.fullText.includes(kw));
+              if (isExcludedFromGourmet) {
+                isMatch = false;
+              }
+            }
             if (isMatch) {
               item.wrapper.classList.remove('filter-hidden');
               item.wrapper.style.display = '';

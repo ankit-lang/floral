@@ -1,0 +1,49 @@
+{%- comment -%}
+  Blog & Article Rich Metadata, OpenGraph & Social Sharing Tags
+{%- endcomment -%}
+
+{%- if template.name == 'article' -%}
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="{{ article.title | escape }} | {{ shop.name }}">
+  <meta property="og:description" content="{{ article.excerpt_or_content | strip_html | truncatewords: 30 | escape }}">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta property="og:site_name" content="{{ shop.name }}">
+  {%- if article.image -%}
+    <meta property="og:image" content="https:{{ article.image | image_url: width: 1200 }}">
+    <meta property="og:image:secure_url" content="https:{{ article.image | image_url: width: 1200 }}">
+    <meta property="og:image:width" content="{{ article.image.width }}">
+    <meta property="og:image:height" content="{{ article.image.height }}">
+    <meta property="og:image:alt" content="{{ article.image.alt | default: article.title | escape }}">
+  {%- else -%}
+    <meta property="og:image" content="https://cdn.shopify.com/s/files/1/0748/1766/7150/files/logopink.png?v=1784187803">
+  {%- endif -%}
+  <meta property="article:published_time" content="{{ article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' }}">
+  {%- if article.updated_at -%}
+    <meta property="article:modified_time" content="{{ article.updated_at | date: '%Y-%m-%dT%H:%M:%SZ' }}">
+  {%- endif -%}
+  {%- if article.author != blank -%}
+    <meta property="article:author" content="{{ article.author | escape }}">
+  {%- endif -%}
+  {%- for tag in article.tags -%}
+    <meta property="article:tag" content="{{ tag | escape }}">
+  {%- endfor -%}
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ article.title | escape }}">
+  <meta name="twitter:description" content="{{ article.excerpt_or_content | strip_html | truncatewords: 30 | escape }}">
+  {%- if article.image -%}
+    <meta name="twitter:image" content="https:{{ article.image | image_url: width: 1200 }}">
+  {%- endif -%}
+
+{%- elsif template.name == 'blog' -%}
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ blog.title | escape }} | {{ shop.name }}">
+  <meta property="og:description" content="{{ page_description | default: 'Explore flower care advice, luxury gifting guides, celebration trends, and stories from Floral India.' | escape }}">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta property="og:site_name" content="{{ shop.name }}">
+  <meta property="og:image" content="https://cdn.shopify.com/s/files/1/0748/1766/7150/files/logopink.png?v=1784187803">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ blog.title | escape }} | {{ shop.name }}">
+  <meta name="twitter:description" content="{{ page_description | default: 'Explore flower care advice, luxury gifting guides, celebration trends, and stories from Floral India.' | escape }}">
+{%- endif -%}

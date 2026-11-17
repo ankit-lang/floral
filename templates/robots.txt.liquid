@@ -1,0 +1,41 @@
+{%- comment -%}
+  Custom robots.txt. Keeps Shopify's default rules (cart, checkout, account, etc.),
+  explicitly allows search and AI crawlers, and points to the custom sitemap page.
+{%- endcomment -%}
+{%- assign allowed_bots = 'Googlebot,Bingbot,OAI-SearchBot,Claude-User,Claude-SearchBot,PerplexityBot,Perplexity-User,GPTBot,ClaudeBot,Google-Extended' | split: ',' -%}
+{%- capture default_disallows -%}
+  {%- for group in robots.default_groups -%}
+    {%- if group.user_agent.value == '*' -%}
+      {%- for rule in group.rules -%}
+        {%- if rule.directive == 'Disallow' %}
+{{ rule }}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- for group in robots.default_groups -%}
+  {{- group.user_agent }}
+  {%- for rule in group.rules %}
+{{ rule }}
+  {%- endfor -%}
+  {%- if group.sitemap != blank %}
+{{ group.sitemap }}
+  {%- endif %}
+
+{% endfor -%}
+
+# ==========================================
+# Search engines and AI crawlers
+# ==========================================
+{%- for bot in allowed_bots %}
+User-agent: {{ bot }}
+Allow: /
+{{- default_disallows }}
+{% endfor %}
+# ==========================================
+# SITEMAP
+# ==========================================
+Sitemap: {{ request.origin }}/pages/sitemap
+ 

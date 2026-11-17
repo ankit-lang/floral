@@ -1,0 +1,28 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-article",
+      "settings": {
+        "show_featured_image": true,
+        "show_date": true,
+        "show_author": true,
+        "show_reading_time": true,
+        "show_share_buttons": true
+      }
+    },
+    "related": {
+      "type": "related-articles",
+      "settings": {
+        "heading": "Related Stories & Recommended Guides",
+        "subheading": "Explore more floral insights, gift inspiration, and celebration trends carefully chosen for you.",
+        "posts_to_show": 3,
+        "show_date": true,
+        "show_view_all": true
+      }
+    }
+  },
+  "order": [
+    "main",
+    "related"
+  ]
+}

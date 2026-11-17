@@ -1,0 +1,32 @@
+{%- comment -%}
+  SEO head tags for the blog post
+  "Best Diwali Gift Hampers and Flowers for This Festive Season".
+  Rendered from layout/theme.liquid.
+{%- endcomment -%}
+{%- assign seo_title = 'Best Diwali Gift Hampers & Flowers for This Festive Season | Floral India' -%}
+{%- assign seo_description = 'Explore the best Diwali gift hampers and flowers for this festive season. Send beautiful festive gifts, fresh flowers and sweet surprises across India and worldwide.' -%}
+{%- assign seo_image = '4nov.png' | asset_url | prepend: 'https:' -%}
+{%- if article.image != blank -%}
+  {%- assign seo_image = article.image | image_url: width: 1200 | prepend: 'https:' -%}
+{%- endif -%}
+
+<title>{{ seo_title }}</title>
+<meta name="description" content="{{ seo_description }}">
+<meta name="keywords" content="Best Diwali gift hampers, Diwali gifts online, Diwali gift hampers online, Luxury Diwali gift hampers, Diwali flowers delivery">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="{{ canonical_url }}">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="{{ seo_title }}">
+<meta property="og:description" content="{{ seo_description }}">
+<meta property="og:url" content="{{ canonical_url }}">
+<meta property="og:site_name" content="{{ shop.name }}">
+<meta property="og:image" content="{{ seo_image }}">
+<meta property="og:image:alt" content="Best Diwali gift hampers and flowers from Floral India">
+<meta property="og:locale" content="en_IN">
+<meta property="article:published_time" content="{{ article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' }}">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ seo_title }}">
+<meta name="twitter:description" content="{{ seo_description }}">
+<meta name="twitter:image" content="{{ seo_image }}">

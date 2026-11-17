@@ -1,4 +1,4 @@
-<section id="luxury-hero-{{ section.id }}" class="relative w-full aspect-[16/9] md:aspect-[3.6/1] md:h-auto max-h-[480px] overflow-hidden group">
+<section id="luxury-hero-{{ section.id }}" class="luxury-hero relative w-full overflow-hidden group">
   <div class="banner-carousel flex h-full transition-transform duration-500 ease-in-out" id="banner-carousel-{{ section.id }}">
     {%- for block in section.blocks -%}
       {%- capture bg_url_desktop -%}
@@ -40,11 +40,18 @@
         {%- assign desktop_style = 'style="left: 50%; bottom: 6%; transform: translateX(-50%);"' -%}
         {%- assign mobile_style = 'style="left: 50%; bottom: 5%; transform: translateX(-50%);"' -%}
       {%- endif -%}
+      {%- comment -%} Optional per-slide custom button position (overrides alignment) {%- endcomment -%}
+      {%- if block.settings.btn_desktop_x != blank and block.settings.btn_desktop_y != blank -%}
+        {%- capture desktop_style -%}style="left: {{ block.settings.btn_desktop_x }}%; bottom: {{ block.settings.btn_desktop_y }}%; transform: translateX(-50%);"{%- endcapture -%}
+      {%- endif -%}
+      {%- if block.settings.btn_mobile_x != blank and block.settings.btn_mobile_y != blank -%}
+        {%- capture mobile_style -%}style="left: {{ block.settings.btn_mobile_x }}%; bottom: {{ block.settings.btn_mobile_y }}%; transform: translateX(-50%);"{%- endcapture -%}
+      {%- endif -%}
 
       <div class="min-w-full h-full shrink-0 relative overflow-hidden" {{ block.shopify_attributes }}>
         <picture class="absolute inset-0 w-full h-full">
           <source media="(max-width: 767px)" srcset="{{ bg_url_mobile | strip }}">
-          <img src="{{ bg_url_desktop | strip }}" alt="{{ block.settings.heading | default: 'Banner' | escape }}" class="w-full h-full object-cover object-center" style="image-rendering: -webkit-optimize-contrast;">
+          <img src="{{ bg_url_desktop | strip }}" alt="{{ block.settings.heading | default: 'Banner' | escape }}" class="w-full h-full object-cover object-center" style="image-rendering: -webkit-optimize-contrast;" {% if forloop.first %}fetchpriority="high" loading="eager"{% else %}loading="lazy"{% endif %}>
         </picture>
         
         <!-- DESKTOP OVERLAY (Percentage-anchored to heart artwork) -->
@@ -88,7 +95,7 @@
       <div class="min-w-full h-full shrink-0 relative overflow-hidden">
         <picture class="absolute inset-0 w-full h-full">
           <source media="(max-width: 767px)" srcset="{{ bg_url_mobile | strip }}">
-          <img src="{{ bg_url_desktop | strip }}" alt="{{ section.settings.heading | default: 'Banner' | escape }}" class="w-full h-full object-cover object-center">
+          <img src="{{ bg_url_desktop | strip }}" alt="{{ section.settings.heading | default: 'Banner' | escape }}" class="w-full h-full object-cover object-center" fetchpriority="high" loading="eager">
         </picture>
         <div class="hidden md:flex absolute z-10 items-center justify-center pointer-events-none" style="left: 74.5%; bottom: 6%; transform: translateX(-50%);">
           <a href="{{ section.settings.btn_link | default: '/collections/all' }}" class="pointer-events-auto inline-block px-8 py-3 bg-white text-gray-900 text-xs md:text-sm font-bold uppercase tracking-widest rounded-full shadow-2xl hover:bg-primary hover:text-white hover:scale-105 transition-all duration-300 whitespace-nowrap">
@@ -121,6 +128,12 @@
 </section>
 
 <style>
+  /* Match the banner artwork ratios so images are never cropped:
+     mobile 1280x714, desktop 1280x325 */
+  #luxury-hero-{{ section.id }} { aspect-ratio: 1280 / 714; }
+  @media (min-width: 768px) {
+    #luxury-hero-{{ section.id }} { aspect-ratio: 1280 / 325; }
+  }
   @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 
@@ -224,7 +237,13 @@
             { "value": "right", "label": "Right" }
           ],
           "default": "center"
-        }
+        },
+        { "type": "header", "content": "Custom button position (optional)" },
+        { "type": "paragraph", "content": "Fill both X and Y to override Button Alignment. Values are % of the banner (X = from left, Y = from bottom)." },
+        { "type": "number", "id": "btn_desktop_x", "label": "Desktop button X (%)" },
+        { "type": "number", "id": "btn_desktop_y", "label": "Desktop button Y (%)" },
+        { "type": "number", "id": "btn_mobile_x", "label": "Mobile button X (%)" },
+        { "type": "number", "id": "btn_mobile_y", "label": "Mobile button Y (%)" }
       ]
     }
   ],

@@ -49,12 +49,59 @@
             "btn_link": "/collections/all",
             "btn_alignment": "right"
           }
+        },
+        "slide_gandhi": {
+          "type": "slide",
+          "settings": {
+            "image_url": "gandhidesk.png",
+            "image_mobile_url": "gandhimob.png",
+            "heading": "",
+            "subheading": "",
+            "btn_text": "Shop now",
+            "btn_link": "/collections/all",
+            "btn_alignment": "left"
+          }
+        },
+        "slide_christmas": {
+          "type": "slide",
+          "settings": {
+            "image_url": "cd.jpeg",
+            "image_mobile_url": "cm.jpeg",
+            "heading": "Merry Christmas",
+            "subheading": "",
+            "btn_text": "Shop now",
+            "btn_link": "/collections/all",
+            "btn_alignment": "center",
+            "btn_desktop_x": 63,
+            "btn_desktop_y": 2,
+            "btn_mobile_x": 80,
+            "btn_mobile_y": 5
+          }
+        },
+        "slide_newyear": {
+          "type": "slide",
+          "settings": {
+            "image_url": "nd.jpeg",
+            "image_mobile_url": "nm.jpeg",
+            "heading": "Happy New Year",
+            "subheading": "",
+            "btn_text": "Shop now",
+            "btn_link": "/collections/all",
+            "btn_alignment": "left",
+            "btn_desktop_x": 12,
+            "btn_desktop_y": 14,
+            "btn_mobile_x": 22,
+            "btn_mobile_y": 5
+          }
         }
       },
       "block_order": [
         "slide_tizXtH",
         "slide_ztjX9A",
-        "slide_ganesh"
+        "slide_ganesh",
+        "slide_gandhi",
+        "slide_christmas",
+        "slide_newyear"
       ],
       "settings": {
         "image": "shopify://shop_images/banner.jpg",
@@ -178,6 +225,10 @@
     "delivery": {
       "type": "global-delivery-icons",
       "settings": {}
+    },
+    "homepage_faq": {
+      "type": "homepage-faq",
+      "settings": {}
     }
   },
   "order": [
@@ -196,6 +247,7 @@
     "diwali_idols",
     "reels",
     "social",
+    "homepage_faq",
     "finder"
   ]
 }

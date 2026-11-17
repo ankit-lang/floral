@@ -59,25 +59,7 @@
         <p id="pincode-error" class="text-red-500 text-xs mt-1 hidden text-left pl-1">Please enter a valid 6-digit pincode.</p>
       </div>
 
-      <!-- Locality Selection Container -->
-      <div id="locality-container" class="hidden space-y-2 mt-2 p-3 bg-gray-50 rounded-2xl border border-gray-200">
-        <div class="flex items-center justify-between px-1">
-          <label class="text-[11px] font-bold text-gray-800 uppercase tracking-wider flex items-center gap-1.5">
-            <svg class="w-3.5 h-3.5 text-primary shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-            Select Locality / Area:
-          </label>
-          <span id="locality-badge" class="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full"></span>
-        </div>
-
-        <div class="relative">
-          <svg class="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-          <input type="text" id="locality-search-input" placeholder="Search locality (e.g. New Friends Colony, Jasola...)" class="w-full h-8 pl-8 pr-3 rounded-lg border border-gray-300 bg-white text-xs font-medium text-gray-800 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 placeholder:text-gray-400">
-        </div>
-
-        <div id="locality-list" class="max-h-36 overflow-y-auto rounded-xl border border-gray-200 bg-white divide-y divide-gray-100 shadow-2xs custom-scroll">
-          <!-- Populated dynamically -->
-        </div>
-      </div>
+      <!-- Locality Selection Container Removed for single-box Geoapify UI -->
 
       <!-- Confirm India Location Button -->
       <button type="button" id="confirm-pincode-btn" disabled class="w-full bg-gray-300 text-white font-bold h-12 rounded-xl text-[15px] mt-2 transition-all duration-200 cursor-not-allowed">
@@ -774,7 +756,7 @@
 
       <!-- International Locality / Area Selection Container -->
       <div id="intl-locality-container" class="space-y-1.5 mt-1.5 p-2.5 bg-amber-50/60 rounded-2xl border border-amber-200">
-        <div class="flex items-center justify-between px-1">
+        <div class="flex items-center justify-between px-1 hidden">
           <label class="text-[11px] font-bold text-amber-900 uppercase tracking-wider flex items-center gap-1.5">
             <svg class="w-3.5 h-3.5 text-amber-700 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
             Select Locality / Area:
@@ -782,7 +764,7 @@
           <span id="intl-locality-badge" class="text-[9px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full"></span>
         </div>
 
-        <div class="relative">
+        <div class="relative hidden">
           <svg class="w-3.5 h-3.5 text-amber-500 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
           <input type="text" id="intl-locality-search-input" placeholder="Search locality / area name..." class="w-full h-8 pl-8 pr-3 rounded-lg border border-amber-300 bg-white text-xs font-medium text-gray-800 focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500/20 placeholder:text-gray-400">
         </div>
@@ -791,7 +773,6 @@
           <!-- Dynamically Populated via Postal API / Locality DB -->
         </div>
       </div>
-
       <!-- Confirm International Delivery Button -->
       <button type="button" id="confirm-intl-btn" class="w-full bg-gradient-to-r from-amber-600 to-pink-600 hover:from-amber-700 hover:to-pink-700 text-white font-bold h-10 rounded-xl text-xs transition-all duration-200 cursor-pointer shadow-md flex items-center justify-center gap-2">
         <span>Confirm International Location (<span id="selected-intl-name-btn">USA</span>)</span>
@@ -842,6 +823,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     document.cookie = name + "=" + (encodeURIComponent(value) || "") + expires + "; path=/; SameSite=Lax";
   }
+  window.setFloralCookie = setCookie;
 
   function getCookie(name) {
     let nameEQ = name + "=";
@@ -853,6 +835,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     return null;
   }
+  window.getFloralCookie = getCookie;
 
   // Global Tab Switcher
   window.switchDeliveryModalTab = function(mode) {
@@ -1164,6 +1147,11 @@ document.addEventListener('DOMContentLoaded', function() {
   let selectedIntlCurrency = 'USD';
   let selectedIntlCode = 'US';
   let selectedIntlLocality = '';
+  let selectedIntlCity = '';
+  let selectedIntlState = '';
+  let selectedIntlZip = '';
+  let selectedIntlLat = '';
+  let selectedIntlLon = '';
 
   const intlSearchInput = document.getElementById('intl-country-search');
   const intlZipInput = document.getElementById('intl-zip-input');
@@ -1175,6 +1163,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const intlZipError = document.getElementById('intl-zip-error');
 
   let activeIntlLocalities = [];
+  let activeIntlLocalitiesData = [];
 
   function getLocalitiesForIntl(country, zip) {
     const cleanZip = (zip || '').trim().toUpperCase();
@@ -1188,13 +1177,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let baseLocs = (countryFallback && countryFallback.localities) ? countryFallback.localities : ['City Center', 'Business District', 'Metropolitan Area', 'Suburbs'];
 
     if (cleanZip.length > 0) {
-      const isNumber = !isNaN(cleanZip) && cleanZip.trim() !== '';
-      if (isNumber) {
-        return [
-          `Central Area (${cleanZip})`,
-          `Downtown District (${cleanZip})`
-        ].concat(baseLocs);
-      }
+      return []; // Do not show dummy localities if a specific zip was entered but not found
     }
     
     return baseLocs;
@@ -1205,6 +1188,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (intlZipError) intlZipError.classList.add('hidden');
 
     if (!cleanZip) {
+      activeIntlLocalitiesData = [];
       const defLocs = getLocalitiesForIntl(selectedIntlCountry, '');
       activeIntlLocalities = defLocs;
       if (intlLocalityBadge) intlLocalityBadge.textContent = `${defLocs.length} Localities Found`;
@@ -1212,127 +1196,54 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
-    const hasDigit = /\d/.test(cleanZip);
-    const isNumber = !isNaN(cleanZip) && cleanZip.trim() !== '';
-    let apiCountry = (countryCode || 'US').toLowerCase();
-    if (apiCountry === 'uk') apiCountry = 'gb';
-
-    let apiZip = cleanZip.replace(/\s+/g, '');
-    let isZipLike = false;
-
-    if (apiCountry === 'us') {
-      isZipLike = isNumber && cleanZip.length === 5;
-    } else if (apiCountry === 'gb') {
-      if (hasDigit && apiZip.length <= 4 && !cleanZip.includes(',')) {
-        isZipLike = true;
-        apiZip = apiZip.substring(0, 4);
-      }
-    } else if (apiCountry === 'ca') {
-      if (hasDigit && apiZip.length <= 3 && !cleanZip.includes(',')) {
-        isZipLike = true;
-        apiZip = apiZip.substring(0, 3);
-      }
-    } else {
-      isZipLike = isNumber;
+    const apiKey = '70b21c8c216144c4acc4b4932d43790e';
+    let url = `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(cleanZip)}&apiKey=${apiKey}&limit=10`;
+    
+    if (countryCode) {
+      let filterCode = (countryCode || 'US').toLowerCase();
+      if (filterCode === 'uk') filterCode = 'gb';
+      url += `&filter=countrycode:${filterCode}`;
     }
 
-    if (isZipLike) {
-      // Search via Zippopotam for zip codes
-      fetch(`https://api.zippopotam.us/${apiCountry}/${encodeURIComponent(apiZip)}`)
-        .then(res => {
-          if (!res.ok) throw new Error('Zip not found');
-          return res.json();
-        })
-        .then(data => {
-          if (data && data.places && data.places.length > 0) {
-            if (intlZipError) intlZipError.classList.add('hidden');
-            const realLocs = data.places.map(p => {
-              const placeName = p['place name'] || '';
-              const state = p['state abbreviation'] || p['state'] || '';
-              return state ? `${placeName}, ${state}` : placeName;
-            });
-            activeIntlLocalities = Array.from(new Set(realLocs));
-            if (intlLocalityBadge) intlLocalityBadge.textContent = `${activeIntlLocalities.length} Verified Localities Found`;
-            filterAndDrawIntlLocalities('');
-            if (activeIntlLocalities.length > 0) {
-              selectedIntlLocality = activeIntlLocalities[0];
-              if (selectedIntlBtnText) selectedIntlBtnText.textContent = `${selectedIntlLocality}, ${selectedIntlCountry}`;
-            }
-          } else {
-            showIntlFallback(cleanZip);
+    fetch(url)
+      .then(res => {
+        if (!res.ok) throw new Error('Geoapify API error');
+        return res.json();
+      })
+      .then(data => {
+        if (data && data.features && data.features.length > 0) {
+          if (intlZipError) intlZipError.classList.add('hidden');
+          
+          activeIntlLocalitiesData = data.features.map(f => {
+            const p = f.properties || {};
+            const name = p.formatted || `${p.city || p.name || ''}, ${p.state || ''}, ${p.country || ''}`.replace(/, ,/g, ',').replace(/^, /, '').replace(/, $/, '');
+            return {
+              name: name,
+              city: p.city || p.name || '',
+              state: p.state || '',
+              zip: p.postcode || '',
+              lat: p.lat || '',
+              lon: p.lon || ''
+            };
+          });
+          
+          activeIntlLocalities = activeIntlLocalitiesData.map(d => d.name);
+          
+          if (intlLocalityBadge) intlLocalityBadge.textContent = `${activeIntlLocalities.length} Verified Localities Found`;
+          filterAndDrawIntlLocalities('');
+          
+          if (activeIntlLocalities.length > 0) {
+            selectedIntlLocality = activeIntlLocalities[0];
+            if (selectedIntlBtnText) selectedIntlBtnText.textContent = selectedIntlLocality;
           }
-        })
-        .catch(() => {
+        } else {
           showIntlFallback(cleanZip);
-        });
-    } else {
-      // Search via Photon API (ElasticSearch prefix autocomplete optimized)
-      fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(cleanZip)}&limit=15&lang=en`)
-        .then(res => {
-          if (!res.ok) throw new Error('Photon API error');
-          return res.json();
-        })
-        .then(data => {
-          let realLocs = [];
-          if (data && data.features && data.features.length > 0) {
-            data.features.forEach(feat => {
-              const p = feat.properties || {};
-              const cc = (p.countrycode || '').toLowerCase();
-              const isUkMatch = (apiCountry === 'gb' || apiCountry === 'uk') && (cc === 'gb' || cc === 'uk');
-              const isUsMatch = (apiCountry === 'us') && (cc === 'us');
-              const isCountryMatch = !apiCountry || cc === apiCountry || isUkMatch || isUsMatch;
-
-              if (cc && !isCountryMatch) return;
-
-              const name = p.name || p.city || p.locality || p.district;
-              const state = p.state || '';
-              if (name) {
-                const locStr = (state && name !== state) ? `${name}, ${state}` : name;
-                if (!realLocs.includes(locStr)) {
-                  realLocs.push(locStr);
-                }
-              }
-            });
-          }
-
-          if (realLocs.length > 0) {
-            if (intlZipError) intlZipError.classList.add('hidden');
-            activeIntlLocalities = realLocs;
-            if (intlLocalityBadge) intlLocalityBadge.textContent = `${activeIntlLocalities.length} Verified Localities Found`;
-            filterAndDrawIntlLocalities('');
-
-            if (activeIntlLocalities.length > 0) {
-              selectedIntlLocality = activeIntlLocalities[0];
-              if (selectedIntlBtnText) selectedIntlBtnText.textContent = `${selectedIntlLocality}, ${selectedIntlCountry}`;
-            }
-          } else {
-            // Fallback to Nominatim if Photon yields no matches for country
-            return fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cleanZip)}&countrycodes=${apiCountry}&format=json&addressdetails=1&limit=10`)
-              .then(res => res.json())
-              .then(nomData => {
-                if (nomData && nomData.length > 0) {
-                  if (intlZipError) intlZipError.classList.add('hidden');
-                  const nomLocs = nomData.map(item => {
-                    const addr = item.address || {};
-                    const name = addr.city || addr.town || addr.village || addr.suburb || addr.hamlet || addr.county || item.name;
-                    const state = addr.state || '';
-                    return state && name !== state ? `${name}, ${state}` : name;
-                  }).filter(Boolean);
-
-                  activeIntlLocalities = Array.from(new Set(nomLocs));
-                  if (intlLocalityBadge) intlLocalityBadge.textContent = `${activeIntlLocalities.length} Verified Localities Found`;
-                  filterAndDrawIntlLocalities('');
-                } else {
-                  showIntlFallback(cleanZip);
-                }
-              })
-              .catch(() => showIntlFallback(cleanZip));
-          }
-        })
-        .catch(() => {
-          showIntlFallback(cleanZip);
-        });
-    }
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+        showIntlFallback(cleanZip);
+      });
   }
 
   function showIntlFallback(cleanZip) {
@@ -1340,8 +1251,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (intlZipError) {
       if (selectedIntlCode === 'US' && isNumber && cleanZip.length !== 5) {
-        intlZipError.textContent = `Note: US ZIP codes are 5 digits (e.g. 90210). Showing available areas:`;
+        intlZipError.textContent = `Please enter a valid 5-digit US ZIP code.`;
         intlZipError.classList.remove('hidden');
+        activeIntlLocalities = [];
+        if (intlLocalityBadge) intlLocalityBadge.textContent = `0 Localities Found`;
+        filterAndDrawIntlLocalities('');
+        return;
       } else {
         intlZipError.textContent = ``;
         intlZipError.classList.add('hidden');
@@ -1352,6 +1267,13 @@ document.addEventListener('DOMContentLoaded', function() {
     activeIntlLocalities = fallbackLocs;
     if (intlLocalityBadge) intlLocalityBadge.textContent = `${fallbackLocs.length} Localities Found`;
     
+    if (fallbackLocs.length === 0 && cleanZip.length > 0) {
+      if (intlZipError) {
+        intlZipError.textContent = `Invalid postal code or location. Please try again.`;
+        intlZipError.classList.remove('hidden');
+      }
+    }
+
     if (!isNumber && cleanZip.length > 0) {
        filterAndDrawIntlLocalities(cleanZip);
     } else {
@@ -1364,6 +1286,13 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function filterAndDrawIntlLocalities(query) {
+    if (intlZipInput && intlZipInput.value.trim().length === 0) {
+      if (intlLocalityContainer) intlLocalityContainer.classList.add('hidden');
+      return;
+    } else {
+      if (intlLocalityContainer) intlLocalityContainer.classList.remove('hidden');
+    }
+
     const q = (query || '').toLowerCase().trim();
     let filtered = activeIntlLocalities.filter(loc => loc.toLowerCase().includes(q));
 
@@ -1375,12 +1304,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         return `
           <div class="intl-locality-item px-3.5 py-2 hover:bg-amber-100/50 cursor-pointer flex items-center justify-between text-xs transition-colors ${isSelected ? 'bg-amber-100 font-bold text-amber-900 border-l-4 border-amber-600' : 'text-gray-800'}"
-            data-locality="${locName}">
-            <div class="flex items-center gap-2">
+            data-locality="${locName.replace(/"/g, '&quot;')}">
+            <div class="flex items-center gap-2 overflow-hidden">
               <span class="w-2.5 h-2.5 rounded-full ${isSelected ? 'bg-amber-600' : 'bg-gray-300'} shrink-0"></span>
-              <span class="font-semibold text-gray-900">${locName}</span>
+              <span class="font-semibold text-gray-900 truncate" title="${locName.replace(/"/g, '&quot;')}">${locName}</span>
             </div>
-            <span class="text-[10px] text-amber-800 font-medium">${selectedIntlCountry}</span>
+            <span class="text-[10px] text-amber-800 font-medium shrink-0 ml-2">${selectedIntlCountry}</span>
           </div>
         `;
       }).join('');
@@ -1405,20 +1334,79 @@ document.addEventListener('DOMContentLoaded', function() {
         this.classList.add('bg-amber-100', 'font-bold', 'text-amber-900', 'border-l-4', 'border-amber-600');
 
         selectedIntlLocality = this.dataset.locality;
-        if (selectedIntlBtnText) selectedIntlBtnText.textContent = `${selectedIntlLocality}, ${selectedIntlCountry}`;
+        if (selectedIntlBtnText) selectedIntlBtnText.textContent = selectedIntlLocality;
+        
+        const match = activeIntlLocalitiesData.find(d => d.name === selectedIntlLocality);
+        if (match) {
+          selectedIntlCity = match.city;
+          selectedIntlState = match.state;
+          selectedIntlZip = match.zip;
+          selectedIntlLat = match.lat;
+          selectedIntlLon = match.lon;
+          if (intlZipInput && match.zip) {
+            intlZipInput.value = match.zip;
+          }
+        }
       });
     });
   }
 
-  if (intlLocalitySearchInput) {
-    intlLocalitySearchInput.addEventListener('input', function() {
-      filterAndDrawIntlLocalities(this.value);
-    });
+  function clearIntlSelection() {
+    selectedIntlLocality = '';
+    selectedIntlCity = '';
+    selectedIntlState = '';
+    selectedIntlZip = '';
+    selectedIntlLat = '';
+    selectedIntlLon = '';
+    if (selectedIntlBtnText) selectedIntlBtnText.textContent = selectedIntlCountry;
+  }
+
+  function updateIntlGeoapifySearch() {
+    const zipVal = (intlZipInput ? intlZipInput.value.trim() : '');
+    const locVal = (intlLocalitySearchInput ? intlLocalitySearchInput.value.trim() : '');
+    
+    const isNumber = !isNaN(zipVal) && zipVal !== '';
+    if (selectedIntlCode === 'US' && isNumber && zipVal.length !== 5) {
+      if (intlZipError) {
+        intlZipError.textContent = 'Please enter a valid 5-digit US ZIP code.';
+        intlZipError.classList.remove('hidden');
+      }
+      activeIntlLocalities = [];
+      activeIntlLocalitiesData = [];
+      if (intlLocalityBadge) intlLocalityBadge.textContent = '0 Localities Found';
+      filterAndDrawIntlLocalities('');
+      return;
+    }
+
+    if (intlZipError) intlZipError.classList.add('hidden');
+    
+    let query = zipVal;
+    if (locVal) {
+      query = locVal + (zipVal ? ' ' + zipVal : '');
+    }
+    
+    fetchIntlPostalCode(selectedIntlCode, query);
   }
 
   let intlZipDebounce = null;
+  
+  if (intlLocalitySearchInput) {
+    intlLocalitySearchInput.addEventListener('input', function() {
+      clearIntlSelection();
+      clearTimeout(intlZipDebounce);
+      intlZipDebounce = setTimeout(() => {
+        updateIntlGeoapifySearch();
+      }, 250);
+    });
+  }
+
   if (intlZipInput) {
     intlZipInput.addEventListener('input', function() {
+      clearIntlSelection();
+      if (selectedIntlCode === 'US' && /^\d{5}/.test(this.value) && this.value.length > 5) {
+        this.value = this.value.substring(0, 5);
+      }
+      
       clearTimeout(intlZipDebounce);
       const val = this.value;
       const q = val.trim().toLowerCase();
@@ -1426,7 +1414,7 @@ document.addEventListener('DOMContentLoaded', function() {
         filterAndDrawIntlLocalities(val);
       }
       intlZipDebounce = setTimeout(() => {
-        fetchIntlPostalCode(selectedIntlCode, val);
+        updateIntlGeoapifySearch();
       }, 250);
     });
   }
@@ -1490,13 +1478,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
   if (confirmIntlBtn) {
     confirmIntlBtn.addEventListener('click', function() {
-      const zipVal = intlZipInput ? intlZipInput.value.trim() : '';
+      const userEnteredZip = intlZipInput ? intlZipInput.value.trim() : '';
+      const finalZipToValidate = selectedIntlLocality ? (selectedIntlZip || '') : userEnteredZip;
 
       // Basic validation for USA (must be exactly 5 digits if provided)
-      if (selectedIntlCode === 'US' && zipVal && !/^\d{5}$/.test(zipVal)) {
-        alert('Please provide a valid 5-digit US ZIP code.');
+      if (selectedIntlCode === 'US' && finalZipToValidate && !/^\d{5}$/.test(finalZipToValidate)) {
+        if (intlZipError) {
+          intlZipError.textContent = 'Please enter a valid 5-digit US ZIP code.';
+          intlZipError.classList.remove('hidden');
+        } else {
+          alert('Please provide a valid 5-digit US ZIP code.');
+        }
         return;
       }
+      
+      // Only save a real postal code. If the customer typed a place name (e.g. "Bell Gardens"),
+      // store no ZIP so checkout asks for it instead of receiving invalid text.
+      const looksLikePostal = function(z) {
+        if (!z) return false;
+        if (selectedIntlCode === 'US') return /^\d{5}(-\d{4})?$/.test(z);
+        return /\d/.test(z) && /^[A-Za-z0-9 \-]{2,10}$/.test(z);
+      };
+      const zipVal = looksLikePostal(finalZipToValidate) ? finalZipToValidate
+                   : (looksLikePostal(userEnteredZip) ? userEnteredZip : '');
 
       const oldMode = localStorage.getItem('delivery_mode') || 'india';
       const isModeChange = (oldMode !== 'international');
@@ -1508,23 +1512,83 @@ document.addEventListener('DOMContentLoaded', function() {
         setCookie('user_intl_zip', zipVal, 365);
         setCookie('user_intl_locality', selectedIntlLocality, 365);
         
+        if (selectedIntlCity) setCookie('user_intl_city', selectedIntlCity, 365);
+        if (selectedIntlState) setCookie('user_intl_state', selectedIntlState, 365);
+        if (selectedIntlLat) setCookie('user_intl_lat', selectedIntlLat, 365);
+        if (selectedIntlLon) setCookie('user_intl_lon', selectedIntlLon, 365);
+
         localStorage.setItem('delivery_mode', 'international');
         localStorage.setItem('user_country', selectedIntlCountry);
         localStorage.setItem('user_country_code', selectedIntlCode);
         localStorage.setItem('user_intl_zip', zipVal);
         localStorage.setItem('user_intl_locality', selectedIntlLocality);
+        
+        if (selectedIntlCity) localStorage.setItem('user_intl_city', selectedIntlCity);
+        if (selectedIntlState) localStorage.setItem('user_intl_state', selectedIntlState);
+        if (selectedIntlLat) localStorage.setItem('user_intl_lat', selectedIntlLat);
+        if (selectedIntlLon) localStorage.setItem('user_intl_lon', selectedIntlLon);
 
         if (window.FloralCurrencyManager) {
           window.FloralCurrencyManager.setCurrencyByCountry(selectedIntlCode || selectedIntlCountry);
         }
 
-        syncDeliveryStateUI();
-        hideModal();
-        if (isModeChange || window.location.pathname.includes('/cart')) window.location.reload();
+        const intlAddress = [selectedIntlLocality, selectedIntlCity, selectedIntlState, zipVal, selectedIntlCountry].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).join(', ');
+
+        // Update saved delivery details in storage
+        try {
+          ['floral_saved_delivery_details', 'floral_session_delivery_details'].forEach(storeKey => {
+            const raw = localStorage.getItem(storeKey) || sessionStorage.getItem(storeKey);
+            if (raw) {
+              const parsed = JSON.parse(raw);
+              parsed['Delivery_Country'] = (selectedIntlCode || 'US').toUpperCase();
+              parsed['Delivery Country'] = selectedIntlCountry;
+              parsed['Delivery_Postcode'] = zipVal;
+              parsed['Delivery_City'] = selectedIntlCity || selectedIntlLocality;
+              parsed['Delivery_State'] = selectedIntlState || '';
+              parsed['Delivery_Address'] = intlAddress;
+              parsed['Delivery_Landmark'] = intlAddress;
+              if (storeKey === 'floral_saved_delivery_details') {
+                localStorage.setItem(storeKey, JSON.stringify(parsed));
+              } else {
+                sessionStorage.setItem(storeKey, JSON.stringify(parsed));
+              }
+            }
+          });
+        } catch(e) {}
+
+        const onDoneIntl = function() {
+          syncDeliveryStateUI();
+          window.dispatchEvent(new CustomEvent('pincodeLocationChanged', { 
+            detail: { mode: 'international', country: selectedIntlCountry, zip: zipVal, address: intlAddress } 
+          }));
+          hideModal();
+          if (isModeChange || window.location.pathname.includes('/cart')) {
+            window.location.reload();
+          }
+        };
+
+        fetch('/cart/update.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            attributes: {
+              'Delivery_Country': (selectedIntlCode || 'US').toUpperCase(),
+              'Delivery Country': selectedIntlCountry,
+              'Delivery_Postcode': zipVal,
+              'Delivery_City': selectedIntlCity || selectedIntlLocality,
+              'Delivery_State': selectedIntlState || '',
+              'Delivery_Address': intlAddress,
+              'Delivery_Landmark': intlAddress,
+              'Delivery Address': intlAddress
+            }
+          })
+        }).then(() => onDoneIntl()).catch(() => onDoneIntl());
       };
 
       if (isModeChange) {
+        // Wait for clear to finish before reloading
         fetch('/cart/clear.js', { method: 'POST' })
+          .then(r => r.json())
           .then(() => finalizeIntl())
           .catch(() => finalizeIntl());
       } else {
@@ -1536,24 +1600,7 @@ document.addEventListener('DOMContentLoaded', function() {
   /* ===== INDIA PINCODE LOGIC ===== */
   const input = document.getElementById('pincode-input');
   const suggestionsBox = document.getElementById('pincode-suggestions');
-  const localityContainer = document.getElementById('locality-container');
-  const localityBadge = document.getElementById('locality-badge');
-  const localitySearchInput = document.getElementById('locality-search-input');
-  const localityList = document.getElementById('locality-list');
   const errorMsg = document.getElementById('pincode-error');
-
-  const pincodeDatabase = [
-    { pincode: '110025', city: 'Delhi', state: 'Delhi', localities: ['New Friends Colony', 'Jasola', 'Okhla', 'Jamia Nagar', 'Holy Family Hospital Area', 'Sukhdev Vihar', 'Masigarh'] },
-    { pincode: '110044', city: 'Delhi', state: 'Delhi', localities: ['Badarpur', 'Molarband', 'Jaitpur', 'Tughlakabad Extension', 'Sarita Vihar', 'Ali Village'] },
-    { pincode: '110001', city: 'Delhi', state: 'Delhi', localities: ['Connaught Place', 'Barakhamba Road', 'Janpath', 'Parliament Street', 'Bengali Market'] },
-    { pincode: '226001', city: 'Lucknow', state: 'Uttar Pradesh', localities: ['Hazratganj', 'Lalbagh', 'Raj Bhavan', 'Vidhan Sabha Marg', 'Kaiserbagh'] },
-    { pincode: '226010', city: 'Lucknow', state: 'Uttar Pradesh', localities: ['Gomti Nagar', 'Patrakar Puram', 'Vipul Khand', 'Vijay Khand', 'Viraj Khand'] },
-    { pincode: '400001', city: 'Mumbai', state: 'Maharashtra', localities: ['Fort', 'Colaba', 'Marine Drive', 'Nariman Point', 'Ballard Estate'] },
-    { pincode: '560001', city: 'Bengaluru', state: 'Karnataka', localities: ['MG Road', 'Brigade Road', 'Commercial Street', 'Cubbon Park', 'Residency Road'] },
-    { pincode: '600001', city: 'Chennai', state: 'Tamil Nadu', localities: ['Parry\'s Corner', 'George Town', 'Broadway', 'Beach Road'] },
-    { pincode: '700001', city: 'Kolkata', state: 'West Bengal', localities: ['BBD Bagh', 'Esplanade', 'Dalhousie Square', 'Strand Road'] },
-    { pincode: '500001', city: 'Hyderabad', state: 'Telangana', localities: ['Abids', 'Nampally', 'Koti', 'Mozamjahi Market'] }
-  ];
 
   let selectedLocation = null;
 
@@ -1567,166 +1614,56 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  function cleanCityName(rawCity, state) {
-    if (!rawCity) return state || 'India';
-    let c = rawCity.trim();
-    if (c.toLowerCase().includes('delhi')) return 'Delhi';
-    return c;
-  }
-
-  function renderLocalityList(localities, pincode, city, state) {
-    if (!localities || localities.length === 0) {
-      localityContainer.classList.add('hidden');
+  function fetchIndiaGeoapify(query) {
+    const cleanQuery = (query || '').trim();
+    if (errorMsg) errorMsg.classList.add('hidden');
+    
+    if (!cleanQuery) {
+      suggestionsBox.classList.add('hidden');
+      suggestionsBox.innerHTML = '';
       return;
     }
 
-    localityBadge.textContent = `${localities.length} Localities Found`;
-    localitySearchInput.value = '';
-    localityContainer.classList.remove('hidden');
-
-    filterAndDrawLocalities(localities, pincode, city, state, '');
-  }
-
-  function filterAndDrawLocalities(localities, pincode, city, state, query) {
-    const q = (query || '').toLowerCase().trim();
-    const filtered = localities.filter(loc => loc.toLowerCase().includes(q));
-
-    if (filtered.length === 0) {
-      localityList.innerHTML = `<div class="p-3 text-center text-xs text-gray-500">No locality matching "${query}"</div>`;
-      return;
+    const isPincode = /^\d+$/.test(cleanQuery);
+    let url = '';
+    
+    if (isPincode) {
+      if (cleanQuery.length !== 6) {
+        return;
+      }
+      url = `https://api.postalpincode.in/pincode/${cleanQuery}`;
+    } else {
+      if (cleanQuery.length < 3) {
+        return;
+      }
+      url = `https://api.postalpincode.in/postoffice/${encodeURIComponent(cleanQuery)}`;
     }
 
-    const cleanedCity = cleanCityName(city, state);
-
-    localityList.innerHTML = filtered.map((locName) => {
-      const isSelected = selectedLocation && selectedLocation.locality === locName;
-      const fullLoc = `${pincode}, ${locName}, ${cleanedCity}`;
-
-      return `
-        <div class="locality-item px-3.5 py-2.5 hover:bg-primary/5 cursor-pointer flex items-center justify-between text-xs transition-colors ${isSelected ? 'bg-primary/10 font-bold text-primary border-l-4 border-primary' : 'text-gray-800'}"
-          data-pincode="${pincode}"
-          data-locality="${locName}"
-          data-city="${cleanedCity}"
-          data-state="${state}"
-          data-full="${fullLoc}">
-          <div class="flex items-center gap-2.5">
-            <span class="w-2.5 h-2.5 rounded-full ${isSelected ? 'bg-primary' : 'bg-gray-300'} shrink-0"></span>
-            <span class="font-semibold text-gray-900">${locName}</span>
-          </div>
-          <span class="text-[11px] text-gray-400 font-normal">${pincode}, ${cleanedCity}</span>
-        </div>
-      `;
-    }).join('');
-
-    localityList.querySelectorAll('.locality-item').forEach(item => {
-      item.addEventListener('click', function() {
-        localityList.querySelectorAll('.locality-item').forEach(i => {
-          i.classList.remove('bg-primary/10', 'font-bold', 'text-primary', 'border-l-4', 'border-primary');
-          i.classList.add('text-gray-800');
-        });
-
-        this.classList.add('bg-primary/10', 'font-bold', 'text-primary', 'border-l-4', 'border-primary');
-
-        const locName = this.dataset.locality;
-        const mainCity = this.dataset.city;
-        const code = this.dataset.pincode;
-        const state = this.dataset.state || '';
-
-        selectedLocation = {
-          pincode: code,
-          locality: locName,
-          city: `${locName}, ${mainCity}`,
-          location: `${code}, ${locName}, ${mainCity}`,
-          state: state
-        };
-
-        setConfirmPincodeActive(true);
-      });
-    });
-  }
-
-  function lookupPincode(code) {
-    if (code.length !== 6 || isNaN(code)) return;
-
-    fetch(`https://api.postalpincode.in/pincode/${code}`)
+    fetch(url)
       .then(res => res.json())
       .then(data => {
-        if (data && data[0] && data[0].Status === 'Success' && data[0].PostOffice && data[0].PostOffice.length > 0) {
-          const offices = data[0].PostOffice;
-          const firstPO = offices[0];
-          const rawCity = firstPO.District || firstPO.Block || firstPO.State;
-          const state = firstPO.State;
-          const city = cleanCityName(rawCity, state);
-
-          const localities = Array.from(new Set(offices.map(po => po.Name).filter(Boolean)));
-
-          suggestionsBox.classList.add('hidden');
-          errorMsg.classList.add('hidden');
-
-          renderLocalityList(localities, code, city, state);
-
-          selectedLocation = {
-            pincode: code,
-            locality: localities[0],
-            city: `${localities[0]}, ${city}`,
-            location: `${code}, ${localities[0]}, ${city}`,
-            state: state
-          };
-          setConfirmPincodeActive(true);
-        } else {
-          selectedLocation = null;
-          localityContainer.classList.add('hidden');
-          suggestionsBox.classList.add('hidden');
-          errorMsg.textContent = "Sorry, pincode not found or not deliverable.";
-          errorMsg.classList.remove('hidden');
-          setConfirmPincodeActive(false);
-        }
-      })
-      .catch(() => {
-        const dbMatch = pincodeDatabase.find(item => item.pincode === code);
-        if (dbMatch) {
-          renderLocalityList(dbMatch.localities, code, dbMatch.city, dbMatch.state);
-          selectedLocation = {
-            pincode: code,
-            locality: dbMatch.localities[0],
-            city: `${dbMatch.localities[0]}, ${dbMatch.city}`,
-            location: `${code}, ${dbMatch.localities[0]}, ${dbMatch.city}`,
-            state: dbMatch.state
-          };
-          setConfirmPincodeActive(true);
-        } else {
-          selectedLocation = null;
-          localityContainer.classList.add('hidden');
-          suggestionsBox.classList.add('hidden');
-          errorMsg.textContent = "Invalid pincode or network issue.";
-          errorMsg.classList.remove('hidden');
-          setConfirmPincodeActive(false);
-        }
-      });
-  }
-
-  function lookupLocality(query) {
-    fetch(`https://api.postalpincode.in/postoffice/${query}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data && data[0] && data[0].Status === 'Success' && data[0].PostOffice && data[0].PostOffice.length > 0) {
-          
-          suggestionsBox.innerHTML = data[0].PostOffice.map(po => {
-            const locName = po.Name;
-            const mainCity = cleanCityName(po.District || po.Block || po.State, po.State);
-            const state = po.State;
-            const code = po.Pincode;
+        if (data && data[0] && data[0].Status === 'Success' && data[0].PostOffice) {
+          const postOffices = data[0].PostOffice.slice(0, 10); // Limit to 10 suggestions
+          suggestionsBox.innerHTML = postOffices.map(po => {
+            const locName = po.Name || '';
+            const mainCity = po.District || po.Block || po.Region || '';
+            const state = po.State || '';
+            const code = po.Pincode || '';
+            const formatted = `${locName}, ${mainCity} - ${code}, ${state}`;
             
             return `
               <div class="suggestion-item px-3.5 py-2.5 hover:bg-gray-50 cursor-pointer flex items-center gap-3 transition-colors text-gray-800"
                 data-pincode="${code}"
                 data-locality="${locName}"
                 data-city="${mainCity}"
-                data-state="${state}">
+                data-state="${state}"
+                data-formatted="${formatted}"
+                data-lat=""
+                data-lon="">
                 <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 <div>
-                  <div class="text-xs font-semibold">${locName}</div>
-                  <div class="text-[10px] text-gray-500">${mainCity}, ${state}, India - ${code}</div>
+                  <div class="text-xs font-semibold">${locName} ${mainCity ? '(' + mainCity + ')' : ''}</div>
+                  <div class="text-[10px] text-gray-500">${formatted}</div>
                 </div>
               </div>
             `;
@@ -1740,62 +1677,58 @@ document.addEventListener('DOMContentLoaded', function() {
               const mainCity = this.dataset.city;
               const code = this.dataset.pincode;
               const state = this.dataset.state || '';
+              const formatted = this.dataset.formatted || '';
 
               selectedLocation = {
                 pincode: code,
                 locality: locName,
-                city: `${locName}, ${mainCity}`,
-                location: `${code}, ${locName}, ${mainCity}`,
-                state: state
+                city: mainCity || locName,
+                location: formatted,
+                state: state,
+                lat: '',
+                lon: ''
               };
 
-              input.value = `${locName}, ${mainCity} - ${code}`;
+              input.value = formatted;
               suggestionsBox.classList.add('hidden');
-              localityContainer.classList.add('hidden');
-              errorMsg.classList.add('hidden');
+              if (errorMsg) errorMsg.classList.add('hidden');
               setConfirmPincodeActive(true);
             });
           });
-          
         } else {
           suggestionsBox.classList.add('hidden');
+          if (errorMsg) {
+             errorMsg.textContent = isPincode ? "No locations found for this pincode." : "No locations found. Try a different search.";
+             errorMsg.classList.remove('hidden');
+          }
         }
       })
       .catch(() => {
-        suggestionsBox.classList.add('hidden');
+         suggestionsBox.classList.add('hidden');
       });
   }
 
   let inputDebounce = null;
   if (input) {
+
+
+    
     input.addEventListener('input', function() {
       const val = this.value.trim();
-      errorMsg.classList.add('hidden');
+      if (errorMsg) errorMsg.classList.add('hidden');
       clearTimeout(inputDebounce);
       
       if (!val) {
         suggestionsBox.classList.add('hidden');
         suggestionsBox.innerHTML = '';
         selectedLocation = null;
-        localityContainer.classList.add('hidden');
         setConfirmPincodeActive(false);
         return;
       }
       
       inputDebounce = setTimeout(() => {
-        if (!isNaN(val) && val.length === 6) {
-          suggestionsBox.classList.add('hidden');
-          lookupPincode(val);
-        } else if (isNaN(val) && val.length >= 3) {
-          localityContainer.classList.add('hidden');
-          lookupLocality(val);
-        } else {
-          suggestionsBox.classList.add('hidden');
-          selectedLocation = null;
-          localityContainer.classList.add('hidden');
-          setConfirmPincodeActive(false);
-        }
-      }, 400);
+        fetchIndiaGeoapify(val);
+      }, 300);
     });
   }
 
@@ -1811,24 +1744,87 @@ document.addEventListener('DOMContentLoaded', function() {
 
       const finalizeIndia = function() {
         setCookie('delivery_mode', 'india', 365);
+        setCookie('user_country', 'India', 365);
+        setCookie('user_country_code', 'IN', 365);
         setCookie('user_pincode', selectedLocation.pincode, 365);
         setCookie('user_location', selectedLocation.location, 365);
         setCookie('user_city', selectedLocation.city, 365);
         if (selectedLocation.state) setCookie('user_state', selectedLocation.state, 365);
+        if (selectedLocation.lat) setCookie('user_lat', selectedLocation.lat, 365);
+        if (selectedLocation.lon) setCookie('user_lon', selectedLocation.lon, 365);
 
         localStorage.setItem('delivery_mode', 'india');
+        localStorage.setItem('user_country', 'India');
+        localStorage.setItem('user_country_code', 'IN');
         localStorage.setItem('user_pincode', selectedLocation.pincode);
         localStorage.setItem('user_location', selectedLocation.location);
         localStorage.setItem('user_city', selectedLocation.city);
         if (selectedLocation.state) localStorage.setItem('user_state', selectedLocation.state);
+        if (selectedLocation.lat) localStorage.setItem('user_lat', selectedLocation.lat);
+        if (selectedLocation.lon) localStorage.setItem('user_lon', selectedLocation.lon);
+
+        // Remove any stale international location keys
+        localStorage.removeItem('user_intl_zip');
+        localStorage.removeItem('user_intl_locality');
+        localStorage.removeItem('user_intl_city');
+        localStorage.removeItem('user_intl_state');
 
         if (window.FloralCurrencyManager) {
           window.FloralCurrencyManager.setCurrency('INR', false);
         }
 
-        syncDeliveryStateUI();
-        hideModal();
-        if (isModeChange || window.location.pathname.includes('/cart')) window.location.reload();
+        // Update saved delivery details in storage with the new pincode address
+        try {
+          ['floral_saved_delivery_details', 'floral_session_delivery_details'].forEach(storeKey => {
+            const raw = localStorage.getItem(storeKey) || sessionStorage.getItem(storeKey);
+            if (raw) {
+              const parsed = JSON.parse(raw);
+              parsed['Delivery_Country'] = 'IN';
+              parsed['Delivery Country'] = 'India';
+              parsed['Delivery_Postcode'] = selectedLocation.pincode;
+              parsed['Delivery_City'] = selectedLocation.city;
+              parsed['Delivery_State'] = selectedLocation.state || '';
+              parsed['Delivery_Address'] = selectedLocation.location;
+              parsed['Delivery_Landmark'] = selectedLocation.location;
+              if (storeKey === 'floral_saved_delivery_details') {
+                localStorage.setItem(storeKey, JSON.stringify(parsed));
+              } else {
+                sessionStorage.setItem(storeKey, JSON.stringify(parsed));
+              }
+            }
+          });
+        } catch(e) {}
+
+        const onDoneIndia = function() {
+          syncDeliveryStateUI();
+          window.dispatchEvent(new CustomEvent('pincodeLocationChanged', { detail: selectedLocation }));
+          hideModal();
+          if (isModeChange || window.location.pathname.includes('/cart')) {
+            window.location.reload();
+          }
+        };
+
+        // Send updated attributes to Shopify cart so server render on reload is also fresh
+        fetch('/cart/update.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            attributes: {
+              'Delivery_Country': 'IN',
+              'Delivery Country': 'India',
+              'Delivery_Postcode': selectedLocation.pincode,
+              'Delivery Postcode': selectedLocation.pincode,
+              'Delivery_City': selectedLocation.city,
+              'Delivery City': selectedLocation.city,
+              'City': selectedLocation.city,
+              'Delivery_State': selectedLocation.state || '',
+              'Delivery State': selectedLocation.state || '',
+              'Delivery_Address': selectedLocation.location,
+              'Delivery_Landmark': selectedLocation.location,
+              'Delivery Address': selectedLocation.location
+            }
+          })
+        }).then(() => onDoneIndia()).catch(() => onDoneIndia());
       };
 
       if (isModeChange) {

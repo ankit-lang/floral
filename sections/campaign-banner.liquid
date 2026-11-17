@@ -104,8 +104,8 @@
   <div class="hero-banner__content">
     <h2 class="hero-banner__title">{{ section.settings.title | escape }}</h2>
     <p class="hero-banner__subtitle">{{ section.settings.subtitle | escape }}</p>
-    {% if section.settings.button_link != blank and section.settings.button_text != blank %}
-      <a href="{{ section.settings.button_link }}" class="hero-banner__btn">{{ section.settings.button_text | escape }}</a>
+    {% if section.settings.button_text != blank %}
+      <a href="/collections/all" class="hero-banner__btn">{{ section.settings.button_text | escape }}</a>
     {% endif %}
   </div>
 </div>

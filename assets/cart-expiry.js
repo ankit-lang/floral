@@ -57,92 +57,38 @@
   // ─── Toast Banner ──────────────────────────────────────────────────────────
 
   function showExpiredToast(removedTitles) {
-    // Remove existing toast
-    const old = document.getElementById('cart-expiry-toast');
-    if (old) old.remove();
-
-    const toast = document.createElement('div');
-    toast.id = 'cart-expiry-toast';
-    toast.style.cssText = [
-      'position:fixed',
-      'top:80px',
-      'left:50%',
-      'transform:translateX(-50%)',
-      'z-index:9999',
-      'max-width:460px',
-      'width:calc(100% - 2rem)',
-      'background:#fff',
-      'border:1.5px solid #fde68a',
-      'border-radius:1rem',
-      'box-shadow:0 8px 32px rgba(0,0,0,0.12)',
-      'padding:1rem 1.25rem',
-      'display:flex',
-      'align-items:flex-start',
-      'gap:0.75rem',
-      'font-family:Inter,system-ui,sans-serif',
-      'animation:slideDown 0.35s cubic-bezier(0.16,1,0.3,1) both',
-    ].join(';');
-
-    const listHtml = removedTitles.map(function(t) {
-      return '<li style="margin:2px 0;">• ' + t + '</li>';
-    }).join('');
-
-    toast.innerHTML =
-      '<div style="font-size:1.4rem;flex-shrink:0;">⏰</div>' +
-      '<div style="flex:1;">' +
-        '<p style="font-weight:700;color:#92400e;font-size:0.85rem;margin:0 0 4px;">Cart items expired</p>' +
-        '<p style="color:#78350f;font-size:0.78rem;margin:0 0 6px;">The following items were reserved for 4 hours and have been removed:</p>' +
-        '<ul style="color:#92400e;font-size:0.75rem;margin:0 0 8px;padding:0;list-style:none;">' + listHtml + '</ul>' +
-        '<a href="/collections/all" style="font-size:0.75rem;font-weight:700;color:#0e7040;text-decoration:underline;">Shop again →</a>' +
-      '</div>' +
-      '<button id="cart-expiry-close" style="flex-shrink:0;background:none;border:none;cursor:pointer;font-size:1.1rem;color:#9ca3af;line-height:1;" aria-label="Close">×</button>';
-
-    // Inject keyframe if not already present
-    if (!document.getElementById('cart-expiry-style')) {
-      const style = document.createElement('style');
-      style.id = 'cart-expiry-style';
-      style.textContent =
-        '@keyframes slideDown{from{opacity:0;transform:translateX(-50%) translateY(-20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}' +
-        '.cart-expiry-countdown{font-size:0.7rem;color:#b45309;font-weight:600;margin-left:4px;}';
-      document.head.appendChild(style);
-    }
-
-    document.body.appendChild(toast);
-
-    document.getElementById('cart-expiry-close').addEventListener('click', function () {
-      toast.remove();
-    });
-
-    // Auto-dismiss after 10 seconds
-    setTimeout(function () { if (toast.parentNode) toast.remove(); }, 10000);
+    // Disabled: do not show toast notification for reserved/expired time
+    return;
   }
 
   // ─── Countdown badges on cart page ─────────────────────────────────────────
 
   function renderCountdownBadges(cartItems) {
-    const ts = getTimestamps();
-    cartItems.forEach(function (item) {
-      const id  = String(item.variant_id);
-      const addedAt = ts[id];
-      if (!addedAt) return;
-
-      // Find rows by variant id data attr on cart page
-      document.querySelectorAll('[data-cart-expiry-variant="' + id + '"]').forEach(function (el) {
-        const remaining = getTimeRemaining(addedAt);
-        if (remaining) {
-          el.textContent = '⏱ Reserved for ' + remaining;
-          el.style.display = '';
-        } else {
-          el.textContent = 'Expired';
-          el.style.color = '#ef4444';
-        }
-      });
-    });
+    // Disabled: do not show notification/countdown badge for reserved for time
+    return;
   }
 
   // ─── Core: fetch cart → remove expired items ───────────────────────────────
 
   function checkAndExpireCartItems() {
+    const ts = getTimestamps();
+    const now = Date.now();
+    const isCartPage = window.location.pathname.includes('/cart');
+    const ids = Object.keys(ts);
+
+    // Skip network roundtrip on reload if no items are tracked or none are expired (unless on cart page)
+    if (!isCartPage) {
+      if (ids.length === 0) return;
+      let hasExpired = false;
+      for (let i = 0; i < ids.length; i++) {
+        if ((now - ts[ids[i]]) >= EXPIRY_MS) {
+          hasExpired = true;
+          break;
+        }
+      }
+      if (!hasExpired) return;
+    }
+
     fetch('/cart.js')
       .then(function (r) { return r.json(); })
       .then(function (cart) {
@@ -186,7 +132,7 @@
             let realCount = 0;
             if (updatedCart.items) {
                updatedCart.items.forEach(function(item) {
-                 if (item.handle !== 'peak-season-delivery-surcharge') {
+                 if (item.handle !== 'peak-season-delivery-surcharge' && item.handle !== 'international-delivery-charge') {
                    realCount += item.quantity;
                  }
                });
@@ -248,6 +194,19 @@
             });
           }
         } catch (e) {}
+
+        try {
+          const mode = localStorage.getItem('delivery_mode') || 'india';
+          const iso = (mode === 'india' ? 'IN' : (localStorage.getItem('user_country_code') || 'IN')).toUpperCase();
+          const full = (iso === 'IN' ? 'India' : (localStorage.getItem('user_country') || iso));
+          setTimeout(function() {
+            _fetch('/cart/update.js', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ attributes: { 'Delivery_Country': iso, 'Delivery Country': full } })
+            }).catch(function() {});
+          }, 300);
+        } catch(e) {}
       }
       return _fetch.apply(this, arguments);
     };
@@ -256,20 +215,8 @@
   // ─── Live countdown updater (for cart page) ────────────────────────────────
 
   function startLiveCountdown() {
-    setInterval(function () {
-      const ts = getTimestamps();
-      Object.keys(ts).forEach(function (id) {
-        document.querySelectorAll('[data-cart-expiry-variant="' + id + '"]').forEach(function (el) {
-          const remaining = getTimeRemaining(ts[id]);
-          if (remaining) {
-            el.textContent = '⏱ Reserved for ' + remaining;
-          } else {
-            el.textContent = '⚠️ Expired — removing...';
-            el.style.color = '#ef4444';
-          }
-        });
-      });
-    }, 30000); // update every 30 seconds
+    // Disabled: do not show reserved for time notification / countdown badges
+    return;
   }
 
   // ─── Init ──────────────────────────────────────────────────────────────────

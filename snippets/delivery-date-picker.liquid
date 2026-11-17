@@ -15,11 +15,27 @@
 {%- assign tags_lc = product.tags | join: ',' | downcase -%}
 {%- assign is_intl_eligible = false -%}
 
+{%- assign is_domestic_only = false -%}
+{%- if tags_lc contains 'domestic' or tags_lc contains 'india only' or tags_lc contains 'india-only' or title_lc contains 'carlton london' or tags_lc contains 'carlton london' -%}
+  {%- assign is_domestic_only = true -%}
+{%- endif -%}
+
 {%- assign is_london_product = false -%}
+{%- unless is_domestic_only -%}
+  {%- for tag in product.tags -%}
+    {%- assign tag_lower = tag | downcase | strip -%}
+    {%- if tag_lower == 'london' or tag_lower == 'uk' or tag_lower == 'united kingdom' -%}
+      {%- assign is_london_product = true -%}
+      {%- break -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endunless -%}
+
+{%- assign has_sdd_tag = false -%}
 {%- for tag in product.tags -%}
-  {%- assign tag_lower = tag | downcase | strip -%}
-  {%- if tag_lower == 'london' or tag_lower == 'uk' or tag_lower == 'united kingdom' -%}
-    {%- assign is_london_product = true -%}
+  {%- assign tag_clean = tag | downcase | strip -%}
+  {%- if tag_clean == 'sdd' -%}
+    {%- assign has_sdd_tag = true -%}
     {%- break -%}
   {%- endif -%}
 {%- endfor -%}
@@ -44,8 +60,10 @@
   {%- endif -%}
 {%- endfor -%}
 
-{%- if is_london_product or is_usa_product or tags_lc contains 'international' or tags_lc contains 'worldwide' or tags_lc contains 'dubai' or tags_lc contains 'uae' or tags_lc contains 'canada' or tags_lc contains 'australia' or title_lc contains 'london' or title_lc contains 'usa' or title_lc contains 'international' or title_lc contains 'worldwide' or tags_lc contains 'balloon' or title_lc contains 'balloon' or type_lc contains 'balloon' or is_in_flower_collection or title_lc contains 'flower' or title_lc contains 'cake' or title_lc contains 'rose' or title_lc contains 'bouquet' or title_lc contains 'bloom' or title_lc contains 'blossom' or title_lc contains 'carnation' or title_lc contains 'lily' or title_lc contains 'orchid' or title_lc contains 'tulip' or title_lc contains 'gerbera' or title_lc contains 'sunflower' or title_lc contains 'hydrangea' or title_lc contains 'iris' or title_lc contains 'peony' or title_lc contains 'bunch' or title_lc contains 'vase' or type_lc contains 'flowers' or type_lc contains 'cakes' or tags_lc contains 'flowers' or tags_lc contains 'cakes' -%}
-  {%- assign is_intl_eligible = true -%}
+{%- if is_london_product or is_usa_product or tags_lc contains 'international' or tags_lc contains 'worldwide' or tags_lc contains 'dubai' or tags_lc contains 'uae' or tags_lc contains 'canada' or tags_lc contains 'australia' or title_lc contains 'usa' or title_lc contains 'international' or title_lc contains 'worldwide' or tags_lc contains 'balloon' or title_lc contains 'balloon' or type_lc contains 'balloon' or is_in_flower_collection or title_lc contains 'flower' or title_lc contains 'cake' or title_lc contains 'rose' or title_lc contains 'bouquet' or title_lc contains 'bloom' or title_lc contains 'blossom' or title_lc contains 'carnation' or title_lc contains 'lily' or title_lc contains 'orchid' or title_lc contains 'tulip' or title_lc contains 'gerbera' or title_lc contains 'sunflower' or title_lc contains 'hydrangea' or title_lc contains 'iris' or title_lc contains 'peony' or title_lc contains 'bunch' or title_lc contains 'vase' or type_lc contains 'flowers' or type_lc contains 'cakes' or tags_lc contains 'flowers' or tags_lc contains 'cakes' -%}
+  {%- unless is_domestic_only -%}
+    {%- assign is_intl_eligible = true -%}
+  {%- endunless -%}
 {%- endif -%}
 
 {%- assign is_in_plant_collection = false -%}
@@ -70,7 +88,10 @@
     {%- assign advance_days = 4 -%}
   {%- elsif prod_desc_lc contains '2-3 advance' or prod_desc_lc contains '2 to 3 advance' or prod_desc_lc contains '2-3 days advance' or prod_desc_lc contains '3 days advance' or prod_desc_lc contains '3-day advance' or prod_desc_lc contains '3 days process' -%}
     {%- assign advance_days = 2 -%}
-  {%- elsif prod_desc_lc contains '1-2 advance' or prod_desc_lc contains '1 to 2 advance' or prod_desc_lc contains '2 days advance' or prod_desc_lc contains '2-day advance' or prod_desc_lc contains '2 days process' -%}
+  {%- elsif prod_desc_lc contains '1-2 days advance' or prod_desc_lc contains '1-2 day advance' or prod_desc_lc contains '1-2 advance' or prod_desc_lc contains '1 to 2 days advance' or prod_desc_lc contains '1 to 2 advance' -%}
+    {%- comment -%} '1-2 days' means next-day delivery is possible {%- endcomment -%}
+    {%- assign advance_days = 1 -%}
+  {%- elsif prod_desc_lc contains '2 days advance' or prod_desc_lc contains '2-day advance' or prod_desc_lc contains '2 days process' -%}
     {%- assign advance_days = 2 -%}
   {%- elsif prod_desc_lc contains '1 day advance' or prod_desc_lc contains '1-day advance' or prod_desc_lc contains '1 day process' -%}
     {%- assign advance_days = 1 -%}
@@ -121,6 +142,20 @@
   {%- endif -%}
 {%- endif -%}
 
+{%- assign is_karwa_chauth = false -%}
+{%- if collection and collection.handle contains 'karwa-chauth' -%}
+  {%- assign is_karwa_chauth = true -%}
+{%- endif -%}
+{%- capture kc_flag -%}{%- render 'karwa-chauth-check', product: product -%}{%- endcapture -%}
+{%- if kc_flag contains 'true' -%}
+  {%- assign is_karwa_chauth = true -%}
+{%- endif -%}
+{%- if is_karwa_chauth -%}
+  {%- if advance_days < 3 -%}
+    {%- assign advance_days = 3 -%}
+  {%- endif -%}
+{%- endif -%}
+
 {%- comment -%} Tier-Based Delivery Logic Detection (Diwali Idols & Fruit Hampers) {%- endcomment -%}
 {%- assign is_tier_restricted = false -%}
 {%- if title_lc contains 'idol' or title_lc contains 'statue' or title_lc contains 'murti' or tags_lc contains 'idol' or tags_lc contains 'diwali idol' or type_lc contains 'idol' or title_lc contains 'fruit hamper' or type_lc contains 'fruit hamper' or tags_lc contains 'fruit hamper' -%}
@@ -140,10 +175,10 @@
   {%- assign is_cake = true -%}
 {%- endif -%}
 
-<div class="delivery-picker-container mb-6" data-advance-days="{{ advance_days }}" data-no-sunday="{{ desc_no_sunday }}" data-is-idol="{{ is_tier_restricted }}" data-is-cake="{{ is_cake }}" data-is-choc-gifting="{{ is_choc_gifting }}" data-is-exotic="{{ is_exotic }}">
+<div class="delivery-picker-container mb-6" data-advance-days="{{ advance_days }}" data-no-sunday="{{ desc_no_sunday }}" data-is-idol="{{ is_tier_restricted }}" data-is-cake="{{ is_cake }}" data-is-choc-gifting="{{ is_choc_gifting }}" data-is-exotic="{{ is_exotic }}" data-is-london="{{ is_london_product }}" data-has-sdd="{{ has_sdd_tag }}">
 
   <!-- International Delivery PDP Notice -->
-  <div id="intl-delivery-pdp-notice" data-intl-eligible="{{ is_intl_eligible }}" data-is-london="{{ is_london_product }}" data-is-usa="{{ is_usa_product }}" class="hidden mb-4 p-3.5 rounded-2xl border text-xs leading-relaxed">
+  <div id="intl-delivery-pdp-notice" data-intl-eligible="{{ is_intl_eligible }}" data-domestic-only="{{ is_domestic_only }}" data-is-london="{{ is_london_product }}" data-is-usa="{{ is_usa_product }}" data-has-sdd="{{ has_sdd_tag }}" class="hidden mb-4 p-3.5 rounded-2xl border text-xs leading-relaxed">
     <!-- Populated dynamically via JS -->
   </div>
 
@@ -161,21 +196,13 @@
 
     <!-- State 2: Displayed when an Indian Pincode IS selected -->
     <div id="active-pincode-bar" class="hidden flex w-full flex-col sm:flex-row">
-      <select name="properties[City]" id="delivery-location"
-        class="px-3.5 py-2.5 bg-primary text-white text-sm font-bold border-none outline-none cursor-pointer shrink-0"
+      {%- comment -%} Options are generated from the saved pincode (city + state) by lockLocationWithPincode() {%- endcomment -%}
+      <select id="delivery-location" autocomplete="off" disabled
+        class="px-3.5 py-2.5 bg-primary text-white text-sm font-bold border-none outline-none shrink-0"
         style="min-width: 120px;">
-        <option value="Mumbai">Mumbai</option>
-        <option value="Delhi">Delhi</option>
-        <option value="Lucknow">Lucknow</option>
-        <option value="Bangalore">Bangalore</option>
-        <option value="Hyderabad">Hyderabad</option>
-        <option value="Chennai">Chennai</option>
-        <option value="Kolkata">Kolkata</option>
-        <option value="Pune">Pune</option>
-        <option value="Ahmedabad">Ahmedabad</option>
-        <option value="Jaipur">Jaipur</option>
-        <option value="Chandigarh">Chandigarh</option>
+        <option value="">Select Pincode</option>
       </select>
+      <input type="hidden" name="properties[City]" id="delivery-city-property" value="">
 
       <div class="flex-1 flex items-center bg-white px-3.5 py-2 gap-2 border-t sm:border-t-0 sm:border-l border-gray-200">
         <input type="text" id="delivery-exact-location" name="properties[Exact Location]" placeholder="House No / Street Address (optional)"
@@ -204,6 +231,13 @@
     <label class="text-xs font-bold text-gray-500 uppercase tracking-widest">Date and Time of Delivery</label>
     <span id="delivery-countdown" class="text-xs font-semibold text-secondary"></span>
   </div>
+
+  {%- if item_advance_days > 0 -%}
+    <div class="mb-3 p-2 bg-amber-50 border border-amber-200 rounded-md text-amber-800 text-[11px] flex items-start gap-2">
+      <span class="text-base leading-none shrink-0">⏳</span>
+      <span><strong>Please note:</strong> This item requires advance preparation ({{ item_advance_days }} day{% if item_advance_days > 1 %}s{% endif %}), so the earliest delivery date has been automatically adjusted.</span>
+    </div>
+  {%- endif -%}
 
   <!-- Quick-Select Date Tabs (Green Pill Design) -->
   <div class="flex gap-2 mb-4" id="delivery-date-tabs">
@@ -299,9 +333,92 @@ document.addEventListener('DOMContentLoaded', function() {
   const MIDNIGHT_HOURS  = 6;   // advance notice required for midnight slot
   const SAMEDAY_CUTOFF  = 16;  // 4 PM — no same-day delivery after this hour
 
+  // ---- Helper: UK & London Location Classifier ----
+  function checkUkDeliveryLocation() {
+    const mode = localStorage.getItem('delivery_mode') || 'india';
+    const country = (localStorage.getItem('user_country') || 'India').toLowerCase().trim();
+    const countryCode = (localStorage.getItem('user_country_code') || 'IN').toLowerCase().trim();
+    const locality = (localStorage.getItem('user_intl_locality') || '').toLowerCase().trim();
+    const city = (localStorage.getItem('user_city') || '').toLowerCase().trim();
+    const zip = (localStorage.getItem('user_intl_zip') || '').toLowerCase().trim();
+
+    const isIntl = (mode === 'international') && (country !== 'india' && country !== 'in');
+    const isUk = isIntl && (
+      country.includes('uk') ||
+      country.includes('united kingdom') ||
+      country.includes('britain') ||
+      country.includes('london') ||
+      countryCode === 'gb' ||
+      countryCode === 'uk'
+    );
+
+    if (!isUk) {
+      return { isUk: false, isLondon: false, isOtherUk: false };
+    }
+
+    const nonLondonCities = [
+      'manchester', 'birmingham', 'edinburgh', 'glasgow', 'bristol', 
+      'leeds', 'liverpool', 'sheffield', 'newcastle', 'nottingham', 
+      'cardiff', 'belfast', 'southampton', 'oxford', 'cambridge', 
+      'york', 'brighton', 'leicester', 'coventry', 'hull', 'bradford'
+    ];
+
+    const isExplicitNonLondon = nonLondonCities.some(function(c) {
+      return locality.includes(c) || city.includes(c);
+    });
+
+    const isLondonPostcode = /^(e|ec|n|nw|se|sw|w|wc)\d/i.test(zip);
+
+    const isLondonKeyword = 
+      locality.includes('london') || 
+      city.includes('london') ||
+      country.includes('london') ||
+      locality.includes('westminster') ||
+      locality.includes('belgravia') ||
+      locality.includes('chelsea') ||
+      locality.includes('kensington') ||
+      locality.includes('mayfair') ||
+      locality.includes('soho') ||
+      locality.includes('camden') ||
+      locality.includes('islington') ||
+      locality.includes('greenwich') ||
+      locality.includes('hackney') ||
+      locality.includes('canary wharf') ||
+      locality.includes('farringdon') ||
+      locality.includes('barbican') ||
+      city.includes('westminster') ||
+      city.includes('kensington');
+
+    let isLondon = false;
+    if (isExplicitNonLondon) {
+      isLondon = false;
+    } else if (isLondonKeyword || isLondonPostcode) {
+      isLondon = true;
+    } else if (!locality && !city && !zip) {
+      isLondon = true;
+    } else if (zip && !isLondonPostcode) {
+      isLondon = false;
+    } else {
+      isLondon = false;
+    }
+
+    return {
+      isUk: true,
+      isLondon: isLondon,
+      isOtherUk: !isLondon
+    };
+  }
+
   // ---- Diwali Idol Tier-Based Delivery Logic ----
   const deliveryContainer = document.querySelector('.delivery-picker-container');
   const isIdolProduct = deliveryContainer && deliveryContainer.dataset.isIdol === 'true';
+
+  // London + SDD-tagged product flag (shared by date rules and countdown timer)
+  const pdpIntlNoticeEl = document.getElementById('intl-delivery-pdp-notice');
+  const isLondonSddProduct =
+    ((deliveryContainer && deliveryContainer.dataset.isLondon === 'true') ||
+     (pdpIntlNoticeEl && pdpIntlNoticeEl.dataset.isLondon === 'true')) &&
+    (deliveryContainer && deliveryContainer.dataset.hasSdd === 'true');
 
   // Metro cities where same day / next day delivery is possible for idols
   const METRO_CITIES = [
@@ -389,7 +506,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const country = (localStorage.getItem('user_country') || 'India').trim();
     const countryCode = (localStorage.getItem('user_country_code') || 'IN').toUpperCase().trim();
     const isIntl = (mode === 'international') && (country.toUpperCase() !== 'INDIA' && country.toUpperCase() !== 'IN');
-    const isSundayAllowed = sundayAllowedCountries.includes(countryCode) || sundayAllowedCountries.includes(country.toUpperCase());
+    const isSundayAllowed = !isIntl || sundayAllowedCountries.includes(countryCode) || sundayAllowedCountries.includes(country.toUpperCase());
 
     return { isIntl, isSundayAllowed, country, countryCode };
   }
@@ -414,8 +531,8 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       if (intlActiveBar) {
-        intlActiveBar.classList.remove('hidden');
-        intlActiveBar.style.setProperty('display', 'flex', 'important');
+        intlActiveBar.classList.add('hidden');
+        intlActiveBar.style.setProperty('display', 'none', 'important');
       }
 
       if (pdpIntlDisplay) {
@@ -460,6 +577,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+  // Rough pincode-prefix → city/state lookup, used only if the popup didn't save city/state
+  function guessCityStateFromPincode(pin) {
+    const p = String(pin || '');
+    const map3 = {
+      '400': ['Mumbai', 'Maharashtra'], '411': ['Pune', 'Maharashtra'], '500': ['Hyderabad', 'Telangana'],
+      '560': ['Bangalore', 'Karnataka'], '600': ['Chennai', 'Tamil Nadu'], '700': ['Kolkata', 'West Bengal'],
+      '380': ['Ahmedabad', 'Gujarat'], '302': ['Jaipur', 'Rajasthan'], '160': ['Chandigarh', 'Chandigarh'],
+      '226': ['Lucknow', 'Uttar Pradesh'], '201': ['Noida', 'Uttar Pradesh'], '122': ['Gurugram', 'Haryana']
+    };
+    if (map3[p.substring(0, 3)]) return { city: map3[p.substring(0, 3)][0], state: map3[p.substring(0, 3)][1] };
+    if (p.substring(0, 2) === '11') return { city: 'Delhi', state: 'Delhi' };
+    return { city: '', state: '' };
+  }
+
   function lockLocationWithPincode(pincodeData) {
     const intlState = getIntlDeliveryState();
     if (intlState.isIntl) {
@@ -498,38 +629,47 @@ document.addEventListener('DOMContentLoaded', function() {
       exactInputEl.value = `PIN: ${pincode}`;
     }
 
-    // Map city name from targetCity or pincode prefix
-    if (!targetCity && pincode) {
-      const firstDigit = pincode.charAt(0);
-      const prefix2 = pincode.substring(0, 3);
-      if (prefix2 === '226') targetCity = 'Lucknow';
-      else if (firstDigit === '2') targetCity = 'Lucknow';
-      else if (firstDigit === '4') targetCity = 'Mumbai';
-      else if (firstDigit === '1') targetCity = 'Delhi';
-      else if (firstDigit === '5') targetCity = 'Bangalore';
-      else if (firstDigit === '6') targetCity = 'Chennai';
-      else if (firstDigit === '7') targetCity = 'Kolkata';
-      else if (firstDigit === '3') targetCity = 'Ahmedabad';
+    let hiddenExactInput = document.getElementById('hidden-exact-location-property');
+    if (!hiddenExactInput) {
+      hiddenExactInput = document.createElement('input');
+      hiddenExactInput.type = 'hidden';
+      hiddenExactInput.id = 'hidden-exact-location-property';
+      hiddenExactInput.name = 'properties[_Exact Location]';
+      if (cityEl && cityEl.parentNode) cityEl.parentNode.appendChild(hiddenExactInput);
+    }
+    if (fullLocation) hiddenExactInput.value = fullLocation;
+    else if (pincode) hiddenExactInput.value = `PIN: ${pincode}`;
+
+    // State saved by the pincode popup (from India Post lookup)
+    let targetState = (typeof pincodeData === 'object' && pincodeData && pincodeData.state)
+      ? pincodeData.state
+      : (getCookieVal('user_state') || localStorage.getItem('user_state') || '');
+
+    // Fallback: derive city/state from pincode prefix when nothing was saved
+    if (pincode && (!targetCity || !targetState)) {
+      const guess = guessCityStateFromPincode(pincode);
+      if (!targetCity) targetCity = guess.city;
+      if (!targetState) targetState = guess.state;
     }
 
-    if (targetCity && cityEl) {
-      let hasOption = false;
-      for (let i = 0; i < cityEl.options.length; i++) {
-        if (cityEl.options[i].value.toLowerCase() === targetCity.toLowerCase()) {
-          cityEl.selectedIndex = i;
-          hasOption = true;
-          break;
-        }
-      }
-      if (!hasOption) {
-        const opt = document.createElement('option');
-        opt.value = targetCity;
-        opt.textContent = targetCity;
-        cityEl.appendChild(opt);
-        cityEl.value = targetCity;
-      }
+    // Lock the dropdown to the pincode's own city + state (single option, no stale choices)
+    if (cityEl && (targetCity || targetState)) {
+      const cityValue = targetCity || targetState;
+      const sameName = targetState && cityValue.toLowerCase() === targetState.toLowerCase();
+      const label = (targetState && !sameName) ? `${cityValue}, ${targetState}` : cityValue;
+
+      cityEl.innerHTML = '';
+      const opt = document.createElement('option');
+      opt.value = cityValue;
+      opt.textContent = label;
+      opt.selected = true;
+      cityEl.appendChild(opt);
       cityEl.disabled = true;
-      cityEl.title = "City locked to PIN code " + (pincode || '');
+      cityEl.title = `${label} (PIN ${pincode || ''})`;
+
+      // Disabled selects are not submitted, so pass the city via a hidden input
+      const cityProp = document.getElementById('delivery-city-property');
+      if (cityProp) cityProp.value = cityValue;
     }
 
     updateCountdown();
@@ -600,7 +740,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const isLondonActive = userCountry.includes('london') || userCountry.includes('uk') || userCountry.includes('united kingdom');
 
     let isEligible = noticeEl.dataset.intlEligible === 'true';
-    if ((isLondonActive && noticeEl.dataset.isLondon === 'true') || (isUsaActive && noticeEl.dataset.isUsa === 'true')) {
+    if (noticeEl.dataset.domesticOnly === 'true') {
+      isEligible = false;
+    } else if ((isLondonActive && noticeEl.dataset.isLondon === 'true') || (isUsaActive && noticeEl.dataset.isUsa === 'true')) {
       isEligible = true;
     }
 
@@ -622,17 +764,8 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       if (isEligible) {
-        noticeEl.className = "mb-4 p-3.5 rounded-2xl border border-amber-300 bg-amber-50/70 text-amber-900 text-xs leading-relaxed flex items-center justify-between gap-3 shadow-2xs";
-        noticeEl.innerHTML = `
-          <div class="flex items-center gap-2.5">
-            <span class="text-xl">🌐</span>
-            <div>
-              <div class="font-bold text-amber-900">International Delivery Active: ${locationLabel}</div>
-              <div class="text-[11px] text-amber-700">Flowers & Cakes eligible. Earliest delivery: <strong>${todayAvailable ? 'Today (Same Day)' : 'Tomorrow'}</strong>. Time slots not applicable. ${intlState.isSundayAllowed ? 'Sunday delivery available!' : 'Sundays non-delivery.'}</div>
-            </div>
-          </div>
-          <button type="button" onclick="openPincodeModal('international')" class="text-[10px] font-bold bg-amber-200 hover:bg-amber-300 text-amber-900 px-2.5 py-1 rounded-lg shrink-0 transition-colors cursor-pointer">Change Location</button>
-        `;
+        noticeEl.classList.add('hidden');
+        noticeEl.innerHTML = '';
         if (submitBtn) submitBtn.disabled = false;
       } else {
         noticeEl.className = "mb-4 p-3.5 rounded-2xl border border-rose-300 bg-rose-50/80 text-rose-900 text-xs leading-relaxed flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs";
@@ -652,7 +785,9 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     } else {
       const savedCity = (localStorage.getItem('user_city') || '').toLowerCase().trim();
-      const allowedCities = ['delhi', 'new delhi', 'mumbai', 'kolkata', 'pune', 'bangalore', 'bengaluru'];
+      const allowedCities = isExotic
+        ? ['delhi', 'new delhi', 'noida', 'greater noida', 'gautam buddha nagar', 'gurgaon', 'gurugram', 'faridabad', 'mumbai', 'kolkata', 'pune', 'bangalore', 'bengaluru']
+        : ['delhi', 'new delhi', 'mumbai', 'kolkata', 'pune', 'bangalore', 'bengaluru'];
       let isCityAllowed = true;
       
       if (isCityRestrictedProduct && savedCity) {
@@ -669,7 +804,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <span class="text-xl">⚠️</span>
             <div>
               <div class="font-bold text-rose-900">City Not Eligible</div>
-              <div class="text-[11px] text-rose-700">This product is only available in Delhi, Mumbai, Kolkata, Pune, and Bangalore.</div>
+              <div class="text-[11px] text-rose-700">This product is only available in ${isExotic ? 'Delhi NCR (Delhi, Noida, Gurgaon, Faridabad)' : 'Delhi'}, Mumbai, Kolkata, Pune, and Bangalore.</div>
             </div>
           </div>
           <button type="button" onclick="openPincodeModal('india')" class="text-[10px] font-bold bg-rose-200 hover:bg-rose-300 text-rose-900 px-2.5 py-1 rounded-lg shrink-0 transition-colors cursor-pointer">Change Location</button>
@@ -702,7 +837,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let advanceDays = container ? (parseInt(container.dataset.advanceDays, 10) || 0) : 0;
     let noSunday = container ? (container.dataset.noSunday === 'true') : false;
 
-    const descEl = document.getElementById('tab-desc') || document.querySelector('.product-description') || document.body;
+    const descEl = document.getElementById('tab-desc') || document.querySelector('.product-description');
     if (descEl) {
       const descText = descEl.textContent.toLowerCase();
       const advMatch = descText.match(/(\d+)\s*(?:-\s*\d+)?\s*(?:days?)?\s*advance/) || 
@@ -804,6 +939,29 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
 
+    // ---- International: no same-day delivery (matches the cart) ----
+    // London same-day (SDD-tagged) is re-enabled by the London rule below.
+    if (intlState.isIntl) {
+      minAdv = Math.max(minAdv, 1);
+    }
+
+    const pdpNoticeEl = document.getElementById('intl-delivery-pdp-notice');
+
+    const ukLoc = checkUkDeliveryLocation();
+
+    // London & SDD Delivery Rules:
+    // • London: Same day delivery possible (minAdv = 0)
+    // • Other part of UK: Next day delivery earliest (minAdv >= 1)
+    if (isLondonSddProduct) {
+      if (ukLoc.isUk && ukLoc.isOtherUk) {
+        minAdv = Math.max(minAdv, 1);
+      } else if (ukLoc.isUk && ukLoc.isLondon) {
+        minAdv = 0;
+      }
+    }
+
+
+
     // Calculate earliest available date
     let earliestAvailableDate = new Date(today);
     if (minAdv > 0) {
@@ -812,14 +970,14 @@ document.addEventListener('DOMContentLoaded', function() {
       earliestAvailableDate.setDate(today.getDate() + 1);
     }
 
-    const pdpNoticeEl = document.getElementById('intl-delivery-pdp-notice');
-    const isLondon = pdpNoticeEl && pdpNoticeEl.dataset.isLondon === 'true';
-    const isUsa = pdpNoticeEl && pdpNoticeEl.dataset.isUsa === 'true';
-    const noWeekendDelivery = isLondon || isUsa;
+    const userCountry = (intlState.country || '').toLowerCase().trim();
+    const isLondon = intlState.isIntl && (userCountry.includes('london') || userCountry.includes('uk') || userCountry.includes('united kingdom') || (pdpNoticeEl && pdpNoticeEl.dataset.isLondon === 'true'));
+    const isUsa = intlState.isIntl && (userCountry.includes('usa') || userCountry.includes('united states') || (pdpNoticeEl && pdpNoticeEl.dataset.isUsa === 'true'));
 
-    // Check Sunday & Saturday restrictions
-    const disallowSunday = (!intlState.isSundayAllowed || rules.noSunday || noWeekendDelivery);
-    const disallowSaturday = noWeekendDelivery;
+    // Saturday delivery is possible in UK (only block Sunday).
+    // USA delivery blocks both Saturday and Sunday.
+    const disallowSunday = (intlState.isIntl ? !intlState.isSundayAllowed : false) || rules.noSunday || isLondon || isUsa;
+    const disallowSaturday = isUsa;
 
     while ((disallowSunday && earliestAvailableDate.getDay() === 0) || (disallowSaturday && earliestAvailableDate.getDay() === 6)) {
       earliestAvailableDate.setDate(earliestAvailableDate.getDate() + 1);
@@ -835,10 +993,17 @@ document.addEventListener('DOMContentLoaded', function() {
       if (todayISO < earliestISO) {
         tabToday.disabled = true;
         tabToday.classList.add('opacity-40', 'cursor-not-allowed');
-        tabToday.title = isIdolCourier ? 'Courier delivery: 3-5 business days' : (minAdv > 0 ? `Requires ${minAdv} days advance order processing` : 'Same-day delivery is not available');
+        if (isLondonSddProduct && ukLoc.isUk && ukLoc.isOtherUk) {
+          tabToday.title = 'Same-day delivery is available for London only. Next-day delivery is available across other parts of the UK.';
+        } else if (intlState.isIntl && minAdv === 1) {
+          tabToday.title = 'Same-day delivery is not available for international orders. Earliest delivery is tomorrow.';
+        } else {
+          tabToday.title = isIdolCourier ? 'Courier delivery: 3-5 business days' : (minAdv > 0 ? `Requires ${minAdv} days advance order processing` : 'Same-day delivery cutoff (4 PM) has passed');
+        }
       } else {
         tabToday.disabled = false;
         tabToday.classList.remove('opacity-40', 'cursor-not-allowed');
+        tabToday.title = '';
       }
     }
 
@@ -893,18 +1058,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Display notice
     if (isIdolCourier) {
       showNotice(`📦 Courier Delivery: Same day/next day delivery is possible in Metro Cities (Other cities by courier 3-5 days). Earliest delivery: ${formatTabDate(earliestAvailableDate)}.`, 'info');
-    } else if (isIdolProduct && isUserInTier1City()) {
-      showNotice(`🪔 Diwali Idol: Same day/next day delivery is possible in Metro Cities (Other cities by courier 3-5 days). You are in a Metro City!`, 'info');
-    } else if (minAdv > 0 && !isIdolCourier) {
-      showNotice(`ℹ️ Advance Order Notice: Product requires ${minAdv} days advance processing notice. Earliest delivery: ${formatTabDate(earliestAvailableDate)}.`, 'info');
-    } else if (intlState.isIntl) {
-      if (noWeekendDelivery && (tomorrow.getDay() === 0 || tomorrow.getDay() === 6 || dayAfter.getDay() === 0 || dayAfter.getDay() === 6)) {
-        showNotice(`✈️ International Delivery to ${intlState.country}: (Weekends non-delivery).`, 'info');
-      } else if (disallowSunday && (tomorrow.getDay() === 0 || dayAfter.getDay() === 0)) {
-        showNotice(`✈️ International Delivery to ${intlState.country}: (Sundays non-delivery).`, 'info');
-      } else {
-        showNotice(`✈️ International Delivery to ${intlState.country}: Earliest delivery: ${todayAvailable ? 'Today (Same Day)' : 'Tomorrow'}.`, 'info');
-      }
     }
 
     // Re-init Flatpickr with minDate set to earliestISO
@@ -1034,8 +1187,6 @@ document.addEventListener('DOMContentLoaded', function() {
         showNotice('⚠️ No delivery slots available today. Please select Tomorrow or a future date.', 'warning');
       } else if (midnightBlocked && currentHour >= (22 - MIDNIGHT_HOURS)) {
         showNotice('🌙 Midnight slot unavailable — must be ordered 6 hrs in advance (by 4 PM). Select tomorrow for midnight delivery.', 'info');
-      } else if (currentHour >= PREP_HOURS) {
-        showNotice('⏱️ Showing slots with 3-hour preparation time. Earlier slots are unavailable.', 'info');
       } else {
         hideNotice();
       }
@@ -1173,7 +1324,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!el) return;
 
     const intlState = getIntlDeliveryState();
-    if (intlState.isIntl) {
+    const ukLoc = checkUkDeliveryLocation();
+    const isLondonSdd = isLondonSddProduct && ukLoc.isUk && ukLoc.isLondon;
+
+    if (intlState.isIntl && !isLondonSdd) {
       el.style.display = 'none';
       return;
     }

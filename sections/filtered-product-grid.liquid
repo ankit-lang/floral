@@ -62,7 +62,7 @@
       <!-- Product Slider Track -->
       <div class="product-slider tier-product-grid flex overflow-x-auto scroll-smooth hide-scrollbar gap-4 md:gap-6 py-2 px-1" data-limit="{{ grid_limit }}">
         {%- if target_collection != blank and target_collection.products_count > 0 -%}
-          {%- for product in target_collection.products limit: 50 -%}
+          {%- for product in target_collection.products limit: 24 -%}
             <div class="min-w-[240px] sm:min-w-[270px] md:min-w-[280px] w-[240px] sm:w-[270px] md:w-[280px] flex-shrink-0 anim-scale stagger-{{ forloop.index }}">
               {% render 'product-card', product_card_product: product %}
             </div>
@@ -135,6 +135,7 @@
                 <div class="min-w-[240px] sm:min-w-[270px] md:min-w-[280px] w-[240px] sm:w-[270px] md:w-[280px] flex-shrink-0 anim-scale stagger-{{ matched_count }}">
                   {% render 'product-card', product_card_product: product %}
                 </div>
+                {%- if matched_count >= 24 -%}{%- break -%}{%- endif -%}
               {%- endif -%}
             {%- endfor -%}
           {%- endpaginate -%}

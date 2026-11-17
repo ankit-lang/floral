@@ -3,7 +3,16 @@
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16">
     
     <!-- Left Column: Product Image Gallery -->
-    <div>
+    <div id="product-image-gallery" class="z-10">
+      <style>
+        @media (min-width: 1024px) {
+          #product-image-gallery {
+            position: sticky;
+            top: 6rem;
+            align-self: start;
+          }
+        }
+      </style>
       
       <!-- Mobile View: Swipeable Carousel -->
       <div class="md:hidden flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 -mx-4 px-4" style="scrollbar-width: none; -ms-overflow-style: none;">
@@ -13,7 +22,7 @@
         {%- if product.images.size > 0 -%}
           {%- for image in product.images -%}
             <div class="snap-center w-full flex-shrink-0 relative rounded-3xl overflow-hidden bg-gray-50/40 border border-gray-100 p-2 flex items-center justify-center min-h-[350px]">
-              <img src="{{ image | img_url: 'master' }}" alt="{{ image.alt | escape }}" class="w-full h-auto max-h-[70vh] rounded-2xl shadow-sm object-contain relative z-10">
+              <img src="{{ image | image_url: width: 1000 }}" alt="{{ image.alt | escape }}" class="w-full h-auto max-h-[70vh] rounded-2xl shadow-sm object-contain relative z-10">
             </div>
           {%- endfor -%}
         {%- else -%}
@@ -24,13 +33,13 @@
       </div>
 
       <!-- Desktop View: Vertical Thumbnails & Main Image -->
-      <div class="hidden md:flex gap-6 lg:sticky lg:top-24 items-start">
+      <div class="hidden md:flex gap-6 items-start">
         
         <!-- Vertical Thumbnails -->
         {%- if product.images.size > 1 -%}
           <div class="flex flex-col gap-3 overflow-y-auto w-20 md:w-24 flex-shrink-0 max-h-[75vh]" style="scrollbar-width: none; -ms-overflow-style: none;">
             {%- for image in product.images -%}
-              <div class="rounded-xl overflow-hidden border-2 border-transparent hover:border-primary cursor-pointer transition-all flex-shrink-0 bg-gray-50/80 p-1 flex items-center justify-center" onclick="document.getElementById('MainImage').src='{{ image | img_url: 'master' }}'">
+              <div class="rounded-xl overflow-hidden border-2 border-transparent hover:border-primary cursor-pointer transition-all flex-shrink-0 bg-gray-50/80 p-1 flex items-center justify-center" onclick="document.getElementById('MainImage').src='{{ image | image_url: width: 1000 }}'">
                 <img src="{{ image | img_url: '250x250' }}" alt="{{ image.alt | escape }}" class="w-full h-full object-contain aspect-square rounded-lg">
               </div>
             {%- endfor -%}
@@ -40,7 +49,7 @@
         <!-- Main Image -->
         <div class="relative w-full rounded-[2rem] overflow-hidden shadow-sm flex-1 bg-gray-50/40 border border-gray-100/80 flex items-center justify-center p-3">
           {%- if product.featured_image -%}
-            <img id="MainImage" src="{{ product.featured_image | img_url: 'master' }}" alt="{{ product.featured_image.alt | escape }}" class="w-full h-auto max-h-[75vh] object-contain transition-transform duration-700 hover:scale-105 relative z-10 rounded-2xl">
+            <img id="MainImage" src="{{ product.featured_image | image_url: width: 1000 }}" alt="{{ product.featured_image.alt | escape }}" class="w-full h-auto max-h-[75vh] object-contain transition-transform duration-700 hover:scale-105 relative z-10 rounded-2xl" fetchpriority="high" loading="eager">
           {%- else -%}
             {{ 'image' | placeholder_svg_tag: 'w-full h-full object-contain text-gray-200' }}
           {%- endif -%}
@@ -114,7 +123,7 @@
         </div>
 
         <!-- Tab Contents -->
-        <div class="py-4 text-sm text-gray-600 leading-relaxed min-h-[150px]">
+        <div class="py-4 text-sm text-gray-600 leading-relaxed">
           <div id="tab-desc" class="tab-content block">
             {%- if product.description != blank -%}
               {{ product.description }}
@@ -141,7 +150,7 @@
 
 
       <!-- Trust Badges -->
-      <div class="grid grid-cols-3 gap-2 py-6 border-t border-gray-100 mt-4">
+      <div class="grid grid-cols-3 gap-2 py-4 border-t border-gray-100 mt-2">
         <div class="flex flex-col items-center justify-center text-center gap-2">
           <div class="w-10 h-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
@@ -314,19 +323,35 @@
 <section class="max-w-7xl mx-auto px-4 py-8 border-t border-gray-200 mt-8">
   <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6 border-b border-gray-100 pb-4">
     <h3 class="text-xl font-serif font-bold text-gray-900 tracking-wide">SIMILAR PRODUCTS</h3>
-    {% render 'sort-by-box', target_grid_id: 'similar-products-grid' %}
+    {% render 'sort-by-box', target_grid_id: 'similar-products-slider' %}
   </div>
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 tier-product-grid product-grid" id="similar-products-grid" data-limit="9999">
-    {% assign current_product = product %}
-    {% assign count = 0 %}
-    {% for p in current_product.collections.first.products limit: 12 %}
-      {% if p.handle != current_product.handle and count < 8 %}
-        <div class="anim-scale">
-          {% render 'product-card', product_card_product: p %}
-        </div>
-        {% assign count = count | plus: 1 %}
-      {% endif %}
-    {% endfor %}
+  <style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+  <div class="relative group">
+    <!-- Left Navigation Button -->
+    <button type="button" class="absolute -left-3 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm shadow-[0_4px_12px_rgba(0,0,0,0.15)] rounded-full w-10 h-10 flex items-center justify-center text-gray-800 hover:bg-gray-50 hover:scale-110 transition-all opacity-0 group-hover:opacity-100 hidden md:flex" onclick="document.getElementById('similar-products-slider').scrollBy({left: -300, behavior: 'smooth'})">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+    </button>
+
+    <div class="flex overflow-x-auto gap-4 md:gap-6 snap-x snap-mandatory no-scrollbar py-2" id="similar-products-slider">
+      {% assign current_product = product %}
+      {% assign count = 0 %}
+      {% for p in current_product.collections.first.products limit: 12 %}
+        {% if p.handle != current_product.handle and count < 8 %}
+          <div class="anim-scale shrink-0 w-[160px] sm:w-[220px] md:w-[260px] snap-start">
+            {% render 'product-card', product_card_product: p %}
+          </div>
+          {% assign count = count | plus: 1 %}
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <!-- Right Navigation Button -->
+    <button type="button" class="absolute -right-3 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm shadow-[0_4px_12px_rgba(0,0,0,0.15)] rounded-full w-10 h-10 flex items-center justify-center text-gray-800 hover:bg-gray-50 hover:scale-110 transition-all opacity-0 group-hover:opacity-100 hidden md:flex" onclick="document.getElementById('similar-products-slider').scrollBy({left: 300, behavior: 'smooth'})">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
   </div>
 </section>
 
@@ -356,6 +381,13 @@
     window.__surchargeVariantId = {{ surcharge_product.variants.first.id }};
   {%- else -%}
     window.__surchargeVariantId = null;
+  {%- endif -%}
+
+  {%- assign intl_delivery_product = all_products['international-delivery-charge'] -%}
+  {%- if intl_delivery_product and intl_delivery_product.available and settings.intl_fee_via_shipping_rates != true -%}
+    window.__intlDeliveryVariantId = {{ intl_delivery_product.variants.first.id }};
+  {%- else -%}
+    window.__intlDeliveryVariantId = null;
   {%- endif -%}
 </script>
 <script src="{{ 'surcharge-logic.js' | asset_url }}"></script>

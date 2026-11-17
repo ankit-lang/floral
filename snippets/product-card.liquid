@@ -8,10 +8,17 @@
 {%- assign tags_lc = product_card_product.tags | join: ',' | downcase -%}
 {%- assign is_intl_eligible = false -%}
 
-{%- assign is_london_product = false -%}
-{%- if tags_lc contains 'london' or tags_lc contains 'uk' or tags_lc contains 'united kingdom' or title_lc contains 'london' or type_lc contains 'london' -%}
-  {%- assign is_london_product = true -%}
+{%- assign is_domestic_only = false -%}
+{%- if tags_lc contains 'domestic' or tags_lc contains 'india only' or tags_lc contains 'india-only' or title_lc contains 'carlton london' or tags_lc contains 'carlton london' -%}
+  {%- assign is_domestic_only = true -%}
 {%- endif -%}
+
+{%- assign is_london_product = false -%}
+{%- unless is_domestic_only -%}
+  {%- if tags_lc contains 'london' or tags_lc contains 'uk' or tags_lc contains 'united kingdom' or title_lc contains 'london' or type_lc contains 'london' -%}
+    {%- assign is_london_product = true -%}
+  {%- endif -%}
+{%- endunless -%}
 
 {%- assign is_usa_product = false -%}
 {%- for tag in product_card_product.tags -%}
@@ -36,8 +43,10 @@
   {%- endif -%}
 {%- endfor -%}
 
-{%- if is_london_product or is_usa_product or tags_lc contains 'international' or tags_lc contains 'worldwide' or tags_lc contains 'dubai' or tags_lc contains 'uae' or tags_lc contains 'canada' or tags_lc contains 'australia' or title_lc contains 'london' or title_lc contains 'usa' or title_lc contains 'international' or title_lc contains 'worldwide' -%}
-  {%- assign is_intl_eligible = true -%}
+{%- if is_london_product or is_usa_product or tags_lc contains 'international' or tags_lc contains 'worldwide' or tags_lc contains 'dubai' or tags_lc contains 'uae' or tags_lc contains 'canada' or tags_lc contains 'australia' or title_lc contains 'usa' or title_lc contains 'international' or title_lc contains 'worldwide' -%}
+  {%- unless is_domestic_only -%}
+    {%- assign is_intl_eligible = true -%}
+  {%- endunless -%}
 {%- endif -%}
 
 {%- assign is_in_plant_collection = false -%}
@@ -74,6 +83,7 @@
   data-price="{{ product_card_product.price | default: 0 }}"
   data-created="{{ product_card_product.created_at | date: '%s' | default: '0' }}"
   data-title="{{ product_card_product.title | escape }}"
+  data-domestic-only="{{ is_domestic_only }}"
   data-intl-eligible="{{ is_intl_eligible }}"
   data-is-london="{{ is_london_product }}"
   data-is-usa="{{ is_usa_product }}"
@@ -84,7 +94,7 @@
       <!-- Shine effect on hover -->
       <div class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-20deg] group-hover/img:animate-[shimmer_1.5s_infinite] z-10 pointer-events-none"></div>
       {% if product_card_product.featured_media %}
-        <img src="{{ product_card_product.featured_media | img_url: '400x400', crop: 'center' }}" alt="{{ product_card_product.title | escape }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-110 duration-[1500ms]" loading="lazy">
+        <img src="{{ product_card_product.featured_media | image_url: width: 600 }}" alt="{{ product_card_product.title | escape }}" class="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-110 duration-[1500ms]" loading="lazy">
       {% else %}
         <div class="w-full h-full bg-gradient-to-br from-blush to-champagne flex items-center justify-center">
           <span class="text-5xl opacity-30">-</span>
@@ -94,7 +104,7 @@
     
     {%- if product_card_product.available == false -%}
       <div class="absolute top-3 -left-2 bg-gray-900 text-white text-[10px] font-bold px-4 py-1 uppercase tracking-wider shadow-md animate-pulse-soft z-20" style="clip-path: polygon(0 0, 100% 0, 90% 100%, 0% 100%);">Sold Out</div>
-    {%- elsif product_card_product.tags contains 'Same Day Delivery' -%}
+    {%- elsif product_card_product.tags contains 'Same Day Delivery' or tags_lc contains 'sdd' -%}
       <span class="absolute top-3 left-3 bg-primary text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Same Day</span>
     {%- elsif product_card_product.compare_at_price > product_card_product.price -%}
       {%- assign discount = product_card_product.compare_at_price | minus: product_card_product.price | times: 100 | divided_by: product_card_product.compare_at_price -%}
@@ -125,8 +135,8 @@
   </div>
 
   <div class="px-4 pb-4">
-    <form class="card-ajax-form" data-variant-id="{{ product_card_product.variants.first.id }}" onsubmit="return false;">
-      <input type="hidden" name="id" value="{{ product_card_product.variants.first.id }}">
+    <form class="card-ajax-form" data-product-id="{{ product_card_product.id }}" data-variant-id="{{ product_card_product.selected_or_first_available_variant.id }}" onsubmit="return false;">
+      <input type="hidden" name="id" value="{{ product_card_product.selected_or_first_available_variant.id }}">
       
       <!-- Default Add to Cart Button -->
       <button type="button" onclick="window.handleProductCardAddToCart(this)" class="card-add-to-cart-btn relative w-full h-10 rounded-xl bg-primary/5 text-primary text-sm font-semibold hover:bg-primary hover:text-white transition-all duration-300 overflow-hidden group/btn cursor-pointer" {% unless product_card_product.available %}disabled{% endunless %}>
@@ -136,6 +146,8 @@
 
       <!-- Inline Quantity Selector Control (Hidden by default) -->
       <div class="card-qty-wrapper hidden flex items-center justify-between w-full h-10 rounded-xl bg-primary text-white text-sm font-bold shadow-md">
+
+
         <button type="button" class="card-qty-btn card-qty-minus px-3.5 h-full hover:bg-primary-600 rounded-l-xl transition-colors flex items-center justify-center text-lg font-black select-none cursor-pointer">-</button>
         <span class="card-qty-count px-2 text-xs font-bold tracking-wider">1 in Cart</span>
         <button type="button" class="card-qty-btn card-qty-plus px-3.5 h-full hover:bg-primary-600 rounded-r-xl transition-colors flex items-center justify-center text-lg font-black select-none cursor-pointer">+</button>
@@ -143,423 +155,3 @@
     </form>
   </div>
 </div>
-
-<script>
-  // --- Inline Add-to-Cart handler (works on every card click immediately) -------
-  window.handleProductCardAddToCart = window.handleProductCardAddToCart || function(btn) {
-    if (!btn || btn.disabled) return;
-    const form = btn.closest('.card-ajax-form');
-    if (!form) return;
-    const variantId = form.dataset.variantId;
-    if (!variantId) return;
-
-    btn.disabled = true;
-    const btnText = btn.querySelector('.btn-text');
-    if (btnText) btnText.textContent = 'Adding-';
-
-    fetch('/cart/add.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: [{ id: parseInt(variantId, 10), quantity: 1 }] })
-    })
-    .then(r => r.json())
-    .then(() => {
-      fetch('/cart.js').then(r => r.json()).then(cart => {
-        let realCount = 0;
-        if (cart.items) {
-           cart.items.forEach(function(item) {
-             if (item.handle !== 'peak-season-delivery-surcharge') {
-               realCount += item.quantity;
-             }
-           });
-        } else {
-           realCount = cart.item_count;
-        }
-        const badge = document.getElementById('cart-count-badge');
-        if (badge) badge.textContent = realCount;
-        document.querySelectorAll('[data-cart-count]').forEach(el => el.textContent = realCount);
-      });
-      window.location.href = '/cart';
-    })
-    .catch(() => { window.location.href = '/cart'; });
-  };
-
-  // --- Global product card logic (runs once per page) --------------------------
-  if (!window.__productCardGlobalScriptLoaded) {
-    window.__productCardGlobalScriptLoaded = true;
-
-    (function() {
-      let pincodeMapData = null;
-
-      // -- Cart count helper ----------------------------------------------
-      function updateCartCountHeader() {
-        fetch('/cart.js')
-          .then(r => r.json())
-          .then(cart => {
-            let realCount = 0;
-            if (cart.items) {
-               cart.items.forEach(function(item) {
-                 if (item.handle !== 'peak-season-delivery-surcharge') {
-                   realCount += item.quantity;
-                 }
-               });
-            } else {
-               realCount = cart.item_count;
-            }
-            const badge = document.getElementById('cart-count-badge');
-            if (badge) badge.textContent = realCount;
-            document.querySelectorAll('[data-cart-count]').forEach(el => el.textContent = realCount);
-          })
-          .catch(() => {});
-      }
-
-      function syncCardQuantitiesWithCart() {
-        fetch('/cart.js')
-          .then(r => r.json())
-          .then(cart => {
-            document.querySelectorAll('.card-ajax-form').forEach(form => {
-              const variantId = parseInt(form.dataset.variantId, 10);
-              const addBtn = form.querySelector('.card-add-to-cart-btn');
-              const qtyWrapper = form.querySelector('.card-qty-wrapper');
-              const qtyText = form.querySelector('.card-qty-count');
-              const item = cart.items.find(i => i.variant_id === variantId);
-              if (item && item.quantity > 0) {
-                if (addBtn) addBtn.classList.add('hidden');
-                if (qtyWrapper) qtyWrapper.classList.remove('hidden');
-                if (qtyText) qtyText.textContent = item.quantity + ' in Cart';
-                form.dataset.currentQty = item.quantity;
-              } else {
-                if (addBtn) addBtn.classList.remove('hidden');
-                if (qtyWrapper) qtyWrapper.classList.add('hidden');
-                form.dataset.currentQty = 0;
-              }
-            });
-          })
-          .catch(() => {});
-      }
-
-      function setFormQtyUI(form, qty) {
-        const addBtn = form.querySelector('.card-add-to-cart-btn');
-        const qtyWrapper = form.querySelector('.card-qty-wrapper');
-        const qtyText = form.querySelector('.card-qty-count');
-        form.dataset.currentQty = qty;
-        if (qty > 0) {
-          if (addBtn) addBtn.classList.add('hidden');
-          if (qtyWrapper) qtyWrapper.classList.remove('hidden');
-          if (qtyText) qtyText.textContent = qty + ' in Cart';
-        } else {
-          if (addBtn) addBtn.classList.remove('hidden');
-          if (qtyWrapper) qtyWrapper.classList.add('hidden');
-        }
-      }
-
-      function optimisticChangeHeaderCartCount(delta) {
-        const badge = document.getElementById('cart-count-badge');
-        if (badge) badge.textContent = Math.max(0, parseInt(badge.textContent || '0', 10) + delta);
-        document.querySelectorAll('[data-cart-count]').forEach(el => {
-          el.textContent = Math.max(0, parseInt(el.textContent || '0', 10) + delta);
-        });
-      }
-
-      // -- Click delegation for +/- quantity buttons --------------------------
-      if (!window.__productCardClickHandlersBound) {
-        window.__productCardClickHandlersBound = true;
-
-        document.addEventListener('click', function(e) {
-          const addBtn = e.target.closest('.card-add-to-cart-btn');
-          const minusBtn = e.target.closest('.card-qty-minus');
-          const plusBtn = e.target.closest('.card-qty-plus');
-
-          if (addBtn && !addBtn.disabled) {
-            e.preventDefault();
-            e.stopPropagation();
-            window.handleProductCardAddToCart(addBtn);
-          }
-
-          if (plusBtn) {
-            e.preventDefault();
-            e.stopPropagation();
-            const form = plusBtn.closest('.card-ajax-form');
-            if (!form) return;
-            const variantId = parseInt(form.dataset.variantId, 10);
-            const currentQty = parseInt(form.dataset.currentQty || '1', 10);
-            const newQty = currentQty + 1;
-            setFormQtyUI(form, newQty);
-            optimisticChangeHeaderCartCount(1);
-            fetch('/cart/change.js', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ id: String(variantId), quantity: newQty })
-            }).then(r => r.json()).then(() => updateCartCountHeader()).catch(() => syncCardQuantitiesWithCart());
-          }
-
-          if (minusBtn) {
-            e.preventDefault();
-            e.stopPropagation();
-            const form = minusBtn.closest('.card-ajax-form');
-            if (!form) return;
-            const variantId = parseInt(form.dataset.variantId, 10);
-            const currentQty = parseInt(form.dataset.currentQty || '1', 10);
-            const newQty = Math.max(0, currentQty - 1);
-            setFormQtyUI(form, newQty);
-            optimisticChangeHeaderCartCount(-1);
-            fetch('/cart/change.js', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ id: String(variantId), quantity: newQty })
-            }).then(r => r.json()).then(() => updateCartCountHeader()).catch(() => syncCardQuantitiesWithCart());
-          }
-        });
-      }
-
-      // -- Cookie helper --------------------------------------------------
-      function getCardCookie(name) {
-        let nameEQ = name + '=';
-        let ca = document.cookie.split(';');
-        for (let i = 0; i < ca.length; i++) {
-          let c = ca[i];
-          while (c.charAt(0) === ' ') c = c.substring(1);
-          if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length));
-        }
-        return null;
-      }
-
-      function getCookieVal(name) {
-        const value = '; ' + document.cookie;
-        const parts = value.split('; ' + name + '=');
-        if (parts.length === 2) return parts.pop().split(';').shift();
-        return '';
-      }
-
-      function normalizeTier(str) {
-        if (!str) return '';
-        let s = str.trim().toLowerCase().replace('tier:', '');
-        s = s.replace(/\s+/g, '-');
-        if (s === 'tier1') s = 'tier-1';
-        if (s === 'tier2') s = 'tier-2';
-        if (s === 'tier3') s = 'tier-3';
-        return s;
-      }
-
-      // -- Tier / pincode logic -----------------------------------------------
-      async function getOrFetchUserTier() {
-        let userPincode = getCardCookie('user_pincode') || localStorage.getItem('user_pincode') || '110001';
-        if (!pincodeMapData) {
-          try {
-            const res = await fetch("{{ 'pincodes_tier_map.json' | asset_url }}");
-            pincodeMapData = await res.json();
-          } catch(e) {}
-        }
-        let userTier = getCardCookie('user_tier') || localStorage.getItem('user_tier');
-        if (pincodeMapData && pincodeMapData[userPincode]) {
-          userTier = pincodeMapData[userPincode];
-          localStorage.setItem('user_tier', userTier);
-          document.cookie = 'user_tier=' + encodeURIComponent(userTier) + '; path=/; max-age=31536000; SameSite=Lax';
-        } else if (!userTier) {
-          userTier = 'Tier-1';
-        }
-        return normalizeTier(userTier || 'Tier-1');
-      }
-
-      async function filterCards() {
-        const userTier = await getOrFetchUserTier();
-
-        document.querySelectorAll('.product-card[data-tiers]').forEach(card => {
-          const rawTags = card.dataset.tiers || '';
-          const tags = rawTags.split(',').map(t => t.trim());
-          const allowedTiers = tags.map(normalizeTier).filter(t => t.startsWith('tier-'));
-          if (allowedTiers.length === 0 || allowedTiers.includes('tier-all')) {
-            delete card.dataset.tierBlocked;
-          } else {
-            if (!allowedTiers.includes(userTier)) {
-              card.dataset.tierBlocked = 'true';
-            } else {
-              delete card.dataset.tierBlocked;
-            }
-          }
-        });
-
-        document.querySelectorAll('.tier-product-grid').forEach(grid => {
-          const limit = grid.dataset.limit ? parseInt(grid.dataset.limit, 10) : 9999;
-          let visibleCount = 0;
-          grid.querySelectorAll('.product-card[data-tiers]').forEach(card => {
-            const wrapper = (card.parentElement && card.parentElement !== grid) ? card.parentElement : card;
-            const isAllowed = !card.dataset.tierBlocked;
-            if (isAllowed && visibleCount < limit) {
-              visibleCount++;
-              card.style.removeProperty('display');
-              card.classList.remove('hidden');
-              if (wrapper !== card) { wrapper.style.removeProperty('display'); wrapper.classList.remove('hidden'); }
-            } else {
-              card.style.setProperty('display', 'none', 'important');
-              card.classList.add('hidden');
-              if (wrapper !== card) { wrapper.style.setProperty('display', 'none', 'important'); wrapper.classList.add('hidden'); }
-            }
-          });
-        });
-
-        document.querySelectorAll('.product-card[data-tiers]').forEach(card => {
-          if (card.closest('.tier-product-grid')) return;
-          const wrapper = (card.parentElement && card.parentElement !== document.body && card.parentElement.children.length === 1) ? card.parentElement : card;
-          const isAllowed = !card.dataset.tierBlocked;
-          if (!isAllowed) {
-            card.style.setProperty('display', 'none', 'important');
-            card.classList.add('hidden');
-            if (wrapper !== card) { wrapper.style.setProperty('display', 'none', 'important'); wrapper.classList.add('hidden'); }
-          } else {
-            card.style.removeProperty('display');
-            card.classList.remove('hidden');
-            if (wrapper !== card) { wrapper.style.removeProperty('display'); wrapper.classList.remove('hidden'); }
-          }
-        });
-
-        syncDeliveryModeCards();
-      }
-
-      // -- Delivery mode filtering --------------------------------------------
-      function syncDeliveryModeCards(eventDetail) {
-        const mode = (eventDetail && eventDetail.mode) ? eventDetail.mode : (localStorage.getItem('delivery_mode') || getCookieVal('delivery_mode') || 'india');
-        const userCountry = ((eventDetail && eventDetail.country) ? eventDetail.country : (localStorage.getItem('user_country') || getCookieVal('user_country') || '')).toLowerCase().trim();
-        const userCountryCode = ((eventDetail && eventDetail.countryCode) ? eventDetail.countryCode : (localStorage.getItem('user_country_code') || getCookieVal('user_country_code') || '')).toLowerCase().trim();
-        const userLocality = ((eventDetail && eventDetail.locality) ? eventDetail.locality : (localStorage.getItem('user_intl_locality') || getCookieVal('user_intl_locality') || '')).toLowerCase().trim();
-
-        const isUsaActive = mode === 'international' && (userCountry.includes('usa') || userCountry.includes('united states') || userCountry === 'us' || userCountryCode === 'us' || userCountryCode === 'usa');
-        const isLondonActive = mode === 'international' && (userCountry.includes('london') || userCountry.includes('united kingdom') || userCountry === 'uk' || userCountryCode === 'gb' || userCountryCode === 'uk');
-        const isUaeActive = mode === 'international' && (userCountry.includes('uae') || userCountry.includes('dubai') || userCountryCode === 'ae');
-        const isCanadaActive = mode === 'international' && (userCountry.includes('canada') || userCountryCode === 'ca');
-        const isAustraliaActive = mode === 'international' && (userCountry.includes('australia') || userCountryCode === 'au');
-        const savedCity = (localStorage.getItem('user_city') || getCookieVal('user_city') || '').toLowerCase().trim();
-        const allowedMetroCities = ['delhi', 'new delhi', 'mumbai', 'kolkata', 'pune', 'bangalore', 'bengaluru'];
-
-        document.querySelectorAll('.product-card').forEach(card => {
-          const isEligible = card.dataset.intlEligible === 'true';
-          const cardTagsRaw = (card.dataset.tags || '').toLowerCase();
-          const cardTagsList = cardTagsRaw.split(',').map(t => t.trim());
-          const cardTitle = (card.dataset.title || '').toLowerCase();
-
-          const isLondonProd = card.dataset.isLondon === 'true' || cardTagsRaw.includes('london') || cardTagsRaw.includes('uk') || cardTitle.includes('london');
-          const isUsaProd = card.dataset.isUsa === 'true' || cardTagsList.includes('usa') || cardTagsList.includes('us') || cardTagsList.includes('united states') || cardTitle.includes('usa');
-          const isUaeProd = cardTagsList.includes('uae') || cardTagsList.includes('dubai') || cardTagsList.includes('ae');
-          const isCanadaProd = cardTagsList.includes('canada') || cardTagsList.includes('ca') || cardTitle.includes('canada');
-          const isAusProd = cardTagsList.includes('australia') || cardTagsList.includes('au');
-          const isExoticProd = card.dataset.isExotic === 'true' || cardTagsRaw.includes('exotic');
-
-          const intlBadge = card.querySelector('.intl-badge');
-          const indiaOnlyBadge = card.querySelector('.intl-badge-india-only');
-          const btn = card.querySelector('.card-add-to-cart-btn');
-          const parentWrapper = card.closest('li') || card.closest('.grid__item') || card.closest('.swiper-slide') || card.closest('.anim-scale') || (card.parentElement && card.parentElement !== document.body ? card.parentElement : null);
-
-          if (mode === 'international') {
-            let showCard = false;
-            if (isUsaActive) showCard = isUsaProd;
-            else if (isLondonActive) showCard = isLondonProd;
-            else if (isUaeActive) showCard = isUaeProd;
-            else if (isCanadaActive) showCard = isCanadaProd;
-            else if (isAustraliaActive) showCard = isAusProd;
-            else {
-              const matchesCountryTag = (userCountry && cardTagsList.includes(userCountry)) || (userCountryCode && cardTagsList.includes(userCountryCode));
-              showCard = isEligible && (matchesCountryTag || (!isUsaProd && !isLondonProd && !isUaeProd && !isCanadaProd && !isAusProd));
-            }
-
-            if (showCard) {
-              card.style.removeProperty('display');
-              card.classList.remove('hidden');
-              if (parentWrapper) { parentWrapper.style.removeProperty('display'); parentWrapper.classList.remove('hidden'); }
-              if (intlBadge) intlBadge.classList.remove('hidden');
-              if (indiaOnlyBadge) indiaOnlyBadge.classList.add('hidden');
-              if (btn) btn.disabled = false;
-            } else {
-              card.style.setProperty('display', 'none', 'important');
-              card.classList.add('hidden');
-              if (parentWrapper) { parentWrapper.style.setProperty('display', 'none', 'important'); parentWrapper.classList.add('hidden'); }
-            }
-          } else {
-            const isCountrySpecific = isLondonProd || isUsaProd || isUaeProd || isCanadaProd || isAusProd;
-            
-            let hideCard = isCountrySpecific;
-            if (isExoticProd && savedCity) {
-              if (!allowedMetroCities.some(c => savedCity.includes(c))) {
-                hideCard = true;
-              }
-            }
-
-            if (hideCard) {
-              card.style.setProperty('display', 'none', 'important');
-              card.classList.add('hidden');
-              if (parentWrapper) { parentWrapper.style.setProperty('display', 'none', 'important'); parentWrapper.classList.add('hidden'); }
-            } else {
-              card.style.removeProperty('display');
-              card.classList.remove('hidden');
-              if (parentWrapper) { parentWrapper.style.removeProperty('display'); parentWrapper.classList.remove('hidden'); }
-              if (isEligible) {
-                if (intlBadge) intlBadge.classList.remove('hidden');
-                if (indiaOnlyBadge) indiaOnlyBadge.classList.add('hidden');
-              } else {
-                if (intlBadge) intlBadge.classList.add('hidden');
-                if (indiaOnlyBadge) indiaOnlyBadge.classList.remove('hidden');
-              }
-            }
-          }
-        });
-
-        // Hide empty sections
-        document.querySelectorAll('.filtered-grid-section, .plant-grid-section, section').forEach(sec => {
-          const gridContainer = sec.querySelector('.product-slider, .product-grid, .tier-product-grid');
-          if (!gridContainer) return;
-          const visibleCards = Array.from(gridContainer.querySelectorAll('.product-card')).filter(card => {
-            const wrapper = (card.parentElement && card.parentElement !== gridContainer) ? card.parentElement : card;
-            return !card.classList.contains('hidden') && card.style.display !== 'none' && !wrapper.classList.contains('hidden') && wrapper.style.display !== 'none';
-          });
-          if (visibleCards.length === 0) {
-            sec.style.setProperty('display', 'none', 'important');
-            sec.classList.add('hidden');
-          } else {
-            sec.style.removeProperty('display');
-            sec.classList.remove('hidden');
-          }
-        });
-
-        // Handle collection empty state
-        const colGrid = document.getElementById('collection-product-grid');
-        if (colGrid) {
-          let emptyNotice = document.getElementById('intl-collection-empty-notice');
-          if (mode === 'international') {
-            const visibleCards = colGrid.querySelectorAll('.product-card:not(.hidden)');
-            const totalCards = colGrid.querySelectorAll('.product-card');
-            if (totalCards.length > 0 && visibleCards.length === 0) {
-              if (!emptyNotice) {
-                emptyNotice = document.createElement('div');
-                emptyNotice.id = 'intl-collection-empty-notice';
-                emptyNotice.className = 'w-full my-6 p-6 rounded-2xl bg-amber-50 border border-amber-200 text-center col-span-full';
-                colGrid.appendChild(emptyNotice);
-              }
-              emptyNotice.classList.remove('hidden');
-              emptyNotice.style.display = '';
-              const countryDisplay = (userCountry ? userCountry.toUpperCase() : 'INTERNATIONAL');
-              emptyNotice.innerHTML = '<div class="text-3xl mb-2">-</div>' +
-                '<h3 class="text-base font-bold text-amber-900 mb-1">Products for ' + countryDisplay + ' Delivery</h3>' +
-                '<p class="text-xs text-amber-700 mb-4 max-w-md mx-auto">Showing items tagged for ' + countryDisplay + ' delivery. Change destination to view other products.</p>' +
-                '<button type="button" onclick="openPincodeModal(\'international\')" class="px-5 py-2.5 bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs rounded-xl shadow-sm transition-colors cursor-pointer">Change Destination -</button>';
-            } else if (emptyNotice) {
-              emptyNotice.classList.add('hidden');
-              emptyNotice.style.display = 'none';
-            }
-          } else if (emptyNotice) {
-            emptyNotice.classList.add('hidden');
-            emptyNotice.style.display = 'none';
-          }
-        }
-      }
-
-      document.addEventListener('DOMContentLoaded', () => {
-        filterCards();
-        syncDeliveryModeCards();
-        syncCardQuantitiesWithCart();
-      });
-      window.addEventListener('load', syncDeliveryModeCards);
-      document.addEventListener('deliveryModeChanged', (e) => syncDeliveryModeCards(e.detail));
-      window.addEventListener('pincodeTierUpdated', filterCards);
-      window.addEventListener('pincodeUpdated', filterCards);
-    })();
-  }
-</script>

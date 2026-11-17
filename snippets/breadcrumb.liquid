@@ -1,0 +1,148 @@
+{%- comment -%}
+  Breadcrumb Navigation Component
+  Supports Blog, Article, Collections, Products, and Pages.
+  Includes clickable Home link, subsection navigation, and Schema.org BreadcrumbList.
+{%- endcomment -%}
+
+{%- assign breadcrumb_blog_title = blog.title -%}
+{%- if breadcrumb_blog_title == 'News' or breadcrumb_blog_title == blank -%}
+  {%- assign breadcrumb_blog_title = 'Blog' -%}
+{%- endif -%}
+{%- assign breadcrumb_blog_url = blog.url | default: '/blogs/news' -%}
+{%- assign breadcrumb_article_title = article.title | default: 'Best Diwali Gift Hampers and Flowers for This Festive Season' -%}
+{%- assign breadcrumb_article_url = article.url | default: '/blogs/news/best-diwali-gift-hampers-and-flowers-for-this-festive-season' -%}
+
+<nav class="flex items-center justify-between text-xs sm:text-sm text-gray-500 py-3 mb-4" aria-label="Breadcrumb">
+  <ol class="inline-flex items-center flex-wrap gap-1 sm:gap-2">
+    <!-- Home Link -->
+    <li class="inline-flex items-center">
+      <a href="{{ routes.root_url }}" class="inline-flex items-center gap-1.5 text-gray-600 hover:text-primary transition-colors font-medium">
+        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+        </svg>
+        <span>Home</span>
+      </a>
+    </li>
+
+    {%- if template.name == 'blog' -%}
+      <li>
+        <span class="text-gray-300 mx-1">/</span>
+      </li>
+      {%- if current_tags -%}
+        <li>
+          <a href="{{ breadcrumb_blog_url }}" class="text-gray-600 hover:text-primary transition-colors font-medium">
+            {{ breadcrumb_blog_title }}
+          </a>
+        </li>
+        <li>
+          <span class="text-gray-300 mx-1">/</span>
+        </li>
+        <li class="font-semibold text-gray-900 truncate max-w-[200px] sm:max-w-none" aria-current="page">
+          {{ current_tags.first | replace: '-', ' ' | capitalize }}
+        </li>
+      {%- else -%}
+        <li class="font-semibold text-gray-900 truncate max-w-[240px] sm:max-w-none" aria-current="page">
+          {{ breadcrumb_blog_title }}
+        </li>
+      {%- endif -%}
+
+    {%- elsif template.name == 'article' -%}
+      <li>
+        <span class="text-gray-300 mx-1">/</span>
+      </li>
+      <li>
+        <a href="{{ breadcrumb_blog_url }}" class="text-gray-600 hover:text-primary transition-colors font-medium">
+          {{ breadcrumb_blog_title }}
+        </a>
+      </li>
+      <li>
+        <span class="text-gray-300 mx-1">/</span>
+      </li>
+      <li class="font-semibold text-gray-900 truncate max-w-[200px] sm:max-w-xs md:max-w-md" aria-current="page" title="{{ breadcrumb_article_title | escape }}">
+        {{ breadcrumb_article_title }}
+      </li>
+
+    {%- elsif template.name == 'collection' and collection.handle -%}
+      <li>
+        <span class="text-gray-300 mx-1">/</span>
+      </li>
+      <li>
+        <a href="{{ routes.collections_url }}" class="text-gray-600 hover:text-primary transition-colors font-medium">Collections</a>
+      </li>
+      <li>
+        <span class="text-gray-300 mx-1">/</span>
+      </li>
+      <li class="font-semibold text-gray-900 truncate" aria-current="page">
+        {{ collection.title }}
+      </li>
+
+    {%- elsif template.name == 'page' -%}
+      <li>
+        <span class="text-gray-300 mx-1">/</span>
+      </li>
+      <li class="font-semibold text-gray-900 truncate" aria-current="page">
+        {{ page.title }}
+      </li>
+    {%- endif -%}
+  </ol>
+
+  <!-- Quick direction link back to Home or Blog -->
+  <div class="hidden sm:flex items-center gap-2">
+    {%- if template.name == 'article' -%}
+      <a href="{{ breadcrumb_blog_url }}" class="inline-flex items-center gap-1 text-xs text-primary font-semibold hover:underline bg-primary/5 hover:bg-primary/10 px-2.5 py-1 rounded-full transition-colors">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        <span>All {{ breadcrumb_blog_title }}</span>
+      </a>
+    {%- else -%}
+      <a href="{{ routes.root_url }}" class="inline-flex items-center gap-1 text-xs text-gray-500 font-medium hover:text-primary hover:underline transition-colors">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        <span>Back to Home</span>
+      </a>
+    {%- endif -%}
+  </div>
+</nav>
+
+<!-- JSON-LD BreadcrumbList Schema for Google SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "{{ shop.url }}"
+    }
+    {%- if template.name == 'blog' -%}
+      ,{
+        "@type": "ListItem",
+        "position": 2,
+        "name": {{ breadcrumb_blog_title | json }},
+        "item": "{{ shop.url }}{{ breadcrumb_blog_url }}"
+      }
+      {%- if current_tags -%}
+        ,{
+          "@type": "ListItem",
+          "position": 3,
+          "name": {{ current_tags.first | json }},
+          "item": "{{ shop.url }}{{ breadcrumb_blog_url }}/tagged/{{ current_tags.first | handleize }}"
+        }
+      {%- endif -%}
+    {%- elsif template.name == 'article' -%}
+      ,{
+        "@type": "ListItem",
+        "position": 2,
+        "name": {{ breadcrumb_blog_title | json }},
+        "item": "{{ shop.url }}{{ breadcrumb_blog_url }}"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": {{ breadcrumb_article_title | json }},
+        "item": "{{ shop.url }}{{ breadcrumb_article_url }}"
+      }
+    {%- endif -%}
+  ]
+}
+</script>

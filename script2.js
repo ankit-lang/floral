@@ -165,7 +165,7 @@
         return true;
       } else {
         if (hintEl) {
-          hintEl.textContent = isMismatch ? `Invalid phone number for ${countryInfo.name}.` : `Please enter a valid ${countryInfo.name} phone number.`;
+          hintEl.textContent = `Please enter a valid ${countryInfo.name} phone number.`;
           hintEl.style.color = '#dc2626';
           hintEl.style.display = 'block';
         }
@@ -255,6 +255,9 @@
           container.innerHTML = newContainer.innerHTML;
           if (typeof window.restoreCartDeliveryDetailsFromStorage === 'function') {
             window.restoreCartDeliveryDetailsFromStorage();
+          }
+          if (typeof window.lockCartLocationFields === 'function') {
+            window.lockCartLocationFields();
           }
           if (window.initAllCartDatePickers) window.initAllCartDatePickers();
         } else {
@@ -427,7 +430,7 @@
       const userCountry = (localStorage.getItem('user_country') || 'India').trim();
       const userCountryCode = (localStorage.getItem('user_country_code') || 'IN').toUpperCase().trim();
       const isIntl = (deliveryMode === 'international') && (userCountry.toUpperCase() !== 'INDIA' && userCountry.toUpperCase() !== 'IN');
-      const isSundayAllowed = sundayAllowedCountries.includes(userCountryCode) || sundayAllowedCountries.includes(userCountry.toUpperCase());
+      const isSundayAllowed = !isIntl || sundayAllowedCountries.includes(userCountryCode) || sundayAllowedCountries.includes(userCountry.toUpperCase());
 
       const timeSelectContainer = timeSelect ? timeSelect.closest('.flex.items-center.gap-2.rounded-lg') : null;
       if (isIntl) {
@@ -537,8 +540,7 @@
               noticeText.textContent = "🌙 Midnight slot unavailable — must be ordered 6 hrs in advance (by 4 PM). Select tomorrow for midnight delivery.";
               noticeBox.className = "cart-delivery-notice mb-3 px-3 py-2 text-xs font-semibold rounded-lg flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700";
             } else {
-              noticeText.textContent = "⏱️ Showing slots with 3-hour preparation time. Earlier slots are unavailable.";
-              noticeBox.className = "cart-delivery-notice mb-3 px-3 py-2 text-xs font-semibold rounded-lg flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700";
+              noticeBox.classList.add('hidden');
             }
           } else if (morningBlocked && currentHour >= 19 && selectedDateISO === tomorrowIso) {
             noticeBox.classList.remove('hidden');
@@ -570,8 +572,11 @@
         minCartDate.setDate(today.getDate() + 1);
       }
 
-      const disallowCartSunday = (!isSundayAllowed || cartNoSun || cartNoWeekend);
-      const disallowCartSaturday = cartNoWeekend;
+      const userCountryLower = userCountry.toLowerCase();
+      const isLondonCart = isIntl && (userCountryLower.includes('london') || userCountryLower.includes('uk') || userCountryLower.includes('united kingdom') || userCountryCode === 'GB');
+
+      const disallowCartSunday = ((isIntl ? !isSundayAllowed : false) || cartNoSun || cartNoWeekend || isLondonCart);
+      const disallowCartSaturday = isLondonCart ? false : cartNoWeekend;
 
       while ((disallowCartSunday && minCartDate.getDay() === 0) || (disallowCartSaturday && minCartDate.getDay() === 6)) {
         minCartDate.setDate(minCartDate.getDate() + 1);
@@ -862,30 +867,37 @@
 
     window.saveCartDeliveryDetailsToStorage = function() {
       const saveCb = document.getElementById('save-delivery-details-cb');
-      if (saveCb && !saveCb.checked) {
-        localStorage.removeItem('floral_saved_delivery_details');
-        return;
-      }
+      
       const formData = {};
-      document.querySelectorAll('.delivery-address-form .addr-field').forEach(field => {
-        const key = field.dataset.prop;
-        if (!key) return;
-        if (field.type === 'checkbox') {
-          formData[key] = field.checked ? field.value : '';
-        } else {
-          formData[key] = field.value || '';
-        }
-      });
+      const firstForm = document.querySelector('.delivery-address-form');
+      if (firstForm) {
+        firstForm.querySelectorAll('.addr-field').forEach(field => {
+          const key = field.dataset.prop;
+          if (!key) return;
+          if (field.type === 'checkbox') {
+            formData[key] = field.checked ? field.value : '';
+          } else {
+            formData[key] = field.value || '';
+          }
+        });
+      }
 
       const dateInput = document.querySelector('.cart-date-input');
       if (dateInput) formData['Delivery Date'] = dateInput.value;
 
-      localStorage.setItem('floral_saved_delivery_details', JSON.stringify(formData));
+      // Always save to sessionStorage to survive redirects (e.g. login)
+      sessionStorage.setItem('floral_session_delivery_details', JSON.stringify(formData));
 
-      const badge = document.getElementById('saved-details-badge');
-      if (badge) {
-        badge.classList.remove('hidden');
-        setTimeout(() => badge.classList.add('hidden'), 2500);
+      if (saveCb && !saveCb.checked) {
+        localStorage.removeItem('floral_saved_delivery_details');
+      } else {
+        localStorage.setItem('floral_saved_delivery_details', JSON.stringify(formData));
+
+        const badge = document.getElementById('saved-details-badge');
+        if (badge) {
+          badge.classList.remove('hidden');
+          setTimeout(() => badge.classList.add('hidden'), 2500);
+        }
       }
     };
 
@@ -963,7 +975,7 @@
     };
 
     window.restoreCartDeliveryDetailsFromStorage = function() {
-      const savedJSON = localStorage.getItem('floral_saved_delivery_details');
+      const savedJSON = sessionStorage.getItem('floral_session_delivery_details') || localStorage.getItem('floral_saved_delivery_details');
       if (!savedJSON) return;
 
       try {
@@ -1058,10 +1070,57 @@
       let firstInvalidField = null;
       let invalidPincode = false;
 
-      forms.forEach(form => {
+      // 1. Sync primary visible form (forms[0]) to all other hidden forms for multi-item carts
+      const firstForm = forms[0];
+      if (firstForm && forms.length > 1) {
+        const firstFields = firstForm.querySelectorAll('.addr-field');
+        forms.forEach((form, idx) => {
+          if (idx === 0) return;
+          const currFields = form.querySelectorAll('.addr-field');
+          currFields.forEach((field, i) => {
+            if (firstFields[i]) {
+              if (field.type === 'checkbox') field.checked = firstFields[i].checked;
+              else field.value = firstFields[i].value;
+            }
+          });
+        });
+      }
+
+      forms.forEach((form, idx) => {
+        // Only validate the visible unified form (forms[0])
+        if (form.style.display === 'none' || idx > 0) {
+          return;
+        }
+
+        // Auto-handle single name or full name in First Name
+        const fNameInput = form.querySelector('[data-prop="Delivery_FirstName"]');
+        const lNameInput = form.querySelector('[data-prop="Delivery_LastName"]');
+        if (fNameInput) {
+          const fVal = fNameInput.value.trim();
+          const lVal = lNameInput ? lNameInput.value.trim() : '';
+          if (fVal && !lVal) {
+            const parts = fVal.split(/\s+/);
+            if (parts.length > 1) {
+              fNameInput.value = parts[0];
+              if (lNameInput) lNameInput.value = parts.slice(1).join(' ');
+            } else if (lNameInput) {
+              lNameInput.value = fVal;
+            }
+          }
+        }
+
         const requiredFields = form.querySelectorAll('[required]');
         requiredFields.forEach(field => {
           if (!field.value.trim()) {
+            // Allow single name if First Name is filled
+            if (field.dataset && field.dataset.prop === 'Delivery_LastName') {
+              const fNameVal = (fNameInput ? fNameInput.value.trim() : '');
+              if (fNameVal.length >= 2) {
+                field.value = fNameVal;
+                field.classList.remove('border-red-500', 'ring-2', 'ring-red-500');
+                return;
+              }
+            }
             field.classList.add('border-red-500', 'ring-2', 'ring-red-500');
             isValid = false;
             if (!firstInvalidField) firstInvalidField = field;
@@ -1071,10 +1130,18 @@
             // Validate Postcode
             if (field.dataset && field.dataset.prop === 'Delivery_Postcode') {
               const val = field.value.trim();
+              let isPostcodeInvalid = false;
               if (mode === 'india') {
-                if (val.length !== 6 || isNaN(val)) invalidPincode = true;
+                if (val.length !== 6 || isNaN(val)) isPostcodeInvalid = true;
               } else if (mode === 'international' && uCountryCode === 'US') {
-                if (!/^\d{5}$/.test(val)) invalidPincode = true;
+                if (!/^\d{5}$/.test(val)) isPostcodeInvalid = true;
+              }
+              
+              if (isPostcodeInvalid) {
+                invalidPincode = true;
+                isValid = false;
+                field.classList.add('border-red-500', 'ring-2', 'ring-red-500');
+                if (!firstInvalidField) firstInvalidField = field;
               }
             }
           }
@@ -1090,11 +1157,6 @@
           }
         });
       });
-
-      if (invalidPincode) {
-        window.location.href = '/search?view=invalid-pincode';
-        return false;
-      }
 
       if (!isValid) {
         alert('Please fill out all required address fields and enter a valid phone number for the selected country.');
@@ -1246,6 +1308,19 @@
             if (delDate) allCartAttributes['Delivery Date'] = delDate;
             if (delTime) allCartAttributes['Delivery Time'] = delTime;
 
+            let finalCountry = properties['Delivery_Country'] || (typeof getUserCountryCode === 'function' ? getUserCountryCode() : (localStorage.getItem('user_country_code') || 'IN')).trim();
+            let lcCountry = finalCountry.toLowerCase();
+            if (['united states of america', 'united states', 'usa', 'us'].includes(lcCountry)) finalCountry = 'US';
+            else if (['india', 'ind', 'in'].includes(lcCountry)) finalCountry = 'IN';
+            else if (['united kingdom', 'uk', 'gb', 'great britain'].includes(lcCountry)) finalCountry = 'GB';
+            else if (['canada', 'can', 'ca'].includes(lcCountry)) finalCountry = 'CA';
+            else if (['australia', 'aus', 'au'].includes(lcCountry)) finalCountry = 'AU';
+            
+            allCartAttributes['Delivery_Country'] = finalCountry;
+            allCartAttributes['Delivery_State'] = state;
+            allCartAttributes['Delivery_City'] = city;
+            allCartAttributes['Delivery_Postcode'] = postcode;
+
             if (hasData || Object.keys(properties).length > 0) {
               if (lineAttr === 'all') {
                 const qtyButtons = document.querySelectorAll('.js-qty-btn[data-line]');
@@ -1291,10 +1366,59 @@
             }).catch(err => console.error('Error updating attributes', err)));
           }
 
-          await Promise.race([
-            Promise.all(updatePromises),
-            new Promise(r => setTimeout(r, 2500))
-          ]);
+          await Promise.all(updatePromises);
+
+          // --- INTERNATIONAL DELIVERY FEE LOGIC ---
+          try {
+            const DELIVERY_FEE_VARIANT_ID = '44471806918734'; // <-- CHANGE THIS!
+            
+            const cartResponse = await fetch('/cart.js');
+            const cartData = await cartResponse.json();
+            
+            if (mode === 'international') {
+              let regularItemsCount = 0;
+              cartData.items.forEach(item => {
+                if (item.variant_id.toString() !== DELIVERY_FEE_VARIANT_ID.toString()) {
+                  regularItemsCount += item.quantity;
+                }
+              });
+              
+              const existingFeeItem = cartData.items.find(item => item.variant_id.toString() === DELIVERY_FEE_VARIANT_ID.toString());
+              
+              if (regularItemsCount > 0) {
+                if (!existingFeeItem) {
+                  await fetch('/cart/add.js', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ items: [{ id: DELIVERY_FEE_VARIANT_ID, quantity: regularItemsCount }] })
+                  });
+                } else if (existingFeeItem.quantity !== regularItemsCount) {
+                  await fetch('/cart/change.js', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: DELIVERY_FEE_VARIANT_ID, quantity: regularItemsCount })
+                  });
+                }
+              } else if (existingFeeItem) {
+                await fetch('/cart/change.js', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ id: DELIVERY_FEE_VARIANT_ID, quantity: 0 })
+                });
+              }
+            } else {
+              // If not international, remove the delivery fee if it exists
+              const hasDeliveryFee = cartData.items.some(item => item.variant_id.toString() === DELIVERY_FEE_VARIANT_ID.toString());
+              if (hasDeliveryFee) {
+                await fetch('/cart/change.js', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ id: DELIVERY_FEE_VARIANT_ID, quantity: 0 })
+                });
+              }
+            }
+          } catch(e) { console.error('Delivery fee error', e); }
+          // ----------------------------------------
 
           clearTimeout(safetyTimeout);
 
@@ -1322,4 +1446,45 @@
         }
       });
     }
+
+// Gift Message Word Limit Enforcer (Global Event Delegation)
+document.addEventListener('input', function(e) {
+  if (e.target && e.target.matches('textarea[data-prop="Delivery_GiftMessage"]')) {
+    const limit = 150;
+    let text = e.target.value;
+    
+    // Split by whitespace to count words
+    let words = text.trim().split(/\s+/).filter(word => word.length > 0);
+    
+    if (words.length > limit) {
+      // Truncate to the limit
+      words = words.slice(0, limit);
+      e.target.value = words.join(' ') + ' ';
+    }
+    
+    // Find the counter in the same wrapper
+    const wrapper = e.target.closest('.addr-wrapper');
+    if (wrapper) {
+      const counter = wrapper.querySelector('.word-count-display');
+      if (counter) {
+        counter.textContent = `${words.length > limit ? limit : words.length} / ${limit} words`;
+        if (words.length >= limit) {
+          counter.classList.add('text-rose-600', 'font-bold');
+          counter.classList.remove('text-gray-400');
+        } else {
+          counter.classList.remove('text-rose-600', 'font-bold');
+          counter.classList.add('text-gray-400');
+        }
+      }
+    }
   }
+});
+
+// Initialize existing textareas on load
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    document.querySelectorAll('textarea[data-prop="Delivery_GiftMessage"]').forEach(ta => {
+      ta.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+  }, 100);
+});

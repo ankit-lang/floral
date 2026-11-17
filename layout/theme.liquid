@@ -1,28 +1,80 @@
 <!doctype html>
-<html class="no-js overflow-x-hidden" lang="{{ request.locale.iso_code }}" style="scroll-behavior: smooth;">
+<html class="no-js" lang="{{ request.locale.iso_code }}" style="scroll-behavior: smooth;">
   <head>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-55CQTRJ7');</script>
+    <!-- End Google Tag Manager -->
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '521141823505707');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=521141823505707&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="theme-color" content="#0e7040">
+    <meta name="google-site-verification" content="yTwdPKb_fH9vp9AlCmAqG9EFujBDf2gKSBkrpfA2uZQ">
     <link rel="icon" type="image/png" href="https://cdn.shopify.com/s/files/1/0748/1766/7150/files/logopink.png?v=1784187803">
-    <link rel="canonical" href="{{ canonical_url }}">
+    {%- assign is_custom_seo = false -%}
+    {%- if request.path == '/' or request.path == '/pages/about-us' or request.path == '/collections/all' or request.path == '/pages/same-day' or request.path == '/pages/corporate-events' or request.path == '/collections/flowers' -%}
+      {%- assign is_custom_seo = true -%}
+    {%- endif -%}
+
+    {%- if is_custom_seo -%}
+      {% render 'custom-seo' %}
+    {%- elsif template.name == 'article' and article.handle == 'best-diwali-gift-hampers-and-flowers-for-this-festive-season' or template.name == 'article' and article.handle contains 'diwali' or template.name == 'article' and article.title contains 'Diwali' -%}
+      {% render 'blog-post-diwali-gift-hampers-seo' %}
+    {%- else -%}
+      <link rel="canonical" href="{{ canonical_url }}">
+      <title>
+        {%- if template.name == 'blog' -%}
+          {%- if page_title == 'News' or page_title == blank -%}
+            Floral India Journal &ndash; {{ shop.name }}
+          {%- else -%}
+            {{ page_title }}{%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+          {%- endif -%}
+        {%- else -%}
+          {{ page_title }}
+          {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+          {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+          {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+        {%- endif -%}
+      </title>
+      {% if page_description %}
+        <meta name="description" content="{{ page_description | escape }}">
+      {% endif %}
+      {% render 'blog-article-meta' %}
+    {%- endif -%}
+
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-
-    <title>
-      {{ page_title }}
-      {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
-      {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
-      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
-    </title>
-
-    {% if page_description %}
-      <meta name="description" content="{{ page_description | escape }}">
-    {% endif %}
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    </noscript>
 
     {{ content_for_header }}
+
+    <!-- libphonenumber-js for International Phone Number Validation -->
+    <script src="https://cdn.jsdelivr.net/npm/libphonenumber-js@1.10.51/bundle/libphonenumber-js.min.js" defer></script>
 
     <!-- Pre-compiled Tailwind CSS (replaces the heavy CDN runtime for 10x faster load) -->
     <link rel="stylesheet" href="{{ 'tailwind-compiled.css' | asset_url }}" />
@@ -35,7 +87,6 @@
         background-color: #ffffff;
         color: #1f2937;
         -webkit-font-smoothing: antialiased;
-        overflow-x: hidden;
       }
 
       /* ===== SCROLL ANIMATION ENGINE ===== */
@@ -102,12 +153,14 @@
     </style>
     <script>
       (function() {
+        var isAccount = location.pathname.includes('/account') || location.href.includes('account/orders');
         function replaceFlitsBanner() {
+          if (!isAccount && !document.querySelector('[class*="flits"], [data-page-id], div[class*="reward"]')) return;
           const imgs = document.querySelectorAll('img');
           imgs.forEach(img => {
             if (img.src && !img.src.includes('logopink') && !img.src.includes('give-floral-banner')) {
               const isFlits = img.closest('[class*="flits"]') || img.closest('[data-page-id]') || img.closest('[class*="reward"]') || img.src.includes('olive') || img.src.includes('flits') || img.src.includes('unsplash') || img.src.includes('dummy');
-              if (isFlits || (location.pathname.includes('/account') && (img.width > 200 || img.naturalWidth > 200))) {
+              if (isFlits || (isAccount && (img.width > 200 || img.naturalWidth > 200))) {
                 img.src = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/give-floral-banner-only-pattern-beautiful-user-friendy.png';
                 if (img.srcset) img.srcset = '';
                 img.style.objectFit = 'cover';
@@ -117,38 +170,49 @@
             }
           });
         }
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', replaceFlitsBanner);
-        } else {
-          replaceFlitsBanner();
+        if (isAccount || document.querySelector('[class*="flits"], [data-page-id], div[class*="reward"]')) {
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', replaceFlitsBanner);
+          } else {
+            replaceFlitsBanner();
+          }
+          var flitsTimer = setInterval(replaceFlitsBanner, 2500);
+          setTimeout(function() { clearInterval(flitsTimer); }, 10000);
         }
-        setInterval(replaceFlitsBanner, 2500);
 
         function injectAccountQuickNav() {
-          if (document.getElementById('account-quick-nav')) return;
-          if (location.pathname.includes('/account') || location.href.includes('account/orders')) {
-            const nav = document.createElement('div');
-            nav.id = 'account-quick-nav';
-            nav.style.cssText = 'position:fixed;top:14px;right:16px;z-index:99999;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border:1px solid rgba(0,0,0,0.1);padding:7px 14px;border-radius:999px;box-shadow:0 10px 25px rgba(0,0,0,0.12);font-family:system-ui,sans-serif;';
-            nav.innerHTML = `
-              <a href="/" style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#0e7040;text-decoration:none;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
-                <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                <span>Home</span>
-              </a>
-              <span style="color:#e5e7eb;font-weight:300;">|</span>
-              <a href="/cart" style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#d15c7e;text-decoration:none;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
-                <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                <span>Cart</span>
-              </a>
-            `;
-            document.body.appendChild(nav);
+          if (!isAccount || document.getElementById('account-quick-nav')) return;
+          const nav = document.createElement('div');
+          nav.id = 'account-quick-nav';
+          nav.style.cssText = 'position:fixed;top:14px;right:16px;z-index:99999;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border:1px solid rgba(0,0,0,0.1);padding:7px 14px;border-radius:999px;box-shadow:0 10px 25px rgba(0,0,0,0.12);font-family:system-ui,sans-serif;';
+          nav.innerHTML = `
+            <a href="/" style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#0e7040;text-decoration:none;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+              <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              <span>Home</span>
+            </a>
+            <span style="color:#e5e7eb;font-weight:300;">|</span>
+            <a href="/cart" style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#d15c7e;text-decoration:none;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+              <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              <span>Cart</span>
+            </a>
+          `;
+          document.body.appendChild(nav);
+        }
+        if (isAccount) {
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', injectAccountQuickNav);
+          } else {
+            injectAccountQuickNav();
           }
+          var navTimer = setInterval(function() {
+            if (document.getElementById('account-quick-nav')) {
+              clearInterval(navTimer);
+            } else {
+              injectAccountQuickNav();
+            }
+          }, 1500);
+          setTimeout(function() { clearInterval(navTimer); }, 8000);
         }
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', injectAccountQuickNav);
-        } else {
-        }
-        setInterval(injectAccountQuickNav, 3000);
       })();
     </script>
 
@@ -319,11 +383,45 @@
         window.addEventListener('pincodeUpdated', checkLocationActive);
       })();
     </script>
+
+    <!-- GUARANTEED CART ATTRIBUTES INITIALIZER (Guest & Logged In) -->
+    <script>
+      (function() {
+        function guaranteeCartDeliveryCountry() {
+          var currentAttr = {{ cart.attributes.Delivery_Country | json }};
+          var count = {{ cart.item_count | default: 0 }};
+          if (count > 0 && (!currentAttr || currentAttr.trim() === '')) {
+            var mode = localStorage.getItem('delivery_mode') || 'india';
+            var isoCode = (mode === 'india' ? 'IN' : (localStorage.getItem('user_country_code') || 'IN')).toUpperCase();
+            var countryName = (isoCode === 'IN' ? 'India' : (localStorage.getItem('user_country') || isoCode));
+            fetch('/cart/update.js', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                attributes: {
+                  'Delivery_Country': isoCode,
+                  'Delivery Country': countryName
+                }
+              })
+            }).catch(function() {});
+          }
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', guaranteeCartDeliveryCountry);
+        } else {
+          guaranteeCartDeliveryCountry();
+        }
+      })();
+    </script>
   </head>
 
-  <body class="font-sans text-gray-900 antialiased flex flex-col min-h-screen overflow-x-hidden">
+  <body class="font-sans text-gray-900 antialiased flex flex-col min-h-screen">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-55CQTRJ7"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <!-- Inline styled preloader to show instantly before Tailwind loads -->
-    <div id="page-preloader" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;background-color:#ffffff;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.5s ease-in-out;">
+    <div id="page-preloader" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;background-color:#ffffff;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.2s ease-out;pointer-events:none;">
       <img src="{{ 'sunflower.gif' | asset_url }}" alt="Loading..." style="width:6rem;height:6rem;object-fit:contain;" />
     </div>
     <script>
@@ -332,17 +430,19 @@
           const preloader = document.getElementById('page-preloader');
           if (preloader && preloader.style.display !== 'none') {
             preloader.style.opacity = '0';
-            setTimeout(() => preloader.style.display = 'none', 500);
+            setTimeout(() => { preloader.style.display = 'none'; }, 200);
           }
         };
 
-        // Hide as soon as the DOM is ready (much faster than full window load)
-        document.addEventListener('DOMContentLoaded', hidePreloader);
+        // Hide as soon as the DOM is interactive/ready (instant on reload)
+        if (document.readyState === 'interactive' || document.readyState === 'complete') {
+          hidePreloader();
+        } else {
+          document.addEventListener('DOMContentLoaded', hidePreloader);
+        }
         
-        // Failsafe: force hide after 800ms regardless of loading state
-        setTimeout(hidePreloader, 800);
-        
-        // Keep window.onload just in case DOMContentLoaded fired before the script executed
+        // Failsafe: force hide after 400ms regardless of loading state
+        setTimeout(hidePreloader, 400);
         window.addEventListener('load', hidePreloader);
       })();
     </script>
@@ -388,11 +488,12 @@
 
     {% section 'footer' %}
 
+    <script>window.__pincodesTierMapUrl = "{{ 'pincodes_tier_map.json' | asset_url }}";</script>
     <script src="{{ 'animations.js' | asset_url }}" defer></script>
+    <script src="{{ 'product-card.js' | asset_url }}" defer></script>
     <script src="{{ 'cart-expiry.js' | asset_url }}" defer></script>
     <script src="{{ 'floral-currency.js' | asset_url }}" defer></script>
     <script src="{{ 'festival-icon-auto.js' | asset_url }}" defer></script>
-    <script src="{{ 'animation-observer.js' | asset_url }}" defer></script>
 
     <!-- WhatsApp Floating Widget -->
     <a href="https://wa.me/919811400051" target="_blank" rel="noopener noreferrer" 

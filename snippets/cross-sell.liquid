@@ -18,10 +18,21 @@
 {% endfor %}
 
 {% if cross_sell_tags == '' %}
-  {% assign cross_sell_tags = 'cross-sell:Cakes,cross-sell:Chocolates,cross-sell:Gourmet,cross-sell:Fragrance,cross-sell:Plants,cross-sell:Greeting Cards,cross-sell:Gifts,cross-sell:Jar Cakes,' %}
+  {% assign cross_sell_tags = 'cross-sell:Cakes,cross-sell:Chocolates,cross-sell:Vases,cross-sell:Gifts,cross-sell:Gourmet,cross-sell:Fragrance,cross-sell:Plants,cross-sell:Greeting Cards,cross-sell:Jar Cakes,' %}
 {% endif %}
 
-<div id="cross-sell-section" class="mt-6 mb-4 rounded-2xl bg-amber-50/40 border border-amber-200/70 p-4 scroll-mt-24" data-cross-tags="{{ cross_sell_tags | escape }}">
+{% assign is_current_london = false %}
+{% assign is_current_usa = false %}
+{% for tag in product.tags %}
+  {% assign tag_lower = tag | downcase | strip %}
+  {% if tag_lower == 'london' or tag_lower == 'uk' or tag_lower == 'united kingdom' %}
+    {% assign is_current_london = true %}
+  {% elsif tag_lower == 'usa' or tag_lower == 'us' or tag_lower == 'united states' %}
+    {% assign is_current_usa = true %}
+  {% endif %}
+{% endfor %}
+
+<div id="cross-sell-section" class="mt-6 mb-4 rounded-2xl bg-amber-50/40 border border-amber-200/70 p-4 scroll-mt-24" data-cross-tags="{{ cross_sell_tags | escape }}" data-current-is-london="{{ is_current_london }}" data-current-is-usa="{{ is_current_usa }}">
 
   <!-- Section Header -->
   <div class="flex items-center justify-between mb-3">
@@ -46,11 +57,12 @@
     <div id="cross-sell-tabs" class="flex gap-2 mb-3 overflow-x-auto pb-1 cursor-grab active:cursor-grabbing select-none" style="scrollbar-width:none;-ms-overflow-style:none;">
       <button type="button" class="cs-tab active">Cakes</button>
       <button type="button" class="cs-tab">Chocolates</button>
+      <button type="button" class="cs-tab">Vases</button>
+      <button type="button" class="cs-tab">Gifts</button>
       <button type="button" class="cs-tab">Gourmet</button>
       <button type="button" class="cs-tab">Fragrance</button>
       <button type="button" class="cs-tab">Plants</button>
       <button type="button" class="cs-tab">Greeting Cards</button>
-      <button type="button" class="cs-tab">Gifts</button>
       <button type="button" class="cs-tab">Jar Cakes</button>
     </div>
 
@@ -65,6 +77,8 @@
       <div id="cross-sell-shelf" class="flex gap-3 overflow-x-auto pb-3 cursor-grab active:cursor-grabbing select-none relative z-0" style="scrollbar-width:none;-ms-overflow-style:none;">
         {% assign current_prod_id = product.id %}
         {% assign real_count = 0 %}
+        {% assign glass_vase_product = all_products['glass-vase'] %}
+        {% assign has_rendered_glass_vase = false %}
 
         {% assign custom_addon_list = section_settings.addon_products %}
         {% if custom_addon_list == blank and section_settings.addon_collection != blank %}
@@ -72,14 +86,36 @@
         {% endif %}
         {% if custom_addon_list != blank %}
           {% for p in custom_addon_list %}
+            {% if p.handle == 'glass-vase' %}{% assign has_rendered_glass_vase = true %}{% endif %}
             {% render 'cross-sell-card', p: p, current_prod_id: current_prod_id %}
           {% endfor %}
         {% else %}
           {% paginate collections['all'].products by 250 %}
             {% for p in collections['all'].products %}
+              {% if p.handle == 'glass-vase' %}{% assign has_rendered_glass_vase = true %}{% endif %}
               {% render 'cross-sell-card', p: p, current_prod_id: current_prod_id %}
             {% endfor %}
           {% endpaginate %}
+        {% endif %}
+
+        {% if has_rendered_glass_vase == false and glass_vase_product and glass_vase_product.id != blank and glass_vase_product.id != current_prod_id %}
+          {% render 'cross-sell-card', p: glass_vase_product, current_prod_id: current_prod_id, is_london_exclusive_addon: true %}
+          {% assign has_rendered_glass_vase = true %}
+        {% endif %}
+
+        {% if has_rendered_glass_vase == false and current_prod_id != 8154809073742 %}
+          {% comment %} Direct fallback for Glass Vase London add-on {% endcomment %}
+          <div class="cs-card" data-category="Vases" data-is-uk="true" data-is-usa="false" data-is-india="false" data-domestic-only="false" data-is-vase="true" data-london-only="true" data-tags="London,Glass Vase,Gifts,Flowers and Glass" data-product-url="/products/glass-vase" data-title="GLASS VASE" data-img="https://cdn.shopify.com/s/files/1/0748/1766/7150/files/l14.jpg?v=1792417348" data-variant-id="44602006241358" data-price="159810">
+            <div class="cs-check"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></div>
+            <div class="w-full h-28 bg-gray-50 overflow-hidden relative">
+              <img src="https://cdn.shopify.com/s/files/1/0748/1766/7150/files/l14.jpg?v=1792417348" alt="GLASS VASE" class="w-full h-full object-cover" loading="lazy">
+            </div>
+            <div class="p-2.5">
+              <p class="text-[11px] font-bold text-gray-800 line-clamp-2 leading-tight mb-1">GLASS VASE</p>
+              <p class="text-[11px] font-semibold text-primary cs-price" data-base-price="159810">£15.98</p>
+              <button class="cs-add-btn" type="button">+ Add</button>
+            </div>
+          </div>
         {% endif %}
       </div>
 
@@ -99,7 +135,7 @@
         <button id="cross-sell-add-btn" type="button"
           class="flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary-600 active:scale-95 transition-all duration-200 shadow-sm">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-          Add Selected Add-ons to Cart
+          Add to Cart with Selected Add-ons
         </button>
       </div>
 
@@ -237,6 +273,10 @@
   // ── Fetch products for a category ──────────────────────────────────────────
   function fetchCategory(cat) {
     return new Promise(function(resolve) {
+      if (cat.toLowerCase() === 'vases') {
+        resolve([]);
+        return;
+      }
       if (cache[cat]) { resolve(cache[cat]); return; }
       fetch('/search/suggest.json?q=' + encodeURIComponent(cat) + '&resources[type]=product&resources[limit]=6')
         .then(function(r) { return r.json(); })
@@ -274,13 +314,60 @@
       shelf.innerHTML = initialCardsHTML;
       shelf.querySelectorAll('.cs-card').forEach(bindCardEvents);
     }
-    const mode = localStorage.getItem('delivery_mode') || 'india';
-    const userCountry = (localStorage.getItem('user_country') || 'India').toLowerCase().trim();
-    const userCountryCode = (localStorage.getItem('user_country_code') || 'IN').toLowerCase().trim();
 
-    const isUsa = mode === 'international' && (userCountry.includes('usa') || userCountry.includes('united states') || userCountry === 'us' || userCountryCode === 'us' || userCountryCode === 'usa');
-    const isUk  = mode === 'international' && (userCountry.includes('london') || userCountry.includes('uk') || userCountry.includes('united kingdom') || userCountryCode === 'gb');
-    const isUae = mode === 'international' && (userCountry.includes('uae') || userCountry.includes('dubai') || userCountryCode === 'ae');
+    // Deduplicate any repeated cards with the same variant ID
+    const seenCards = new Set();
+    if (shelf) {
+      shelf.querySelectorAll('.cs-card').forEach(function(c) {
+        const vid = c.dataset.variantId;
+        if (vid && seenCards.has(vid)) {
+          c.remove();
+        } else if (vid) {
+          seenCards.add(vid);
+        }
+      });
+    }
+
+    const mode = (localStorage.getItem('delivery_mode') || '').toLowerCase().trim();
+    const userCountry = (localStorage.getItem('user_country') || '').toLowerCase().trim();
+    const userCountryCode = (localStorage.getItem('user_country_code') || '').toLowerCase().trim();
+    const userLocality = (localStorage.getItem('user_intl_locality') || '').toLowerCase().trim();
+
+    const isCurrentProductLondon = (sectionEl && sectionEl.dataset.currentIsLondon === 'true') ||
+                                   document.documentElement.classList.contains('london-mode-active') ||
+                                   (document.body && document.body.classList.contains('london-mode-active')) ||
+                                   document.querySelector('#intl-delivery-pdp-notice[data-is-london="true"]') !== null;
+
+    const isCurrentProductUsa = (sectionEl && sectionEl.dataset.currentIsUsa === 'true') ||
+                                document.documentElement.classList.contains('usa-mode-active') ||
+                                (document.body && document.body.classList.contains('usa-mode-active')) ||
+                                document.querySelector('#intl-delivery-pdp-notice[data-is-usa="true"]') !== null;
+
+    const shopifyCountry = (window.Shopify && window.Shopify.country) ? window.Shopify.country.toLowerCase() : '';
+    const shopifyCurrency = (window.Shopify && window.Shopify.currency && window.Shopify.currency.active) ? window.Shopify.currency.active.toUpperCase() : '';
+
+    // Active browsing context — the visitor's delivery choice (India / International) decides first.
+    // Previously stale browser values (an old UK selection, GBP currency or a UK Shopify market) put
+    // India-mode visitors into UK context, so some browsers showed UK add-ons on Indian products.
+    const isIntlMode = mode === 'international';
+    const noModeChosen = !mode;
+    const pickedUk = userCountryCode === 'gb' || userCountryCode === 'uk' ||
+                     /\b(uk|united kingdom|great britain|london|england)\b/.test(userCountry) || userLocality.includes('london');
+    const pickedUsa = userCountryCode === 'us' || /\b(usa|us|united states|america)\b/.test(userCountry);
+
+    // UK context: current product is a London product, or visitor chose UK delivery,
+    // or (only when no delivery mode chosen yet) the Shopify market is UK / GBP
+    const isUkContext = isCurrentProductLondon ||
+                        (isIntlMode && pickedUk) ||
+                        (noModeChosen && !isCurrentProductUsa && (shopifyCountry === 'gb' || shopifyCurrency === 'GBP'));
+
+    // USA context: same rules for the United States
+    const isUsaContext = !isUkContext && (isCurrentProductUsa ||
+                         (isIntlMode && pickedUsa) ||
+                         (noModeChosen && (shopifyCountry === 'us' || shopifyCurrency === 'USD')));
+
+    // India context for everything else
+    const isIndiaContext = !isUkContext && !isUsaContext;
 
     let matched = 0;
     const cards = shelf ? shelf.querySelectorAll('.cs-card') : [];
@@ -290,36 +377,70 @@
       const cardTitle = (card.dataset.title || '').toLowerCase();
       const cardTagsRaw = (card.dataset.tags || '').toLowerCase();
       const cardTagsList = cardTagsRaw.split(',').map(t => t.trim());
-      
-      const isUsaProd = cardTagsList.includes('usa') || cardTagsList.includes('us') || cardTagsList.includes('united states') || cardTagsRaw.includes('usa') || cardTitle.includes('usa');
-      const isUkProd  = cardTagsList.includes('london') || cardTagsList.includes('uk') || cardTagsList.includes('united kingdom') || cardTagsRaw.includes('london') || cardTitle.includes('london');
-      const isUaeProd = cardTagsList.includes('uae') || cardTagsList.includes('dubai') || cardTagsRaw.includes('uae') || cardTagsRaw.includes('dubai') || cardTitle.includes('dubai') || cardTitle.includes('uae');
+      const cardUrl = (card.dataset.productUrl || '').toLowerCase();
 
-      let isCatMatch = (!cat || cat === 'All' || cardCat.toLowerCase() === cat.toLowerCase());
+      const isGlassVase = card.dataset.isVase === 'true' || cardUrl.includes('glass-vase') || cardTitle.includes('glass vase');
+
+      // Strict product country tags:
+      // UK product has london tag (or uk tag, or is glass vase)
+      // USA product has usa tag
+      // All other products are Indian products
+      const hasLondonTag = cardTagsList.includes('london') || cardTagsList.includes('uk') || cardTagsList.includes('united kingdom');
+      const hasUsaTag = cardTagsList.includes('usa') || cardTagsList.includes('us') || cardTagsList.includes('united states');
+
+      const isCardUk = card.dataset.isUk === 'true' || isGlassVase || hasLondonTag;
+      const isCardUsa = !isCardUk && (card.dataset.isUsa === 'true' || hasUsaTag);
+      const isCardIndia = !isCardUk && !isCardUsa;
+
+      // Exclude Karwa Chauth products & Jewellery, purses, bangles, necklaces
+      const isKarwaChauth = cardTitle.includes('karwa') || cardTitle.includes('karva') || cardTitle.includes('sargi') || cardTitle.includes('chauth') ||
+        cardTagsRaw.includes('karwa') || cardTagsRaw.includes('karva') || cardTagsRaw.includes('sargi') || cardTagsRaw.includes('chauth');
+
+      const isJewelleryOrPurse = 
+        cardTitle.includes('jewel') || cardTitle.includes('necklace') || cardTitle.includes('neckpiece') ||
+        cardTitle.includes('bangle') || cardTitle.includes('bracelet') || cardTitle.includes('earring') ||
+        cardTitle.includes('pendant') || cardTitle.includes('chain') || cardTitle.includes('anklet') ||
+        cardTitle.includes('payal') || cardTitle.includes('mangalsutra') || cardTitle.includes('shringar') ||
+        cardTitle.includes('purse') || cardTitle.includes('clutch') || cardTitle.includes('handbag') ||
+        cardTitle.includes('tote') || cardTitle.includes('potli') || cardTitle.includes('batwa') ||
+        cardTitle.includes('wallet') ||
+        cardTagsRaw.includes('jewel') || cardTagsRaw.includes('necklace') || cardTagsRaw.includes('neckpiece') ||
+        cardTagsRaw.includes('bangle') || cardTagsRaw.includes('bracelet') || cardTagsRaw.includes('earring') ||
+        cardTagsRaw.includes('pendant') || cardTagsRaw.includes('chain') || cardTagsRaw.includes('anklet') ||
+        cardTagsRaw.includes('payal') || cardTagsRaw.includes('mangalsutra') || cardTagsRaw.includes('shringar') ||
+        cardTagsRaw.includes('purse') || cardTagsRaw.includes('clutch') || cardTagsRaw.includes('handbag') ||
+        cardTagsRaw.includes('tote') || cardTagsRaw.includes('potli') || cardTagsRaw.includes('batwa') ||
+        cardTagsRaw.includes('wallet');
+
+      if (isKarwaChauth || isJewelleryOrPurse) {
+        card.style.display = 'none';
+        return;
+      }
+
+      let isCatMatch = false;
+      if (!cat || cat === 'All') {
+        isCatMatch = true;
+      } else if (cat.toLowerCase() === 'vases') {
+        // Show ONLY the standalone glass vase under Vases tab
+        isCatMatch = isGlassVase;
+      } else {
+        // Other tabs must not show the glass vase
+        isCatMatch = (cardCat.toLowerCase() === cat.toLowerCase()) && !isGlassVase;
+      }
       
       let isCountryMatch = false;
-      if (mode === 'international') {
-        if (isUsa) {
-          // STRICT USA FILTER: Show ONLY products tagged with 'usa', 'us', or 'united states'
-          isCountryMatch = isUsaProd;
-        } else if (isUk) {
-          // STRICT UK FILTER: Show ONLY products tagged with 'london', 'uk', or 'united kingdom'
-          isCountryMatch = isUkProd;
-        } else if (isUae) {
-          // STRICT UAE FILTER: Show ONLY products tagged with 'uae' or 'dubai'
-          isCountryMatch = isUaeProd;
-        } else {
-          const matchesTag = cardTagsList.includes(userCountry) || cardTagsList.includes(userCountryCode) || cardTagsList.includes('international') || cardTagsList.includes('worldwide');
-          isCountryMatch = matchesTag;
-        }
+      if (isUkContext) {
+        // UK context: show ONLY UK products
+        isCountryMatch = isCardUk;
+      } else if (isUsaContext) {
+        // USA context: show ONLY USA products
+        isCountryMatch = isCardUsa;
       } else {
-        // India mode: hide international exclusive tagged items
-        if (isUsaProd || isUkProd || isUaeProd) {
-          isCountryMatch = false;
-        } else {
-          isCountryMatch = true;
-        }
+        // India context: show ONLY Indian products (never UK, never USA)
+        isCountryMatch = isCardIndia;
       }
+
+      card.dataset.countryEligible = isCountryMatch ? 'true' : 'false';
 
       if (isCatMatch && isCountryMatch) {
         card.style.display = '';
@@ -336,20 +457,12 @@
       }
     });
 
-    // Show clean info notice if 0 products match the strict country tag in International mode
-    let noticeEl = document.getElementById('cs-intl-category-notice');
-    if (mode === 'international' && matched === 0) {
-      if (!noticeEl) {
-        noticeEl = document.createElement('div');
-        noticeEl.id = 'cs-intl-category-notice';
-        noticeEl.className = 'w-full p-4 my-2 rounded-xl bg-amber-50 border border-amber-200 text-center text-xs text-amber-800 font-medium';
-        shelf.parentElement.insertBefore(noticeEl, shelf);
-      }
-      const tagLabel = isUsa ? 'usa' : (isUk ? 'london' : (isUae ? 'uae' : userCountry));
-      noticeEl.innerHTML = '🌐 <strong>No ' + cat + ' tagged "' + tagLabel + '" found</strong><br><span class="text-[11px] text-amber-700">To show ' + cat + ' for ' + userCountry.toUpperCase() + ' delivery, please add the tag <strong>"' + tagLabel + '"</strong> to your products in Shopify Admin.</span>';
-      noticeEl.classList.remove('hidden');
-    } else if (noticeEl) {
-      noticeEl.classList.add('hidden');
+    updateTabsVisibility();
+
+    // Remove any notification banner completely
+    const noticeEl = document.getElementById('cs-intl-category-notice');
+    if (noticeEl) {
+      noticeEl.remove();
     }
   }
 
@@ -359,6 +472,20 @@
       filterShelfByCategory(activeCategory);
       return;
     }
+
+    products = products.filter(function(p) {
+      const t = ((p.title || '') + ' ' + (p.handle || '')).toLowerCase();
+      const isExcluded = 
+        t.includes('karwa') || t.includes('karva') || t.includes('sargi') || t.includes('chauth') ||
+        t.includes('jewel') || t.includes('necklace') || t.includes('neckpiece') ||
+        t.includes('bangle') || t.includes('bracelet') || t.includes('earring') ||
+        t.includes('pendant') || t.includes('chain') || t.includes('anklet') ||
+        t.includes('payal') || t.includes('mangalsutra') || t.includes('shringar') ||
+        t.includes('purse') || t.includes('clutch') || t.includes('handbag') ||
+        t.includes('tote') || t.includes('potli') || t.includes('batwa') ||
+        t.includes('wallet');
+      return !isExcluded;
+    });
 
     shelf.innerHTML = '';
     products.forEach(function(p) {
@@ -469,8 +596,6 @@
         addBtnEl.style.background = '';
         addBtnEl.style.color = '';
       }
-      const existingInput = document.getElementById('addon-prop-' + vid);
-      if (existingInput) existingInput.remove();
     } else {
       card.classList.add('selected');
       selectedItems[vid] = { price: price, title: title };
@@ -479,151 +604,112 @@
         addBtnEl.style.background = '#0e7040';
         addBtnEl.style.color = '#fff';
       }
-
-      // Attach hidden property to product form so add-on is included when main item added
-      const form = document.querySelector('form[action*="/cart/add"]');
-      if (form && !document.getElementById('addon-prop-' + vid)) {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.id = 'addon-prop-' + vid;
-        input.name = 'properties[Add-on: ' + title + ']';
-        input.value = formatMoney(price);
-        form.appendChild(input);
-      }
     }
     updateFooter();
   }
 
+  // ── Global accessor for selected cross-sell products ──────────────────────
+  window.getSelectedCrossSellItems = function() {
+    const list = [];
+    const keys = Object.keys(selectedItems);
+    keys.forEach(function(vid) {
+      const numVid = parseInt(vid, 10);
+      if (!isNaN(numVid) && numVid > 0) {
+        list.push({
+          id: numVid,
+          title: (selectedItems[vid] && selectedItems[vid].title) ? selectedItems[vid].title : 'Add-on',
+          price: (selectedItems[vid] && selectedItems[vid].price) ? selectedItems[vid].price : 0
+        });
+      }
+    });
+    // Fallback: Also check any .cs-card.selected in DOM that might have data-variant-id
+    const selectedCards = document.querySelectorAll('#cross-sell-shelf .cs-card.selected, .cs-card.selected');
+    selectedCards.forEach(function(c) {
+      const numVid = parseInt(c.dataset.variantId, 10);
+      if (!isNaN(numVid) && numVid > 0 && !list.some(function(item) { return item.id === numVid; })) {
+        list.push({
+          id: numVid,
+          title: c.dataset.title || 'Add-on',
+          price: parseInt(c.dataset.price || '0', 10)
+        });
+      }
+    });
+    return list;
+  };
+
   function updateFooter() {
     const keys = Object.keys(selectedItems);
+    const bottomCartBtn = document.getElementById('add-to-cart-btn');
+
     if (keys.length === 0) {
-      footer.classList.add('hidden');
+      if (footer) footer.classList.add('hidden');
+      if (bottomCartBtn && bottomCartBtn.dataset.originalHtml) {
+        bottomCartBtn.innerHTML = bottomCartBtn.dataset.originalHtml;
+      }
       return;
     }
-    footer.classList.remove('hidden');
+
+    if (footer) footer.classList.remove('hidden');
     const total = keys.reduce(function(sum, vid) { return sum + (selectedItems[vid].price || 0); }, 0);
-    totalEl.textContent = formatMoney(total);
-    addBtn.textContent  = 'Add ' + keys.length + ' Item' + (keys.length > 1 ? 's' : '') + ' to Cart (' + formatMoney(total) + ')';
+    if (totalEl) totalEl.textContent = formatMoney(total);
+    const countText = keys.length + ' Add-on' + (keys.length > 1 ? 's' : '');
+    if (addBtn) addBtn.textContent = 'Add to Cart with ' + countText + ' (' + formatMoney(total) + ')';
+
+    if (bottomCartBtn) {
+      if (!bottomCartBtn.dataset.originalHtml) {
+        bottomCartBtn.dataset.originalHtml = bottomCartBtn.innerHTML;
+      }
+      bottomCartBtn.innerHTML = 'Add to Cart (+ ' + countText + ') <svg class="w-4 h-4 ml-1 inline" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>';
+    }
   }
 
   // ── Quick add one item ─────────────────────────────────────────────────────
   function quickAddOne(variantId, title, price, btnEl) {
     if (!variantId) return;
-    const orig = btnEl.textContent;
-    btnEl.textContent = '...';
-    btnEl.disabled = true;
-
-    const numericVid = parseInt(variantId, 10);
-    if (!isNaN(numericVid)) {
-      fetch('/cart/add.js', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: numericVid, quantity: 1 })
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(res) {
-        if (res.status && res.status >= 400) {
-          throw new Error(res.description || 'Add to cart failed');
-        }
-        btnEl.textContent = '✓ Added!';
-        btnEl.style.background = '#0e7040';
-        btnEl.style.color = '#fff';
-        updateCartBadge();
-        setTimeout(function() {
-          btnEl.textContent = orig;
-          btnEl.style.background = '';
-          btnEl.style.color = '';
-          btnEl.disabled = false;
-        }, 2000);
-      })
-      .catch(function(err) {
-        console.error('Add to cart error', err);
-        btnEl.textContent = orig;
-        btnEl.disabled = false;
-      });
-    } else {
-      // Fallback item — add property to form
-      const form = document.querySelector('form[action*="/cart/add"]');
-      if (form) {
-        let input = document.getElementById('addon-prop-' + variantId);
-        if (!input) {
-          input = document.createElement('input');
-          input.type = 'hidden';
-          input.id = 'addon-prop-' + variantId;
-          input.name = 'properties[Add-on: ' + title + ']';
-          input.value = formatMoney(price || 0);
-          form.appendChild(input);
-        }
+    const card = btnEl ? btnEl.closest('.cs-card') : document.querySelector('.cs-card[data-variant-id="' + variantId + '"]');
+    if (card && !card.classList.contains('selected')) {
+      toggleCard(card);
+    }
+    const form = document.querySelector('form[action*="/cart/add"]');
+    if (form) {
+      if (typeof form.requestSubmit === 'function') {
+        form.requestSubmit();
+      } else {
+        const submitBtn = form.querySelector('[type="submit"], button[name="add"], #add-to-cart-btn');
+        if (submitBtn) submitBtn.click();
+        else form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
       }
-      btnEl.textContent = '✓ Added to Product!';
-      btnEl.style.background = '#0e7040';
-      btnEl.style.color = '#fff';
-      setTimeout(function() {
-        btnEl.textContent = orig;
-        btnEl.style.background = '';
-        btnEl.style.color = '';
-        btnEl.disabled = false;
-      }, 2000);
     }
   }
 
-  // ── Add all selected items ─────────────────────────────────────────────────
-  addBtn.addEventListener('click', function() {
-    const keys = Object.keys(selectedItems);
-    if (!keys.length) return;
+  // ── Add all selected items with main product ───────────────────────────────
+  if (addBtn) {
+    addBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const keys = Object.keys(selectedItems);
+      if (!keys.length) return;
 
-    addBtn.disabled = true;
-    addBtn.textContent = 'Adding...';
+      // Validate delivery time if required on product page
+      if (typeof window.checkDeliveryTimeBeforeSubmit === 'function') {
+        const isValid = window.checkDeliveryTimeBeforeSubmit(e);
+        if (isValid === false) return;
+      }
 
-    const items = [];
-    keys.forEach(function(vid) {
-      const numVid = parseInt(vid, 10);
-      if (!isNaN(numVid)) {
-        items.push({ id: numVid, quantity: 1 });
+      const form = document.querySelector('form[action*="/cart/add"]');
+      if (form) {
+        if (typeof form.requestSubmit === 'function') {
+          form.requestSubmit();
+        } else {
+          const submitBtn = form.querySelector('[type="submit"], button[name="add"], #add-to-cart-btn');
+          if (submitBtn) {
+            submitBtn.click();
+          } else {
+            form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+          }
+        }
       }
     });
-
-    if (items.length > 0) {
-      fetch('/cart/add.js', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: items })
-      })
-      .then(function(r) { return r.json(); })
-      .then(function() {
-        updateCartBadge();
-        successEl.classList.remove('hidden');
-        addBtn.textContent = '✓ Added!';
-        setTimeout(function() {
-          successEl.classList.add('hidden');
-          addBtn.disabled = false;
-          updateFooter();
-        }, 3000);
-
-        // Deselect all
-        document.querySelectorAll('.cs-card.selected').forEach(function(c) {
-          c.classList.remove('selected');
-        });
-        Object.keys(selectedItems).forEach(function(k) { delete selectedItems[k]; });
-        updateFooter();
-      })
-      .catch(function(err) {
-        console.error('Error adding selected cross-sells', err);
-        addBtn.disabled = false;
-        updateFooter();
-      });
-    } else {
-      // Only fallback properties selected
-      updateCartBadge();
-      successEl.classList.remove('hidden');
-      addBtn.textContent = '✓ Added!';
-      setTimeout(function() {
-        successEl.classList.add('hidden');
-        addBtn.disabled = false;
-        updateFooter();
-      }, 3000);
-    }
-  });
+  }
 
   // ── Update header cart badge count ────────────────────────────────────────
   function updateCartBadge() {
@@ -633,7 +719,7 @@
         let realCount = 0;
         if (cart.items) {
            cart.items.forEach(function(item) {
-             if (item.handle !== 'peak-season-delivery-surcharge') {
+             if (item.handle !== 'peak-season-delivery-surcharge' && item.handle !== 'international-delivery-charge') {
                realCount += item.quantity;
              }
            });
@@ -646,6 +732,67 @@
           el.textContent = realCount;
         });
       });
+  }
+
+  // ── Update Tabs Visibility based on available eligible items ───────────────
+  function updateTabsVisibility() {
+    if (!tabsEl) return;
+    const cards = shelf ? shelf.querySelectorAll('.cs-card') : [];
+    const tabs = tabsEl.querySelectorAll('.cs-tab');
+
+    let firstActiveTab = null;
+    let currentTabHasItems = false;
+
+    tabs.forEach(function(tab) {
+      const tabCat = tab.textContent.trim().toLowerCase();
+      let count = 0;
+      cards.forEach(function(card) {
+        if (card.dataset.countryEligible === 'true') {
+          const cardCat = (card.dataset.category || 'Gifts').toLowerCase();
+          const cardTitle = (card.dataset.title || '').toLowerCase();
+          const cardUrl = (card.dataset.productUrl || '').toLowerCase();
+          const isGlassVase = card.dataset.isVase === 'true' || cardUrl.includes('glass-vase') || cardTitle.includes('glass vase');
+          let match = false;
+          if (tabCat === 'all') match = true;
+          else if (tabCat === 'vases') match = isGlassVase;
+          else match = (cardCat === tabCat && !isGlassVase);
+          if (match) count++;
+        }
+      });
+
+      if (count > 0) {
+        tab.style.display = '';
+        if (!firstActiveTab) firstActiveTab = tab;
+        if (tabCat === activeCategory.toLowerCase()) {
+          currentTabHasItems = true;
+        }
+      } else {
+        tab.style.display = 'none';
+      }
+    });
+
+    // If currently selected tab has no items in this country, switch to first available tab
+    if (!currentTabHasItems && firstActiveTab) {
+      tabs.forEach(function(t) { t.classList.remove('active'); });
+      firstActiveTab.classList.add('active');
+      activeCategory = firstActiveTab.textContent.trim();
+      const activeCatLower = activeCategory.toLowerCase();
+      cards.forEach(function(card) {
+        if (card.dataset.countryEligible === 'true') {
+          const cardCat = (card.dataset.category || 'Gifts').toLowerCase();
+          const cardTitle = (card.dataset.title || '').toLowerCase();
+          const cardUrl = (card.dataset.productUrl || '').toLowerCase();
+          const isGlassVase = card.dataset.isVase === 'true' || cardUrl.includes('glass-vase') || cardTitle.includes('glass vase');
+          let isMatch = false;
+          if (activeCatLower === 'all') isMatch = true;
+          else if (activeCatLower === 'vases') isMatch = isGlassVase;
+          else isMatch = (cardCat === activeCatLower && !isGlassVase);
+          card.style.display = isMatch ? '' : 'none';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
   }
 
   // ── Build category tabs ────────────────────────────────────────────────────

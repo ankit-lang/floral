@@ -128,108 +128,101 @@
   </div>
 </div>
 
-<!-- Store Products Catalog Script -->
+<!-- Store Products Catalog Script (Asynchronously loaded from Edge CDN & cached in sessionStorage) -->
 <script>
   (function() {
-    {% comment %} Helper macro to output a product JSON object {% endcomment %}
-    {% assign ai_seen_ids = '' %}
+    window.STORE_CATALOG = [];
+    var isCatalogLoaded = false;
+    var isCatalogLoading = false;
 
-    var rawProducts = [];
+    // Load from sessionStorage if available for instant responses
+    try {
+      var cached = sessionStorage.getItem('floral_ai_catalog');
+      if (cached) {
+        window.STORE_CATALOG = JSON.parse(cached);
+        isCatalogLoaded = true;
+      }
+    } catch(e) {}
 
-    {% comment %} ── PRIORITY COLLECTIONS: cakes & flowers first ───────────── {% endcomment %}
-    {% assign priority_collections = 'cakes,flowers,combos,hampers,chocolates,gifts,eggless-cakes' | split: ',' %}
-    {% for col_handle in priority_collections %}
-      {% if collections[col_handle] %}
-        {% for product in collections[col_handle].products limit: 100 %}
-          {% assign pid = product.id | append: '' %}
-          {% unless ai_seen_ids contains pid %}
-            {% assign ai_seen_ids = ai_seen_ids | append: pid | append: ',' %}
-            {% assign v_id = product.selected_or_first_available_variant.id | default: product.variants.first.id %}
-            {% assign title_lc = product.title | downcase %}
-            {% assign is_uk = false %}
-            {% assign is_usa = false %}
-            {% assign is_uae = false %}
-            {% assign is_canada = false %}
-            {% assign is_aus = false %}
-            {% for t in product.tags %}
-              {% assign t_down = t | downcase | strip %}
-              {% if t_down == 'london' or t_down == 'uk' or t_down == 'united kingdom' %}{% assign is_uk = true %}{% endif %}
-              {% if t_down contains 'usa' or t_down contains 'united states' or t_down == 'us' %}{% assign is_usa = true %}{% endif %}
-              {% if t_down == 'uae' or t_down == 'dubai' %}{% assign is_uae = true %}{% endif %}
-              {% if t_down == 'canada' or t_down == 'ca' %}{% assign is_canada = true %}{% endif %}
-              {% if t_down == 'australia' or t_down == 'au' %}{% assign is_aus = true %}{% endif %}
-            {% endfor %}
-            {% if title_lc contains 'london' %}{% assign is_uk = true %}{% endif %}
-            {% if title_lc contains 'usa' %}{% assign is_usa = true %}{% endif %}
-            rawProducts.push({
-              id: {{ product.id | json }},
-              variantId: {{ v_id | json }},
-              title: {{ product.title | json }},
-              handle: {{ product.handle | json }},
-              url: {{ product.url | json }},
-              price: {{ product.price | json }},
-              image: {{ product.featured_image | image_url: width: 400 | json }},
-              tags: {{ product.tags | json }},
-              type: {{ product.type | json }},
-              description: {{ product.description | strip_html | truncate: 120 | json }},
-              isLondon: {{ is_uk | json }},
-              isUsa: {{ is_usa | json }},
-              isUae: {{ is_uae | json }},
-              isCanada: {{ is_canada | json }},
-              isAustralia: {{ is_aus | json }}
-            });
-          {% endunless %}
-        {% endfor %}
-      {% endif %}
-    {% endfor %}
-
-    {% comment %} ── ALL PRODUCTS: fill remaining slots ─────────────────────── {% endcomment %}
-    {% for product in collections['all'].products limit: 250 %}
-      {% assign pid = product.id | append: '' %}
-      {% unless ai_seen_ids contains pid %}
-        {% assign ai_seen_ids = ai_seen_ids | append: pid | append: ',' %}
-        {% assign v_id = product.selected_or_first_available_variant.id | default: product.variants.first.id %}
-        {% assign title_lc = product.title | downcase %}
-        {% assign is_uk = false %}
-        {% assign is_usa = false %}
-        {% assign is_uae = false %}
-        {% assign is_canada = false %}
-        {% assign is_aus = false %}
-        {% for t in product.tags %}
-          {% assign t_down = t | downcase | strip %}
-          {% if t_down == 'london' or t_down == 'uk' or t_down == 'united kingdom' %}{% assign is_uk = true %}{% endif %}
-          {% if t_down contains 'usa' or t_down contains 'united states' or t_down == 'us' %}{% assign is_usa = true %}{% endif %}
-          {% if t_down == 'uae' or t_down == 'dubai' %}{% assign is_uae = true %}{% endif %}
-          {% if t_down == 'canada' or t_down == 'ca' %}{% assign is_canada = true %}{% endif %}
-          {% if t_down == 'australia' or t_down == 'au' %}{% assign is_aus = true %}{% endif %}
-        {% endfor %}
-        {% if title_lc contains 'london' %}{% assign is_uk = true %}{% endif %}
-        {% if title_lc contains 'usa' %}{% assign is_usa = true %}{% endif %}
-        rawProducts.push({
-          id: {{ product.id | json }},
-          variantId: {{ v_id | json }},
-          title: {{ product.title | json }},
-          handle: {{ product.handle | json }},
-          url: {{ product.url | json }},
-          price: {{ product.price | json }},
-          image: {{ product.featured_image | image_url: width: 400 | json }},
-          tags: {{ product.tags | json }},
-          type: {{ product.type | json }},
-          description: {{ product.description | strip_html | truncate: 120 | json }},
-          isLondon: {{ is_uk | json }},
-          isUsa: {{ is_usa | json }},
-          isUae: {{ is_uae | json }},
-          isCanada: {{ is_canada | json }},
-          isAustralia: {{ is_aus | json }}
+    window.ensureAiCatalogLoaded = function() {
+      if (isCatalogLoaded && window.STORE_CATALOG.length > 0) {
+        return Promise.resolve(window.STORE_CATALOG);
+      }
+      if (isCatalogLoading) {
+        return new Promise(function(resolve) {
+          var check = setInterval(function() {
+            if (isCatalogLoaded) { clearInterval(check); resolve(window.STORE_CATALOG); }
+          }, 80);
         });
-      {% endunless %}
-    {% endfor %}
+      }
 
-    window.STORE_CATALOG = rawProducts;
-    console.log('[Floral AI] Catalog loaded:', rawProducts.length, 'products |',
-      rawProducts.filter(p => p.isUsa).length, 'USA |',
-      rawProducts.filter(p => p.isLondon).length, 'UK |',
-      rawProducts.filter(p => p.isUae).length, 'UAE');
+      isCatalogLoading = true;
+      return fetch('/products.json?limit=250')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          var raw = [];
+          (data.products || []).forEach(function(p) {
+            var v = (p.variants && p.variants[0]) || {};
+            var img = (p.images && p.images[0] && p.images[0].src) || '';
+            var tags = p.tags || [];
+            var titleLc = (p.title || '').toLowerCase();
+            var isUk = false, isUsa = false, isUae = false, isCanada = false, isAus = false;
+            tags.forEach(function(t) {
+              var td = (t || '').toLowerCase().trim();
+              if (td === 'london' || td === 'uk' || td === 'united kingdom') isUk = true;
+              if (td.indexOf('usa') !== -1 || td.indexOf('united states') !== -1 || td === 'us') isUsa = true;
+              if (td === 'uae' || td === 'dubai') isUae = true;
+              if (td === 'canada' || td === 'ca') isCanada = true;
+              if (td === 'australia' || td === 'au') isAus = true;
+            });
+            if (titleLc.indexOf('london') !== -1) isUk = true;
+            if (titleLc.indexOf('usa') !== -1) isUsa = true;
+
+            raw.push({
+              id: p.id,
+              variantId: v.id,
+              title: p.title,
+              handle: p.handle,
+              url: '/products/' + p.handle,
+              price: Math.round(parseFloat(v.price || 0) * 100),
+              image: img,
+              tags: tags,
+              type: p.product_type,
+              description: (p.body_html || '').replace(/<[^>]*>/g, '').slice(0, 120),
+              isLondon: isUk,
+              isUsa: isUsa,
+              isUae: isUae,
+              isCanada: isCanada,
+              isAustralia: isAus
+            });
+          });
+
+          window.STORE_CATALOG = raw;
+          isCatalogLoaded = true;
+          isCatalogLoading = false;
+          try { sessionStorage.setItem('floral_ai_catalog', JSON.stringify(raw)); } catch(e) {}
+          return raw;
+        })
+        .catch(function(err) {
+          isCatalogLoading = false;
+          console.warn('[Floral AI] Catalog load error:', err);
+          return [];
+        });
+    };
+
+    // Prefetch smoothly during idle time or on user interaction
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(function() { setTimeout(window.ensureAiCatalogLoaded, 2500); });
+    } else {
+      setTimeout(window.ensureAiCatalogLoaded, 3500);
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      var trigger = document.getElementById('ai-assistant-toggle-btn');
+      if (trigger) {
+        trigger.addEventListener('mouseenter', window.ensureAiCatalogLoaded, { once: true });
+        trigger.addEventListener('touchstart', window.ensureAiCatalogLoaded, { once: true });
+      }
+    });
   })();
 </script>
 
@@ -387,8 +380,10 @@
       const tagMatch = cleanTags.some(t => t === 'usa' || t === 'us' || t === 'united states' || t.includes('usa') || t.includes('united states'));
       return tagMatch || titleStr.includes('usa') || titleStr.includes('united states');
     } else if (key === 'uk' || key === 'london' || key === 'gb') {
-      const tagMatch = cleanTags.some(t => t === 'london' || t === 'uk' || t === 'gb' || t === 'united kingdom' || t.includes('london') || t.includes('uk'));
-      return tagMatch || titleStr.includes('london') || titleStr.includes('uk');
+      const isCarlton = titleStr.includes('carlton london');
+      const cleanUkTags = cleanTags.filter(t => !t.includes('carlton london'));
+      const tagMatch = cleanUkTags.some(t => t === 'london' || t === 'uk' || t === 'gb' || t === 'united kingdom' || t.includes('london') || t.includes('uk'));
+      return !isCarlton && (tagMatch || (titleStr.includes('london') && !isCarlton) || titleStr.includes('uk'));
     } else if (key === 'uae' || key === 'dubai' || key === 'ae') {
       const tagMatch = cleanTags.some(t => t === 'uae' || t === 'dubai' || t === 'ae' || t.includes('uae') || t.includes('dubai'));
       return tagMatch || titleStr.includes('dubai') || titleStr.includes('uae');
@@ -419,7 +414,10 @@
     const isIdol = typeStr.includes('idol') || titleStr.includes('idol');
 
     if (loc.isIntl) {
-      if (p.isIndiaOnly) return false;
+      const pTags = Array.isArray(p.tags) ? p.tags.join(',').toLowerCase() : String(p.tags || '').toLowerCase();
+      const isCarltonLondon = titleStr.includes('carlton london') || pTags.includes('carlton london');
+      const isDomesticOnly = p.isIndiaOnly || isCarltonLondon || pTags.includes('domestic') || pTags.includes('india only');
+      if (isDomesticOnly) return false;
 
       // Plants, Balloons, Idols are India-only unless explicitly tagged for a country
       if ((isPlant || isBalloon || isIdol) && !isCountryExclusive) return false;
@@ -449,6 +447,7 @@
   function toggleDrawer(open) {
     isOpen = (typeof open === 'boolean') ? open : !isOpen;
     if (isOpen) {
+      if (window.ensureAiCatalogLoaded) window.ensureAiCatalogLoaded();
       updateAiLocationInfo();
       drawer.classList.remove('opacity-0', 'translate-y-6', 'pointer-events-none');
       drawer.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
@@ -514,10 +513,13 @@
     appendUserMessage(userQuery);
     const typingId = showTypingIndicator();
 
-    setTimeout(() => {
-      removeTypingIndicator(typingId);
-      processQueryAndRespond(userQuery);
-    }, 700);
+    const loadPromise = (window.ensureAiCatalogLoaded) ? window.ensureAiCatalogLoaded() : Promise.resolve();
+    loadPromise.then(() => {
+      setTimeout(() => {
+        removeTypingIndicator(typingId);
+        processQueryAndRespond(userQuery);
+      }, 400);
+    });
   }
 
   function appendUserMessage(text) {

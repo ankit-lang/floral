@@ -1,0 +1,218 @@
+{%- comment -%}
+  Main Blog / Subsection Listing Section
+  Displays articles for the current blog or tag with breadcrumbs,
+  a heading, and a responsive card grid.
+{%- endcomment -%}
+
+<section class="bg-gray-50/50 py-4 sm:py-8 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- 1. Breadcrumbs with Home direction -->
+    {% render 'breadcrumb' %}
+
+    <!-- 2. Blog Heading -->
+    <header class="mb-8 sm:mb-10">
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-gray-900 tracking-tight leading-tight">
+        {%- if current_tags -%}
+          {{ current_tags.first | replace: '-', ' ' | capitalize }}
+        {%- else -%}
+          {{ section.settings.heading | default: 'Blog' }}
+        {%- endif -%}
+      </h1>
+      {%- if section.settings.subheading != blank and current_tags == blank -%}
+        <p class="text-sm sm:text-base text-gray-600 leading-relaxed max-w-2xl mt-3">
+          {{ section.settings.subheading }}
+        </p>
+      {%- endif -%}
+    </header>
+
+    <!-- 4. Article Grid with Pagination -->
+    {%- assign posts_limit = section.settings.posts_per_page | default: 9 -%}
+    {%- paginate blog.articles by posts_limit -%}
+
+      {%- if blog.articles.size > 0 -%}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-12">
+          {%- for article in blog.articles -%}
+            {% render 'article-card',
+              article: article,
+              show_date: section.settings.show_date,
+              show_author: section.settings.show_author,
+              show_excerpt: section.settings.show_excerpt
+            %}
+          {%- endfor -%}
+        </div>
+
+        <!-- Pagination Controls -->
+        {%- if paginate.pages > 1 -%}
+          <div class="flex items-center justify-center gap-2 my-10">
+            {%- if paginate.previous -%}
+              <a href="{{ paginate.previous.url }}" class="inline-flex items-center gap-1 px-4 py-2 rounded-xl bg-white border border-gray-200 hover:border-primary text-gray-700 text-xs font-bold hover:text-primary transition-colors shadow-2xs">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                <span>Previous</span>
+              </a>
+            {%- endif -%}
+
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}
+                <a href="{{ part.url }}" class="w-9 h-9 rounded-xl flex items-center justify-center bg-white border border-gray-200 hover:border-primary text-gray-700 text-xs font-bold hover:text-primary transition-colors shadow-2xs">
+                  {{ part.title }}
+                </a>
+              {%- else -%}
+                {%- if part.title == paginate.current_page -%}
+                  <span class="w-9 h-9 rounded-xl flex items-center justify-center bg-primary text-white text-xs font-bold shadow-xs">
+                    {{ part.title }}
+                  </span>
+                {%- else -%}
+                  <span class="w-9 h-9 rounded-xl flex items-center justify-center text-gray-400 text-xs">
+                    {{ part.title }}
+                  </span>
+                {%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+
+            {%- if paginate.next -%}
+              <a href="{{ paginate.next.url }}" class="inline-flex items-center gap-1 px-4 py-2 rounded-xl bg-white border border-gray-200 hover:border-primary text-gray-700 text-xs font-bold hover:text-primary transition-colors shadow-2xs">
+                <span>Next</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+              </a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+      {%- else -%}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-12">
+          {% render 'article-card',
+            show_date: section.settings.show_date,
+            show_author: section.settings.show_author,
+            show_excerpt: section.settings.show_excerpt
+          %}
+        </div>
+      {%- endif -%}
+
+      <!-- Full Article Inline Container (Instant access to read the entire post) -->
+      <div id="diwali-full-article-preview" class="hidden my-10 bg-white rounded-3xl p-6 sm:p-10 md:p-12 shadow-sm border border-emerald-100">
+        <div class="flex items-center justify-between pb-4 mb-6 border-b border-gray-100">
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-100">
+              🌸 Diwali Hampers & Flowers
+            </span>
+            <span class="text-xs text-gray-500 font-medium">Published Guide</span>
+          </div>
+          <button type="button" onclick="document.getElementById('diwali-full-article-preview').classList.add('hidden')" class="px-3 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 text-xs text-gray-600 font-bold transition-colors">
+            ✕ Close
+          </button>
+        </div>
+
+        <!-- Featured Image -->
+        <div class="mb-8 rounded-2xl overflow-hidden shadow-md">
+          <img
+            src="{{ '4nov.png' | asset_url }}"
+            alt="Best Diwali gift hampers and flowers from Floral India"
+            class="w-full h-auto max-h-[500px] object-cover"
+            loading="lazy"
+            width="1280"
+            height="853"
+          >
+        </div>
+
+        <!-- Title -->
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-serif font-bold text-gray-900 tracking-tight leading-tight mb-6">
+          Best Diwali Gift Hampers and Flowers for This Festive Season
+        </h2>
+
+        <div class="article-rich-text text-gray-800 text-base sm:text-lg leading-relaxed space-y-6">
+          {% render 'blog-post-diwali-gift-hampers' %}
+        </div>
+      </div>
+
+    {%- endpaginate -%}
+
+    <!-- 5. Direction to Home Footer Action -->
+    <div class="mt-8 pt-8 border-t border-gray-200/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+      <div class="flex items-center gap-2">
+        <a href="{{ routes.root_url }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-gray-200 text-gray-700 text-xs sm:text-sm font-bold hover:text-primary hover:border-primary shadow-2xs transition-all">
+          <svg class="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
+          <span>&larr; Back to Floral India Home</span>
+        </a>
+      </div>
+
+      <div class="text-xs text-gray-500">
+        Looking for a bespoke bouquet? <a href="/collections/flowers" class="text-primary font-bold hover:underline">Explore Fresh Flowers &rarr;</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Article Rich Text Styling Support & Deep Link Auto-Open -->
+<style>
+  .article-rich-text p { margin-bottom: 1.25rem; }
+  .article-rich-text h2 { font-family: 'Playfair Display', Georgia, serif; font-size: 1.6rem; font-weight: 700; margin-top: 2rem; margin-bottom: 1rem; color: #111827; }
+  .article-rich-text h3 { font-size: 1.25rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem; color: #1f2937; }
+  .article-rich-text ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.25rem; }
+  .article-rich-text ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1.25rem; }
+  .article-rich-text li { margin-bottom: 0.5rem; }
+  .article-rich-text blockquote { border-left: 4px solid #0e7040; padding-left: 1rem; font-style: italic; color: #374151; margin: 1.5rem 0; }
+  .article-rich-text img { border-radius: 1rem; max-width: 100%; height: auto; margin: 1.5rem 0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+  .article-rich-text a { color: #0e7040; text-decoration: underline; font-weight: 600; }
+  .article-rich-text a:hover { color: #0b5c34; }
+</style>
+
+<script>
+  (function() {
+    // If URL has #read or ?article=diwali, auto-expand full post immediately
+    if (window.location.hash === '#read' || window.location.search.indexOf('article=diwali') !== -1 || window.location.search.indexOf('view=full') !== -1) {
+      var p = document.getElementById('diwali-full-article-preview');
+      if (p) {
+        p.classList.remove('hidden');
+        setTimeout(function() { p.scrollIntoView({ behavior: 'smooth' }); }, 150);
+      }
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Main Blog & Subsections",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Blog"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "range",
+      "id": "posts_per_page",
+      "label": "Posts Per Page",
+      "min": 6,
+      "max": 24,
+      "step": 3,
+      "default": 9
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": "Show Publication Date",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "Show Author",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "label": "Show Excerpt",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

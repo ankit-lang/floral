@@ -1,0 +1,77 @@
+{% layout none %}<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="{{ 'sitemap.xsl' | asset_url }}"?>
+{%- comment -%}
+  Dynamic XML sitemap served at /pages/sitemap.
+  Requires a page with handle "sitemap" assigned to the "custom-sitemap" template.
+  Collections, products and blog articles are pulled from the store automatically.
+{%- endcomment -%}
+{%- assign base_url = request.origin -%}
+{%- assign core_page_handles = 'contact,same-day,corporate-events,elite-concierge,e-gifts,about,faq,festival,subscription,track-order,shipping-delivery,return-refund,refund-policy,cancellation,substitution-policy,special-provisions,privacy,terms,terms-conditions,disclaimer' | split: ',' -%}
+{%- assign blog_handles = 'news' | split: ',' -%}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Homepage -->
+  <url>
+    <loc>{{ base_url }}/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Pages -->
+  {%- for handle in core_page_handles -%}
+    {%- assign sitemap_page = pages[handle] -%}
+    {%- if sitemap_page != blank and sitemap_page.handle != blank %}
+  <url>
+    <loc>{{ base_url }}{{ sitemap_page.url }}</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+    {%- endif -%}
+  {%- endfor %}
+
+  <!-- Collections -->
+  {%- paginate collections by 250 -%}
+    {%- for collection in collections -%}
+      {%- if collection.handle == 'frontpage' or collection.metafields.seo.hidden == 1 -%}{%- continue -%}{%- endif %}
+  <url>
+    <loc>{{ base_url }}{{ collection.url }}</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+    {%- endfor -%}
+  {%- endpaginate %}
+
+  <!-- Products -->
+  {%- paginate collections.all.products by 250 -%}
+    {%- for product in collections.all.products -%}
+      {%- if product.metafields.seo.hidden == 1 -%}{%- continue -%}{%- endif %}
+  <url>
+    <loc>{{ base_url }}{{ product.url }}</loc>
+    {%- if product.published_at %}
+    <lastmod>{{ product.published_at | date: '%Y-%m-%d' }}</lastmod>
+    {%- endif %}
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+    {%- endfor -%}
+  {%- endpaginate %}
+
+  <!-- Blogs & Articles -->
+  {%- for handle in blog_handles -%}
+    {%- assign sitemap_blog = blogs[handle] -%}
+    {%- if sitemap_blog != blank and sitemap_blog.handle != blank %}
+  <url>
+    <loc>{{ base_url }}{{ sitemap_blog.url }}</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+      {%- for article in sitemap_blog.articles %}
+  <url>
+    <loc>{{ base_url }}{{ article.url }}</loc>
+    <lastmod>{{ article.updated_at | default: article.published_at | date: '%Y-%m-%d' }}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+      {%- endfor -%}
+    {%- endif -%}
+  {%- endfor %}
+</urlset>

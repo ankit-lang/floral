@@ -6,9 +6,9 @@
     <a href="{{ section.settings.link_1 | default: '#' }}" class="md:col-span-2 relative rounded-2xl overflow-hidden group block h-[280px] md:h-full">
       <div class="absolute inset-0 bg-gradient-to-br from-blush via-white to-champagne"></div>
       {% if section.settings.image_1 != blank %}
-        <img src="{{ section.settings.image_1 | img_url: 'master' }}" alt="Hero Banner" class="absolute inset-0 w-full h-full object-cover">
+        <img src="{{ section.settings.image_1 | image_url: width: 1400 }}" alt="Hero Banner" class="absolute inset-0 w-full h-full object-cover" fetchpriority="high" loading="eager">
       {% else %}
-        <img src="{{ 'hero-banner.png' | asset_url }}" alt="Premium Gifts" class="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-60">
+        <img src="{{ 'hero-banner.png' | asset_url }}" alt="Premium Gifts" class="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-60" fetchpriority="high" loading="eager">
       {% endif %}
       <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
       <div class="absolute bottom-0 left-0 p-4 md:p-10">
@@ -27,9 +27,9 @@
       <a href="{{ section.settings.link_2 | default: '#' }}" class="relative rounded-2xl overflow-hidden group block h-full">
         <div class="absolute inset-0 bg-gradient-to-br from-sage to-emerald-50"></div>
         {% if section.settings.image_2 != blank %}
-          <img src="{{ section.settings.image_2 | img_url: '600x400' }}" alt="Banner 2" class="absolute inset-0 w-full h-full object-cover">
+          <img src="{{ section.settings.image_2 | image_url: width: 600 }}" alt="Banner 2" class="absolute inset-0 w-full h-full object-cover" loading="lazy">
         {% else %}
-          <img src="{{ 'hero-banner.png' | asset_url }}" alt="Cakes" class="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-50">
+          <img src="{{ 'hero-banner.png' | asset_url }}" alt="Cakes" class="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-50" loading="lazy">
         {% endif %}
         <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
         <div class="absolute bottom-0 left-0 p-5">
@@ -41,9 +41,9 @@
       <a href="{{ section.settings.link_3 | default: '#' }}" class="relative rounded-2xl overflow-hidden group block h-full">
         <div class="absolute inset-0 bg-gradient-to-br from-champagne to-amber-50"></div>
         {% if section.settings.image_3 != blank %}
-          <img src="{{ section.settings.image_3 | img_url: '600x400' }}" alt="Banner 3" class="absolute inset-0 w-full h-full object-cover">
+          <img src="{{ section.settings.image_3 | image_url: width: 600 }}" alt="Banner 3" class="absolute inset-0 w-full h-full object-cover" loading="lazy">
         {% else %}
-          <img src="{{ 'hero-banner.png' | asset_url }}" alt="Birthday" class="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-50">
+          <img src="{{ 'hero-banner.png' | asset_url }}" alt="Birthday" class="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-50" loading="lazy">
         {% endif %}
         <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
         <div class="absolute bottom-0 left-0 p-5">

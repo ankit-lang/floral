@@ -4,8 +4,8 @@
     "theme_name": "Floral India Custom",
     "theme_author": "Antigravity IDE",
     "theme_version": "1.0.0",
-    "theme_documentation_url": "https:\/\/shopify.com\/",
-    "theme_support_url": "https:\/\/support.shopify.com\/"
+    "theme_documentation_url": "https://shopify.com/",
+    "theme_support_url": "https://support.shopify.com/"
   },
   {
     "name": "Peak Season Surcharge",
@@ -223,6 +223,18 @@
         "id": "peak_date_30",
         "label": "Peak Date 30",
         "info": "Format: YYYY-MM-DD"
+      }
+    ]
+  },
+  {
+    "name": "International Delivery",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "intl_fee_via_shipping_rates",
+        "label": "Charge international delivery through Shopify shipping rates",
+        "default": false,
+        "info": "Turn on only after the weight-based International Delivery rates are set up in Settings → Shipping and delivery. When on, the theme stops adding the 'International Delivery Charge' product to the cart."
       }
     ]
   }

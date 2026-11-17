@@ -97,6 +97,15 @@
 
   assign is_floral = true
 
+  assign hide_size = false
+  assign hide_keywords = 'purse,bag,wallet,jewel,bangle,bracelet,earring,necklace,ring,pendant,chain,perfume,fragrance' | split: ','
+  for keyword in hide_keywords
+    if product_type_lower contains keyword or product_title_lower contains keyword or product_tags_lower contains keyword
+      assign hide_size = true
+      break
+    endif
+  endfor
+
   assign is_idol = false
   if product_title_lower contains 'idol' or product_tags_lower contains 'idol' or product_title_lower contains 'statue' or product_tags_lower contains 'diwali idol'
     assign is_idol = true
@@ -130,17 +139,17 @@
     assign box_active_class = 'border-2 border-primary bg-transparent'
     assign box_inactive_class = 'border-2 border-transparent bg-transparent'
   elsif is_chocolate
-    assign img_standard = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/hampers.png?v=1785394470'
-    assign img_premium = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/hamperm.png?v=1785390046'
-    assign img_grand = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/hamper3.png?v=1785390046'
+    assign img_standard = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/flowers.png?v=1785755042'
+    assign img_premium = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/flowerm.png?v=1785755042'
+    assign img_grand = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/flowerl.png?v=1785755042'
     assign box_aspect = 'h-[75px] md:h-[85px]'
     assign img_fit = 'object-contain'
     assign box_active_class = 'border-2 border-primary bg-transparent'
     assign box_inactive_class = 'border-2 border-transparent bg-transparent'
   elsif is_hamper
-    assign img_standard = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/hampers.png?v=1785394470'
-    assign img_premium = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/hamperm.png?v=1785390046'
-    assign img_grand = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/hamper3.png?v=1785390046'
+    assign img_standard = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/flowers.png?v=1785755042'
+    assign img_premium = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/flowerm.png?v=1785755042'
+    assign img_grand = 'https://cdn.shopify.com/s/files/1/0748/1766/7150/files/flowerl.png?v=1785755042'
     assign box_aspect = 'h-[75px] md:h-[85px]'
     assign img_fit = 'object-contain'
     assign box_active_class = 'border-2 border-primary bg-transparent'
@@ -180,7 +189,7 @@
   endif
 %}
 
-{% if is_floral %}
+{% if is_floral and hide_size == false %}
   <!-- ========== FLORAL / HAMPER SIZE TABS ========== -->
   <div class="variant-tabs-container mb-6">
     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Choose Size</label>

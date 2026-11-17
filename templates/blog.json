@@ -1,0 +1,18 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-blog",
+      "settings": {
+        "heading": "Floral India Journal",
+        "subheading": "Festive gifting guides, luxury hampers, and flower inspiration curated by Floral India.",
+        "posts_per_page": 9,
+        "show_date": true,
+        "show_author": true,
+        "show_excerpt": true
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

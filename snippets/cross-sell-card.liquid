@@ -2,40 +2,110 @@
   {% assign p_title_lower = p.title | downcase %}
   {% assign p_type_lower  = p.type | downcase %}
   {% assign p_tags_lower  = p.tags | join: ',' | downcase %}
+  {% assign p_handle_lower = p.handle | downcase %}
 
-  {% assign p_cat = 'Gifts' %}
-  {% if p_title_lower contains 'cake' or p_type_lower contains 'cake' or p_tags_lower contains 'cake' %}
-    {% assign p_cat = 'Cakes' %}
-  {% elsif p_title_lower contains 'gourmet' or p_tags_lower contains 'gourmet' or p_type_lower contains 'gourmet' or p_title_lower contains 'dry fruit' or p_tags_lower contains 'dry fruit' or p_title_lower contains 'hamper' or p_tags_lower contains 'hamper' %}
-    {% assign p_cat = 'Gourmet' %}
-  {% elsif p_title_lower contains 'chocolate' or p_title_lower contains 'choco' or p_title_lower contains 'truffle' or p_type_lower contains 'chocolate' or p_tags_lower contains 'chocolate' %}
-    {% assign p_cat = 'Chocolates' %}
-  {% elsif p_title_lower contains 'plant' or p_type_lower contains 'plant' or p_tags_lower contains 'plant' %}
-    {% assign p_cat = 'Plants' %}
-  {% elsif p_title_lower contains 'flower' or p_title_lower contains 'bouquet' or p_type_lower contains 'flower' %}
-    {% assign p_cat = 'Flowers' %}
-  {% elsif p_tags_lower contains 'fragrance' or p_type_lower contains 'fragrance' %}
-    {% assign p_cat = 'Fragrance' %}
+  {% comment %} Karwa Chauth items cannot be arranged for same-day delivery with flowers {% endcomment %}
+  {% assign is_karwa_chauth = false %}
+  {% if p_title_lower contains 'karwa' or p_title_lower contains 'karva' or p_title_lower contains 'sargi' or p_title_lower contains 'chauth' or p_title_lower contains 'pooja thali' or p_title_lower contains 'chalni' or p_title_lower contains 'channi' %}
+    {% assign is_karwa_chauth = true %}
+  {% elsif p_tags_lower contains 'karwa' or p_tags_lower contains 'karva' or p_tags_lower contains 'sargi' or p_tags_lower contains 'chauth' %}
+    {% assign is_karwa_chauth = true %}
+  {% elsif p_type_lower contains 'karwa' or p_type_lower contains 'karva' or p_type_lower contains 'sargi' %}
+    {% assign is_karwa_chauth = true %}
+  {% elsif p_handle_lower contains 'karwa' or p_handle_lower contains 'karva' or p_handle_lower contains 'sargi' %}
+    {% assign is_karwa_chauth = true %}
   {% endif %}
-
-  {% for tag in p.tags %}
-    {% if tag contains 'cross-sell:' %}
-      {% assign p_cat = tag | remove: 'cross-sell:' %}
+  {% for col in p.collections %}
+    {% assign col_title_lower = col.title | downcase %}
+    {% assign col_handle_lower = col.handle | downcase %}
+    {% if col_title_lower contains 'karwa' or col_title_lower contains 'karva' or col_handle_lower contains 'karwa' or col_handle_lower contains 'karva' %}
+      {% assign is_karwa_chauth = true %}
+      {% break %}
     {% endif %}
   {% endfor %}
 
-  {% assign variant = p.selected_or_first_available_variant %}
-  {% if variant and p.featured_media %}
-    <div class="cs-card" data-category="{{ p_cat }}" data-tags="{{ p.tags | join: ',' | escape }}" data-product-url="{{ p.url }}" data-title="{{ p.title | escape }}" data-img="{{ p.featured_media | img_url: '400x400', crop: 'center' }}" data-variant-id="{{ variant.id }}" data-price="{{ variant.price }}">
-      <div class="cs-check"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></div>
-      <div class="w-full h-28 bg-gray-50 overflow-hidden relative">
-        <img src="{{ p.featured_media | img_url: '400x400', crop: 'center' }}" alt="{{ p.title | escape }}" class="w-full h-full object-cover" loading="lazy">
+  {% comment %} Jewellery, purses, bangles, necklaces cannot be arranged for same-day delivery and must never be in Gourmet {% endcomment %}
+  {% assign is_jewellery_or_purse = false %}
+  {% assign exclude_keywords = 'jewel,necklace,neckpiece,bangle,bracelet,earring,pendant,ring,chain,anklet,payal,mangalsutra,purse,clutch,handbag,tote,potli,batwa,wallet,shringar' | split: ',' %}
+  {% for kw in exclude_keywords %}
+    {% if p_title_lower contains kw or p_type_lower contains kw or p_tags_lower contains kw or p_handle_lower contains kw %}
+      {% assign is_jewellery_or_purse = true %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+
+  {% comment %} Exclude Karwa Chauth items and jewellery/purses/bangles from the 'Make It Extra Special' add-on shelf entirely {% endcomment %}
+  {% unless is_karwa_chauth or is_jewellery_or_purse %}
+    {% assign is_vase = false %}
+    {% if p_handle_lower == 'glass-vase' or p_handle_lower contains 'glass-vase' or p_title_lower == 'glass vase' or is_london_exclusive_addon %}
+      {% assign is_vase = true %}
+    {% endif %}
+
+    {% assign is_uk_prod = false %}
+    {% assign is_usa_prod = false %}
+    {% for tag in p.tags %}
+      {% assign tag_clean = tag | downcase | strip %}
+      {% if tag_clean == 'london' or tag_clean == 'uk' or tag_clean == 'united kingdom' %}
+        {% assign is_uk_prod = true %}
+      {% elsif tag_clean == 'usa' or tag_clean == 'us' or tag_clean == 'united states' %}
+        {% assign is_usa_prod = true %}
+      {% endif %}
+    {% endfor %}
+    {% if is_london_exclusive_addon or p_handle_lower == 'glass-vase' or p_handle_lower contains 'glass-vase' or p_title_lower == 'glass vase' %}
+      {% assign is_uk_prod = true %}
+    {% endif %}
+
+    {% assign is_india_prod = false %}
+    {% unless is_uk_prod or is_usa_prod %}
+      {% assign is_india_prod = true %}
+    {% endunless %}
+
+    {% assign is_london_only = is_uk_prod %}
+    {% assign is_domestic_only = is_india_prod %}
+
+    {% assign p_cat = 'Gifts' %}
+    {% if is_vase %}
+      {% assign p_cat = 'Vases' %}
+    {% elsif p_title_lower contains 'cake' or p_type_lower contains 'cake' or p_tags_lower contains 'cake' %}
+      {% assign p_cat = 'Cakes' %}
+    {% elsif p_title_lower contains 'perfume' or p_title_lower contains 'fragrance' or p_title_lower contains 'edp' or p_tags_lower contains 'perfume' or p_tags_lower contains 'fragrance' or p_type_lower contains 'fragrance' or p_type_lower contains 'perfume' or p_title_lower contains 'carlton london' %}
+      {% assign p_cat = 'Fragrance' %}
+    {% elsif p_title_lower contains 'chocolate' or p_title_lower contains 'choco' or p_title_lower contains 'truffle' or p_type_lower contains 'chocolate' or p_tags_lower contains 'chocolate' %}
+      {% assign p_cat = 'Chocolates' %}
+    {% elsif p_title_lower contains 'plant' or p_type_lower contains 'plant' or p_tags_lower contains 'plant' %}
+      {% assign p_cat = 'Plants' %}
+    {% elsif p_title_lower contains 'flower' or p_title_lower contains 'bouquet' or p_type_lower contains 'flower' %}
+      {% assign p_cat = 'Flowers' %}
+    {% elsif p_title_lower contains 'gourmet' or p_tags_lower contains 'gourmet' or p_type_lower contains 'gourmet' or p_title_lower contains 'dry fruit' or p_tags_lower contains 'dry fruit' or p_title_lower contains 'dryfruit' or p_tags_lower contains 'dryfruit' or p_title_lower contains 'cookies' or p_title_lower contains 'nuts' or p_title_lower contains 'mithai' or p_title_lower contains 'sweets' %}
+      {% assign p_cat = 'Gourmet' %}
+    {% endif %}
+
+    {% for tag in p.tags %}
+      {% if tag contains 'cross-sell:' %}
+        {% assign tag_cat = tag | remove: 'cross-sell:' %}
+        {% if tag_cat == 'Vases' and is_vase == false %}
+          {% assign p_cat = 'Flowers' %}
+        {% elsif tag_cat == 'Gourmet' and is_jewellery_or_purse %}
+          {% assign p_cat = 'Gifts' %}
+        {% else %}
+          {% assign p_cat = tag_cat %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% assign variant = p.selected_or_first_available_variant %}
+    {% if variant and p.featured_media %}
+      <div class="cs-card" data-category="{{ p_cat }}" data-is-uk="{{ is_uk_prod }}" data-is-usa="{{ is_usa_prod }}" data-is-india="{{ is_india_prod }}" data-domestic-only="{{ is_domestic_only }}" data-is-vase="{{ is_vase }}" data-london-only="{{ is_london_only }}" data-tags="{{ p.tags | join: ',' | escape }}" data-product-url="{{ p.url }}" data-title="{{ p.title | escape }}" data-img="{{ p.featured_media | img_url: '400x400', crop: 'center' }}" data-variant-id="{{ variant.id }}" data-price="{{ variant.price }}">
+        <div class="cs-check"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></div>
+        <div class="w-full h-28 bg-gray-50 overflow-hidden relative">
+          <img src="{{ p.featured_media | img_url: '400x400', crop: 'center' }}" alt="{{ p.title | escape }}" class="w-full h-full object-cover" loading="lazy">
+        </div>
+        <div class="p-2.5">
+          <p class="text-[11px] font-bold text-gray-800 line-clamp-2 leading-tight mb-1">{{ p.title }}</p>
+          <p class="text-[11px] font-semibold text-primary cs-price" data-base-price="{{ variant.price }}">{{ variant.price | money }}</p>
+          <button class="cs-add-btn" type="button">+ Add</button>
+        </div>
       </div>
-      <div class="p-2.5">
-        <p class="text-[11px] font-bold text-gray-800 line-clamp-2 leading-tight mb-1">{{ p.title }}</p>
-        <p class="text-[11px] font-semibold text-primary cs-price" data-base-price="{{ variant.price }}">{{ variant.price | money }}</p>
-        <button class="cs-add-btn" type="button">+ Add</button>
-      </div>
-    </div>
-  {% endif %}
+    {% endif %}
+  {% endunless %}
 {% endunless %}

@@ -1,0 +1,403 @@
+{%- comment -%}
+  Main Article Section
+  Displays the full blog post with breadcrumbs, reading progress bar,
+  publication date, author, reading time, responsive typography, social sharing,
+  author card, prev/next navigation, comments, and BlogPosting schema markup.
+{%- endcomment -%}
+
+<!-- Reading Progress Bar -->
+<div id="article-progress-bar" class="fixed top-0 left-0 h-1 bg-gradient-to-r from-primary via-emerald-400 to-amber-400 z-50 transition-all duration-100" style="width: 0%;"></div>
+
+{%- liquid
+  assign is_diwali_post = false
+  if article.handle == 'best-diwali-gift-hampers-and-flowers-for-this-festive-season' or article.handle contains 'diwali' or article.title contains 'Diwali' or article == blank
+    assign is_diwali_post = true
+  endif
+  assign article_blog_title = blog.title
+  if article_blog_title == 'News' or article_blog_title == blank
+    assign article_blog_title = 'Blog'
+  endif
+  assign article_blog_url = blog.url | default: '/blogs/news'
+-%}
+
+<article class="bg-gray-50/40 py-4 sm:py-8 min-h-screen">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6">
+
+    <!-- 1. Breadcrumbs with Home direction -->
+    {% render 'breadcrumb' %}
+
+    <div class="bg-white rounded-3xl p-6 sm:p-10 md:p-12 shadow-sm border border-gray-100 mt-2">
+      
+      <!-- 2. Header Meta Row & Category -->
+      <header class="mb-8">
+        <div class="flex items-center flex-wrap gap-2.5 mb-4">
+          {%- if article.tags.size > 0 -%}
+            {%- for tag in article.tags limit: 2 -%}
+              <a href="{{ article_blog_url }}/tagged/{{ tag | handleize }}" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-100 hover:bg-emerald-100 transition-colors">
+                🌸 {{ tag }}
+              </a>
+            {%- endfor -%}
+          {%- elsif is_diwali_post -%}
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-100">
+              🌸 Diwali Hampers
+            </span>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-100">
+              🌸 Festive Gifts
+            </span>
+          {%- endif -%}
+
+          {%- if section.settings.show_reading_time -%}
+            {%- if is_diwali_post -%}
+              {%- capture post_body -%}{% render 'blog-post-diwali-gift-hampers' %}{%- endcapture -%}
+              {%- assign words = post_body | strip_html | split: ' ' | size -%}
+            {%- else -%}
+              {%- assign words = article.content | strip_html | split: ' ' | size -%}
+            {%- endif -%}
+            {%- assign read_minutes = words | divided_by: 200 | at_least: 1 -%}
+            <span class="inline-flex items-center gap-1 text-xs text-gray-500 font-medium bg-gray-100 px-2.5 py-1 rounded-full">
+              <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span>{{ read_minutes }} min read</span>
+            </span>
+          {%- endif -%}
+        </div>
+
+        <!-- Article Title -->
+        <h1 class="text-2xl sm:text-4xl md:text-5xl font-serif font-bold text-gray-900 tracking-tight leading-tight sm:leading-tight mb-6">
+          {%- if is_diwali_post -%}
+            {{ article.title | default: 'Best Diwali Gift Hampers and Flowers for This Festive Season' }}
+          {%- else -%}
+            {{ article.title }}
+          {%- endif -%}
+        </h1>
+
+        <!-- Date, Author, Comments Meta Bar -->
+        <div class="flex items-center flex-wrap justify-between gap-4 py-4 border-y border-gray-100 text-xs sm:text-sm text-gray-500">
+          <div class="flex items-center flex-wrap gap-3 sm:gap-5">
+            <!-- Date of Addition -->
+            {%- if section.settings.show_date -%}
+              <div class="flex items-center gap-1.5 font-medium text-emerald-800 bg-emerald-50/80 px-2.5 py-1 rounded-lg border border-emerald-100/70" title="Date of addition">
+                <svg class="w-4 h-4 text-primary shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <span>Published on {{ article.published_at | default: 'now' | date: "%B %d, %Y" }}</span>
+              </div>
+            {%- endif -%}
+
+            <!-- Author -->
+            {%- if section.settings.show_author -%}
+              <div class="flex items-center gap-1.5 font-medium text-gray-700">
+                <div class="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-[10px]">
+                  {{ article.author | default: shop.name | slice: 0, 1 | upcase }}
+                </div>
+                <span>By {{ article.author | default: shop.name }}</span>
+              </div>
+            {%- endif -%}
+          </div>
+
+          <!-- Share Button Trigger -->
+          {%- if section.settings.show_share_buttons -%}
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-gray-400 uppercase tracking-wider hidden sm:inline">Share:</span>
+              <button type="button" onclick="navigator.clipboard.writeText(window.location.href); alert('Article link copied to clipboard!');" class="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-primary transition-colors cursor-pointer" title="Copy Link">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+              </button>
+              <a href="https://api.whatsapp.com/send?text={{ article.title | escape }}%20{{ canonical_url | url_encode }}" target="_blank" rel="noopener" class="p-1.5 rounded-lg bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] transition-colors" title="Share on WhatsApp">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+              </a>
+            </div>
+          {%- endif -%}
+        </div>
+      </header>
+
+      <!-- 3. Featured Image -->
+      {%- if section.settings.show_featured_image and article.image != blank or section.settings.show_featured_image and is_diwali_post -%}
+        <div class="mb-10 rounded-2xl overflow-hidden shadow-md bg-gradient-to-br from-emerald-50 via-pink-50 to-amber-50">
+          {%- if article.image != blank -%}
+            <img
+              src="{{ article.image | image_url: width: 1400 }}"
+              srcset="{{ article.image | image_url: width: 600 }} 600w, {{ article.image | image_url: width: 1000 }} 1000w, {{ article.image | image_url: width: 1400 }} 1400w"
+              sizes="(min-width: 1024px) 800px, 100vw"
+              alt="{{ article.image.alt | default: article.title | escape }}"
+              class="w-full h-auto max-h-[520px] object-cover"
+              loading="eager"
+              width="{{ article.image.width }}"
+              height="{{ article.image.height }}"
+            >
+            {%- if article.image.alt != blank -%}
+              <figcaption class="p-2.5 text-center text-xs text-gray-500 italic bg-gray-50 border-t border-gray-100">
+                {{ article.image.alt }}
+              </figcaption>
+            {%- endif -%}
+          {%- elsif is_diwali_post -%}
+            <img
+              src="{{ '4nov.png' | asset_url }}"
+              alt="Best Diwali gift hampers and flowers from Floral India"
+              class="w-full h-auto max-h-[520px] object-cover"
+              loading="eager"
+              width="1280"
+              height="853"
+            >
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      <!-- 4. Article Content Body -->
+      <div class="article-rich-text text-gray-800 text-base sm:text-lg leading-relaxed space-y-6">
+        {%- if is_diwali_post -%}
+          {% render 'blog-post-diwali-gift-hampers' %}
+        {%- else -%}
+          {{ article.content }}
+        {%- endif -%}
+      </div>
+
+      <!-- 5. Tags & Social Sharing Footer -->
+      <div class="mt-12 pt-8 border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+        <!-- Tags list -->
+        {%- if article.tags.size > 0 -%}
+          <div class="flex items-center flex-wrap gap-2">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mr-1">Tags:</span>
+            {%- for tag in article.tags -%}
+              <a href="{{ article_blog_url }}/tagged/{{ tag | handleize }}" class="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 hover:bg-primary hover:text-white text-gray-700 transition-colors">
+                #{{ tag }}
+              </a>
+            {%- endfor -%}
+          </div>
+        {%- elsif is_diwali_post -%}
+          <div class="flex items-center flex-wrap gap-2">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mr-1">Tags:</span>
+            <span class="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">#DiwaliHampers</span>
+            <span class="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">#DiwaliGifts</span>
+            <span class="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">#DiwaliFlowers</span>
+          </div>
+        {%- else -%}
+          <div></div>
+        {%- endif -%}
+
+        <!-- Social Share Icons -->
+        {%- if section.settings.show_share_buttons -%}
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mr-1">Share:</span>
+            <!-- WhatsApp -->
+            <a href="https://api.whatsapp.com/send?text={{ article.title | default: 'Best Diwali Gift Hampers and Flowers for This Festive Season' | escape }}%20{{ canonical_url | url_encode }}" target="_blank" rel="noopener" class="w-8 h-8 rounded-full bg-[#25D366] text-white flex items-center justify-center hover:opacity-90 transition-opacity" title="Share on WhatsApp">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+            </a>
+            <!-- Facebook -->
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ canonical_url | url_encode }}" target="_blank" rel="noopener" class="w-8 h-8 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:opacity-90 transition-opacity" title="Share on Facebook">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
+            </a>
+            <!-- X (Twitter) -->
+            <a href="https://twitter.com/intent/tweet?text={{ article.title | default: 'Best Diwali Gift Hampers and Flowers for This Festive Season' | escape }}&url={{ canonical_url | url_encode }}" target="_blank" rel="noopener" class="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center hover:opacity-80 transition-opacity" title="Share on X">
+              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <!-- Copy link -->
+            <button type="button" onclick="navigator.clipboard.writeText(window.location.href); alert('Article URL copied to clipboard!');" class="w-8 h-8 rounded-full bg-gray-200 text-gray-700 flex items-center justify-center hover:bg-gray-300 transition-colors" title="Copy Article Link">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+            </button>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <!-- 7. Prev / Next Article Navigation & Direction to Home -->
+      <div class="mt-10 pt-8 border-t border-gray-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {%- if blog.previous_article -%}
+          <a href="{{ blog.previous_article.url }}" class="group p-4 rounded-xl border border-gray-200 hover:border-primary transition-all text-left flex items-start gap-3">
+            <span class="text-primary text-lg group-hover:-translate-x-1 transition-transform">&larr;</span>
+            <div class="min-w-0">
+              <span class="text-[11px] uppercase font-bold text-gray-400 block">Previous Story</span>
+              <span class="text-xs sm:text-sm font-bold text-gray-800 group-hover:text-primary transition-colors truncate block">{{ blog.previous_article.title }}</span>
+            </div>
+          </a>
+        {%- else -%}
+          <a href="{{ article_blog_url }}" class="p-4 rounded-xl border border-dashed border-gray-200 text-gray-500 hover:text-primary text-xs font-bold flex items-center gap-2">
+            <span>&larr; View All Articles in {{ article_blog_title }}</span>
+          </a>
+        {%- endif -%}
+
+        {%- if blog.next_article -%}
+          <a href="{{ blog.next_article.url }}" class="group p-4 rounded-xl border border-gray-200 hover:border-primary transition-all text-right flex items-start justify-end gap-3 sm:col-start-2">
+            <div class="min-w-0">
+              <span class="text-[11px] uppercase font-bold text-gray-400 block">Next Story</span>
+              <span class="text-xs sm:text-sm font-bold text-gray-800 group-hover:text-primary transition-colors truncate block">{{ blog.next_article.title }}</span>
+            </div>
+            <span class="text-primary text-lg group-hover:translate-x-1 transition-transform">&rarr;</span>
+          </a>
+        {%- else -%}
+          <a href="{{ routes.root_url }}" class="p-4 rounded-xl border border-dashed border-gray-200 text-gray-500 hover:text-primary text-xs font-bold flex items-center justify-end gap-2 sm:col-start-2">
+            <span>Return to Home &rarr;</span>
+          </a>
+        {%- endif -%}
+      </div>
+
+      <!-- 8. Return to Home Direction Bar -->
+      <div class="mt-8 pt-6 border-t border-gray-100 flex items-center justify-between flex-wrap gap-4">
+        <a href="{{ routes.root_url }}" class="inline-flex items-center gap-2 text-xs font-bold text-gray-600 hover:text-primary transition-colors">
+          <svg class="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
+          <span>Floral India Home</span>
+        </a>
+
+        <a href="{{ article_blog_url }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary-600 transition-colors shadow-xs">
+          <span>Explore More in {{ article_blog_title }}</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- 9. Shopify Comments System (if blog comments enabled) -->
+    {%- if blog.comments_enabled? -%}
+      <div id="comments" class="bg-white rounded-3xl p-6 sm:p-10 shadow-sm border border-gray-100 mt-8">
+        <h3 class="text-xl sm:text-2xl font-serif font-bold text-gray-900 mb-6">
+          Comments ({{ article.comments_count }})
+        </h3>
+
+        {%- if article.comments_count > 0 -%}
+          <div class="space-y-4 mb-8">
+            {%- paginate article.comments by 10 -%}
+              {%- for comment in article.comments -%}
+                <div class="p-4 rounded-xl bg-gray-50 border border-gray-100">
+                  <div class="flex items-center justify-between text-xs text-gray-500 mb-2">
+                    <span class="font-bold text-gray-800">{{ comment.author }}</span>
+                    <span>{{ comment.created_at | date: "%B %d, %Y" }}</span>
+                  </div>
+                  <div class="text-sm text-gray-700 leading-relaxed">{{ comment.content }}</div>
+                </div>
+              {%- endfor -%}
+            {%- endpaginate -%}
+          </div>
+        {%- endif -%}
+
+        <!-- Comment Form -->
+        {% form 'new_comment', article %}
+          <h4 class="text-base font-bold text-gray-800 mb-4">Leave a Comment</h4>
+          {% if form.posted_successfully? %}
+            <div class="p-3 mb-4 rounded-lg bg-emerald-50 text-emerald-800 text-xs font-semibold">
+              Thank you! Your comment has been submitted successfully.
+            </div>
+          {% endif %}
+          {% if form.errors %}
+            <div class="p-3 mb-4 rounded-lg bg-red-50 text-red-700 text-xs font-semibold">
+              Please check your input: {{ form.errors | default_errors }}
+            </div>
+          {% endif %}
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <input type="text" name="comment[author]" placeholder="Your Name *" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary">
+            <input type="email" name="comment[email]" placeholder="Your Email *" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary">
+          </div>
+          <textarea name="comment[body]" rows="4" placeholder="Your Comment *" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary mb-4"></textarea>
+          <button type="submit" class="px-6 py-2.5 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary-600 transition-colors">
+            Post Comment
+          </button>
+        {% endform %}
+      </div>
+    {%- endif -%}
+
+  </div>
+</article>
+
+<!-- Reading progress scroll listener -->
+<script>
+  (function() {
+    function updateProgress() {
+      const bar = document.getElementById('article-progress-bar');
+      if (!bar) return;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      if (docHeight <= 0) return;
+      const scrolled = (window.scrollY / docHeight) * 100;
+      bar.style.width = Math.min(100, Math.max(0, scrolled)) + '%';
+    }
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+  })();
+</script>
+
+<!-- Article Rich Text Styling Support -->
+<style>
+  .article-rich-text p { margin-bottom: 1.25rem; }
+  .article-rich-text h2 { font-family: 'Playfair Display', Georgia, serif; font-size: 1.6rem; font-weight: 700; margin-top: 2rem; margin-bottom: 1rem; color: #111827; }
+  .article-rich-text h3 { font-size: 1.25rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem; color: #1f2937; }
+  .article-rich-text ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.25rem; }
+  .article-rich-text ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1.25rem; }
+  .article-rich-text li { margin-bottom: 0.5rem; }
+  .article-rich-text blockquote { border-left: 4px solid #0e7040; padding-left: 1rem; font-style: italic; color: #374151; margin: 1.5rem 0; }
+  .article-rich-text img { border-radius: 1rem; max-width: 100%; height: auto; margin: 1.5rem 0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+  .article-rich-text a { color: #0e7040; text-decoration: underline; font-weight: 600; }
+  .article-rich-text a:hover { color: #0b5c34; }
+</style>
+
+<!-- BlogPosting JSON-LD Schema for SEO & Metadata -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": {{ article.title | json }},
+  {% if article.image %}
+    "image": [
+      {{ article.image | image_url: width: 1200 | prepend: "https:" | json }}
+    ],
+  {% elsif is_diwali_post %}
+    "image": [{{ '4nov.png' | asset_url | prepend: "https:" | json }}],
+  {% endif %}
+  "datePublished": {{ article.published_at | date: "%Y-%m-%dT%H:%M:%S%z" | json }},
+  "dateModified": {{ article.updated_at | default: article.published_at | date: "%Y-%m-%dT%H:%M:%S%z" | json }},
+  "author": {
+    "@type": "Person",
+    "name": {{ article.author | default: shop.name | json }}
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": {{ shop.name | json }},
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://cdn.shopify.com/s/files/1/0748/1766/7150/files/logopink.png?v=1784187803"
+    }
+  },
+  {%- if is_diwali_post %}
+  "description": "Explore the best Diwali gift hampers and flowers for this festive season. Send beautiful festive gifts, fresh flowers and sweet surprises across India and worldwide.",
+  "keywords": "Best Diwali gift hampers, Diwali gifts online, Diwali gift hampers online, Luxury Diwali gift hampers, Diwali flowers delivery",
+  {%- else %}
+  "description": {{ article.excerpt_or_content | strip_html | truncatewords: 35 | json }},
+  {%- endif %}
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": {{ canonical_url | json }}
+  }
+}
+</script>
+
+{% schema %}
+{
+  "name": "Main Article Details",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_featured_image",
+      "label": "Show Featured Image",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": "Show Publication Date",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "Show Author",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_reading_time",
+      "label": "Show Estimated Reading Time",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_share_buttons",
+      "label": "Show Social Share Buttons",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

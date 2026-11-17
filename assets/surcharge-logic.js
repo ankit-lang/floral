@@ -35,89 +35,149 @@
     }
 
     // Intercept form submission to add the Hidden Surcharge Product
+    // Intercept form submission to add main product and any selected add-ons via AJAX
     const form = document.querySelector('form[action*="/cart/add"]');
     if (form) {
       form.addEventListener('submit', async function(e) {
-        if (!surchargeActive) return; // Proceed normally if no surcharge
         if (e.defaultPrevented) return; // Validation failed from delivery-date-picker
 
-        e.preventDefault(); // Stop native submission
+        e.preventDefault(); // Stop native submission to handle via AJAX
 
-        const submitBtn = form.querySelector('[type="submit"], button[name="add"]');
+        const submitBtn = form.querySelector('[type="submit"], button[name="add"], #add-to-cart-btn');
+        const crossSellBtn = document.getElementById('cross-sell-add-btn');
         const origText = submitBtn ? submitBtn.innerHTML : '';
+        const origCrossSellText = crossSellBtn ? crossSellBtn.textContent : '';
+
         if (submitBtn) {
           submitBtn.innerHTML = 'Adding...';
           submitBtn.disabled = true;
         }
+        if (crossSellBtn) {
+          crossSellBtn.textContent = 'Adding to Cart...';
+          crossSellBtn.disabled = true;
+        }
 
         try {
-          // Use the variant ID pre-injected by Liquid (avoids auth issues on local dev)
-          const surchargeVariantId = window.__surchargeVariantId;
-          if (!surchargeVariantId) {
-            throw new Error('Surcharge product not found or unavailable. Please make sure the "Peak Season Delivery Surcharge" product is Active, published to Online Store, and has "Track quantity" unchecked.');
-          }
-
           const formData = new FormData(form);
-          const qty = parseInt(formData.get('quantity') || '1', 10);
           
-          // Calculate the total surcharge amount (and thus quantity of 1 INR product)
-          // currentVariantBasePrice is in cents/paise (e.g., 299900 = 2999 INR).
-          // We convert it to standard format. Wait, if currentVariantBasePrice is 299900,
-          // then (299900 / 100) = 2999. Surcharge = 2999 * 0.15 = 450.
-          const basePriceRupees = currentVariantBasePrice >= 100 ? currentVariantBasePrice / 100 : currentVariantBasePrice;
-          const surchargePerUnit = Math.round(basePriceRupees * (PRODUCT_SURCHARGE_PCT / 100));
-          const totalSurchargeQty = surchargePerUnit * qty; 
+          // Ensure Peak Surcharge property is added if active
+          const isPeakActive = (typeof surchargeActive !== 'undefined' && surchargeActive && typeof PRODUCT_SURCHARGE_PCT !== 'undefined');
+          
+          // Ensure International Delivery property is added if active
+          const isInternational = (localStorage.getItem('delivery_mode') || 'india') === 'international';
 
-          let props = {};
-          for (let [key, value] of formData.entries()) {
-             if (key.startsWith('properties[')) {
-                let propName = key.replace('properties[', '').replace(']', '');
-                props[propName] = value;
-             }
+          // Extract properties for main product
+          const mainProperties = {};
+          for (const [key, value] of formData.entries()) {
+            if (key.startsWith('properties[') && key.endsWith(']')) {
+              const propName = key.slice(11, -1);
+              if (!propName.startsWith('Add-on:')) {
+                mainProperties[propName] = value;
+              }
+            }
           }
-          props['_Peak Surcharge'] = 'Applied (+' + PRODUCT_SURCHARGE_PCT + '%)';
 
-          const mainItemId = formData.get('id');
+          if (isPeakActive) {
+            mainProperties['_Peak Surcharge'] = 'Applied (+' + PRODUCT_SURCHARGE_PCT + '%)';
+          }
+          if (isInternational) {
+            mainProperties['_For International Delivery'] = 'True';
+          }
 
-          const items = [
+          const mainVariantId = parseInt(formData.get('id') || (form.querySelector('input[name="id"]') ? form.querySelector('input[name="id"]').value : ''), 10);
+          const rawQty = parseInt(formData.get('quantity') || (form.querySelector('input[name="quantity"]') ? form.querySelector('input[name="quantity"]').value : '1'), 10);
+          const mainQty = isNaN(rawQty) || rawQty < 1 ? 1 : rawQty;
+
+          if (!mainVariantId || isNaN(mainVariantId)) {
+            throw new Error('Please select a product option.');
+          }
+
+          // Build main product payload item
+          const itemsToAdd = [
             {
-               id: mainItemId,
-               quantity: qty,
-               properties: props
+              id: mainVariantId,
+              quantity: mainQty,
+              properties: mainProperties
             }
           ];
 
-          if (totalSurchargeQty > 0) {
-            items.push({
-               id: surchargeVariantId,
-               quantity: totalSurchargeQty,
-               properties: {
-                 '_For Surcharge': 'True'
-               }
+          // Collect any selected "Make It Extra Special" add-on products
+          const addonItems = (typeof window.getSelectedCrossSellItems === 'function')
+            ? window.getSelectedCrossSellItems()
+            : [];
+
+          const mainTitle = (document.querySelector('h1') ? document.querySelector('h1').textContent.trim() : 'Main Product');
+          const groupToken = 'grp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+
+          mainProperties['_is_main_product'] = 'true';
+          mainProperties['_group_id'] = groupToken;
+
+          addonItems.forEach(function(addon) {
+            const addonProps = {};
+            if (mainProperties['Delivery Date']) {
+              addonProps['Delivery Date'] = mainProperties['Delivery Date'];
+            }
+            if (mainProperties['Delivery Time']) {
+              addonProps['Delivery Time'] = mainProperties['Delivery Time'];
+            }
+            if (mainProperties['City']) {
+              addonProps['City'] = mainProperties['City'];
+            }
+            if (isInternational) {
+              addonProps['_For International Delivery'] = 'True';
+            }
+            addonProps['_Addon_For'] = mainTitle;
+            addonProps['_is_addon'] = 'true';
+            addonProps['_parent_title'] = mainTitle;
+            addonProps['_parent_group_id'] = groupToken;
+            addonProps['_parent_variant_id'] = String(mainVariantId);
+
+            itemsToAdd.push({
+              id: addon.id,
+              quantity: 1,
+              properties: addonProps
             });
+          });
+
+          const rootUrl = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) ? window.Shopify.routes.root : '/';
+          const addRes = await fetch(rootUrl + 'cart/add.js', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({ items: itemsToAdd })
+          });
+
+          if (!addRes.ok) {
+            const errorData = await addRes.json();
+            throw new Error(errorData.description || 'Could not add item to cart.');
           }
 
-          const addRes = await fetch(window.Shopify.routes.root + 'cart/add.js', {
-             method: 'POST',
-             headers: { 'Content-Type': 'application/json' },
-             body: JSON.stringify({ items: items })
-          });
-          
-          if (!addRes.ok) {
-            let errMsg = 'Failed to add to cart';
-            try {
-              const errData = await addRes.json();
-              errMsg = errData.description || errData.message || errMsg;
-            } catch(e) {}
-            throw new Error(errMsg);
-          }
-          window.location.href = window.Shopify.routes.root + 'cart';
+          // Redirect to cart on success
+          window.location.href = rootUrl + 'cart';
 
         } catch (err) {
-          console.error('[Surcharge Error]', err);
-          alert('⚠️ Could not apply Peak Season Surcharge.\n\nError Details: ' + err.message + '\n\nIf you are the admin, please check that the "Peak Season Delivery Surcharge" product is Active, published to Online Store AND International Markets, and has "Track quantity" unchecked.');
-          // Fallback: Submit form natively
-          form.submit();
+          console.error('[Cart Add Error]', err);
+          
+          if (submitBtn) {
+            submitBtn.innerHTML = origText;
+            submitBtn.disabled = false;
+          }
+          if (crossSellBtn) {
+            crossSellBtn.textContent = origCrossSellText;
+            crossSellBtn.disabled = false;
+          }
+
+          // Show a nice inline error message instead of an alert
+          let errorDiv = document.getElementById('ajax-cart-error');
+          if (!errorDiv) {
+            errorDiv = document.createElement('div');
+            errorDiv.id = 'ajax-cart-error';
+            errorDiv.className = 'mt-3 p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-xl text-center';
+            form.appendChild(errorDiv);
+          }
+          errorDiv.innerHTML = '⚠️ ' + err.message;
         }
       });
     }

@@ -1,0 +1,141 @@
+{%- comment -%}
+  Article Card Snippet
+  Accepts:
+  - article: {Object} Shopify Article object 
+  - show_date: {Boolean} Whether to show publication date (default: true)
+  - show_author: {Boolean} Whether to show author (default: false)
+  - show_excerpt: {Boolean} Whether to show article excerpt (default: true)
+{%- endcomment -%}
+
+{%- assign show_date = show_date | default: true -%}
+{%- assign show_author = show_author | default: false -%}
+{%- assign show_excerpt = show_excerpt | default: true -%}
+
+{%- assign default_article_title = "Best Diwali Gift Hampers and Flowers for This Festive Season" -%}
+{%- assign default_article_url = "/blogs/news/best-diwali-gift-hampers-and-flowers-for-this-festive-season" -%}
+{%- assign default_article_excerpt = "Explore the best Diwali gift hampers and flowers for this festive season. Send beautiful festive gifts, fresh flowers and sweet surprises across India and worldwide." -%}
+
+{%- assign card_url = article.url | default: default_article_url -%}
+{%- if card_url contains '/blogs/news' -%}
+  {%- assign card_url = card_url -%}
+{%- endif -%}
+{%- assign card_title = article.title | default: default_article_title -%}
+{%- assign card_date = article.published_at | default: 'now' | date: "%B %d, %Y" -%}
+{%- assign card_author = article.author | default: shop.name | default: 'Floral India' -%}
+{%- assign card_excerpt = article.excerpt_or_content | strip_html | truncatewords: 22 -%}
+{%- assign card_tag = article.tags.first | default: "Diwali Hampers" -%}
+{%- assign words = article.content | strip_html | split: ' ' | size -%}
+
+{%- if article == blank or article.handle == 'best-diwali-gift-hampers-and-flowers-for-this-festive-season' or article.handle contains 'diwali' -%}
+  {%- assign card_fallback_image = '4nov.png' | asset_url -%}
+  {%- assign card_excerpt = default_article_excerpt -%}
+  {%- capture post_body -%}{% render 'blog-post-diwali-gift-hampers' %}{%- endcapture -%}
+  {%- assign words = post_body | strip_html | split: ' ' | size -%}
+{%- endif -%}
+{%- assign read_minutes = words | divided_by: 200 | at_least: 1 -%}
+
+<article class="group flex flex-col bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-emerald-200/80 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-full">
+  <!-- Card Media / Featured Image -->
+  <a href="{{ card_url }}" class="relative block aspect-[16/10] overflow-hidden bg-gradient-to-br from-emerald-50 via-pink-50 to-amber-50 shrink-0" aria-label="{{ card_title | escape }}">
+    {%- if article.image != blank -%}
+      <img
+        src="{{ article.image | image_url: width: 700 }}"
+        srcset="{{ article.image | image_url: width: 400 }} 400w, {{ article.image | image_url: width: 700 }} 700w, {{ article.image | image_url: width: 1000 }} 1000w"
+        sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+        alt="{{ article.image.alt | default: card_title | escape }}"
+        loading="lazy"
+        width="{{ article.image.width }}"
+        height="{{ article.image.height }}"
+        class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+      >
+    {%- elsif card_fallback_image != blank -%}
+      <img
+        src="{{ card_fallback_image }}"
+        alt="{{ card_title | escape }}"
+        loading="lazy"
+        width="1280"
+        height="853"
+        class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+      >
+    {%- else -%}
+      <!-- Aesthetic Fallback Floral Visual Placeholder -->
+      <div class="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-emerald-50/80 via-white to-pink-50/80 relative">
+        <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2 shadow-xs group-hover:scale-110 transition-transform">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+          </svg>
+        </div>
+      </div>
+    {%- endif -%}
+
+    <!-- Category / Tag Badge -->
+    {%- if card_tag != blank -%}
+      <div class="absolute top-3 left-3 z-10">
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-white/95 text-emerald-800 shadow-sm backdrop-blur-xs border border-emerald-100">
+          🌸 {{ card_tag }}
+        </span>
+      </div>
+    {%- endif -%}
+
+    <!-- Reading Time Badge -->
+    <div class="absolute bottom-3 right-3 z-10">
+      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-gray-900/75 text-white backdrop-blur-xs">
+        <svg class="w-3 h-3 text-amber-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>{{ read_minutes }} min read</span>
+      </span>
+    </div>
+  </a>
+
+  <!-- Card Content -->
+  <div class="p-5 sm:p-6 flex flex-col flex-1 justify-between">
+    <div>
+      <!-- Meta Information Row: Date & Author -->
+      <div class="flex items-center flex-wrap gap-2 text-[11px] sm:text-xs text-gray-500 mb-2.5">
+        {%- if show_date -%}
+          <div class="flex items-center gap-1.5 font-medium text-emerald-800 bg-emerald-50/80 px-2 py-0.5 rounded-md border border-emerald-100/60" title="Date of addition">
+            <svg class="w-3.5 h-3.5 text-primary shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <span>{{ card_date }}</span>
+          </div>
+        {%- endif -%}
+
+        {%- if show_author and card_author != blank -%}
+          <span class="text-gray-300">•</span>
+          <span class="flex items-center gap-1 font-medium text-gray-600">
+            <svg class="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+            {{ card_author }}
+          </span>
+        {%- endif -%}
+      </div>
+
+      <!-- Article Title -->
+      <h2 class="text-base sm:text-lg md:text-xl font-serif font-bold text-gray-900 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+        <a href="{{ card_url }}" class="focus:outline-none focus:underline">
+          {{ card_title }}
+        </a>
+      </h2>
+
+      <!-- Article Excerpt -->
+      {%- if show_excerpt and card_excerpt != blank -%}
+        <p class="text-xs sm:text-sm text-gray-600 line-clamp-3 mt-2.5 leading-relaxed">
+          {{ card_excerpt }}
+        </p>
+      {%- endif -%}
+    </div>
+
+    <!-- Read Story Link -->
+    <div class="pt-4 mt-4 border-t border-gray-100 flex items-center justify-between gap-2">
+      <a href="{{ card_url }}" class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-primary group-hover:text-primary-700 transition-colors">
+        <span>Read More</span>
+        <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+        </svg>
+      </a>
+
+      <button type="button" onclick="var p=document.getElementById('diwali-full-article-preview'); if(p){ p.classList.toggle('hidden'); if(!p.classList.contains('hidden')){ p.scrollIntoView({behavior:'smooth'}); } }" class="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200/60 transition-colors">
+        <span>Quick Read &darr;</span>
+      </button>
+    </div>
+  </div>
+</article>

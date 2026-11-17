@@ -1,7 +1,22 @@
+{%- comment -%} Larger desktop header (plain CSS: tailwind-compiled.css is prebuilt and lacks new utility classes) {%- endcomment -%}
+<style>
+  @media (min-width: 768px) {
+    .fi-topbar { font-size: 13px; }
+    .fi-topbar > div { min-height: 40px; }
+    .fi-header-main { padding-top: 1rem; padding-bottom: 1rem; }
+    .fi-header-logo { height: 6rem; }
+    .fi-header-loc { width: 270px; }
+    .fi-header-loc button { padding: 0.375rem 0.75rem; }
+    .fi-header-loc button span { font-size: 13px; }
+    .fi-header-nav { height: 3rem; font-size: 15px; }
+    .fi-header-nav > li > a,
+    .fi-header-nav > li > button { font-size: 15px; }
+  }
+</style>
 <!-- ============================================ -->
 <!-- TOP UTILITY BAR                              -->
 <!-- ============================================ -->
-<div class="bg-primary text-white text-[11px] font-medium py-1.5 sm:py-0">
+<div class="fi-topbar bg-primary text-white text-[11px] font-medium py-1.5 sm:py-0">
   <div class="max-w-7xl mx-auto px-3 sm:px-4 flex items-center justify-between min-h-[34px] gap-2">
     <div class="flex items-center gap-1.5 shrink-0">
       <a href="tel:01141050051" class="hidden sm:inline-flex items-center gap-1 animate-pulse-soft text-yellow-100 font-semibold hover:underline">011-41050051</a>
@@ -64,19 +79,19 @@
 <!-- MAIN HEADER BAR                              -->
 <!-- ============================================ -->
 <header id="main-header" class="bg-white/95 backdrop-blur-md sticky top-0 z-50 shadow-sm transition-all duration-500" style="animation:headerIn 0.8s ease forwards;">
-  <div class="max-w-7xl mx-auto px-2.5 sm:px-4 py-2 sm:py-3 flex items-center justify-between gap-1.5 sm:gap-4">
+  <div class="fi-header-main max-w-7xl mx-auto px-2.5 sm:px-4 py-2 sm:py-3 flex items-center justify-between gap-1.5 sm:gap-4">
 
     <!-- Logo & Location Button Container -->
     <div class="flex items-center gap-1.5 sm:gap-4 shrink min-w-0">
       <a href="/" class="flex items-center shrink-0">
-        <img src="https://cdn.shopify.com/s/files/1/0748/1766/7150/files/logopink.png?v=1784187803" alt="{{ section.settings.logo_text | default: 'Floral India' }}" class="h-9 sm:h-14 md:h-20 w-auto object-contain hover:animate-leaf-sway origin-bottom">
+        <img src="https://cdn.shopify.com/s/files/1/0748/1766/7150/files/logopink.png?v=1784187803" alt="{{ section.settings.logo_text | default: 'Floral India' }}" class="fi-header-logo h-9 sm:h-14 md:h-20 w-auto object-contain hover:animate-leaf-sway origin-bottom">
       </a>
 
       <!-- Divider -->
       <div class="h-8 sm:h-10 w-px bg-gray-200 hidden sm:block"></div>
 
       <!-- Stacked Delivery Selector Buttons (Desktop Only - hidden on mobile main row) -->
-      <div class="hidden md:flex flex-col gap-1 shrink-0 py-0.5 w-[220px] md:w-[240px]">
+      <div class="fi-header-loc hidden md:flex flex-col gap-1 shrink-0 py-0.5 w-[220px] md:w-[240px]">
         <!-- India Delivery Button -->
         <button type="button" id="header-india-delivery-btn" onclick="openPincodeModal('india')" class="flex items-center justify-between gap-1.5 bg-emerald-50 border-2 border-emerald-600 px-2.5 py-1 rounded-lg transition-all cursor-pointer text-left group shadow-xs w-full" title="India Delivery Location">
           <div class="flex items-center gap-1.5 min-w-0 flex-1">
@@ -140,7 +155,7 @@
 
       {% assign real_item_count = 0 %}
       {% for item in cart.items %}
-        {% if item.product.handle != 'peak-season-delivery-surcharge' %}
+        {% if item.product.handle != 'peak-season-delivery-surcharge' and item.product.handle != 'international-delivery-charge' %}
           {% assign real_item_count = real_item_count | plus: item.quantity %}
         {% endif %}
       {% endfor %}
@@ -176,7 +191,7 @@
               </div>
             {% else %}
               {% for item in cart.items %}
-                {% if item.product.handle != 'peak-season-delivery-surcharge' %}
+                {% if item.product.handle != 'peak-season-delivery-surcharge' and item.product.handle != 'international-delivery-charge' %}
                   <div class="flex items-center gap-3 py-2.5 px-2 hover:bg-gray-50 rounded-xl transition-colors cart-item-row" data-key="{{ item.key }}">
                     <a href="{{ item.url }}" class="flex-shrink-0">
                       <img src="{{ item.image | img_url: '80x80', crop: 'center' }}" alt="{{ item.title | escape }}" class="w-12 h-12 rounded-xl object-cover border border-gray-100">
@@ -265,12 +280,12 @@
   <nav class="border-t border-gray-100 bg-white block overflow-x-auto scrollbar-hide" style="-webkit-overflow-scrolling: touch; -ms-overflow-style: none; scrollbar-width: none;">
     <style>.scrollbar-hide::-webkit-scrollbar { display: none; }</style>
     <div class="max-w-7xl mx-auto px-2 md:px-4">
-      <ul class="flex items-center md:justify-center h-10 md:h-11 text-[11px] md:text-[13px] font-semibold relative flex-nowrap min-w-max">
+      <ul class="fi-header-nav flex items-center md:justify-center h-10 md:h-11 text-[11px] md:text-[13px] font-semibold relative flex-nowrap min-w-max">
 
         <!-- Exotic Flowers -->
         <li>
-          <a href="/collections/exotic-flowers" class="px-2.5 md:px-3.5 py-1 md:py-1.5 mx-0.5 md:mx-1 rounded-xl bg-gradient-to-r from-amber-50 to-pink-50 hover:from-amber-100 hover:to-pink-100 border border-amber-200/90 font-bold whitespace-nowrap flex items-center gap-1 md:gap-1.5 transition-all shadow-2xs cursor-pointer text-[10px] md:text-[13px]">
-            <span>Exotic</span>
+          <a href="/collections/exotic-flowers" class="px-2.5 md:px-3.5 py-1 md:py-1.5 mx-0.5 md:mx-1 rounded-xl bg-pink-50 hover:bg-pink-100 border border-pink-200 font-bold whitespace-nowrap flex items-center gap-1 md:gap-1.5 transition-all shadow-2xs cursor-pointer text-[10px] md:text-[13px]">
+            <span class="text-pink-700">Exotic</span>
             <span class="text-[8px] md:text-[9px] font-extrabold text-emerald-700 bg-emerald-100 px-1 md:px-1.5 py-0.2 rounded-full uppercase tracking-wider">Flowers</span>
           </a>
         </li>
@@ -294,7 +309,7 @@
                 <ul class="space-y-1.5 text-sm text-gray-600 max-h-[340px] overflow-y-auto pr-2 custom-scroll">
                   {%- assign products_list = 'Exotic Flowers,Plants,Flowers,Cakes,Combo,Balloons,Chocolates,Essentials,Stones,Hampers,Indian Sweets,Perfumes,Artificial Jewelry,Soft Toys,Greeting Cards,Wine & Champagne' | split: ',' -%}
                   {% for item in products_list %}
-                    {%- assign product_link = '/collections/' | append: item | handleize -%}
+                    {%- assign product_link = item | handleize | prepend: '/collections/' -%}
                     {%- if item == 'Combo' -%}{%- assign product_link = '/collections/combos' -%}{%- endif -%}
                     <li><a href="{{ product_link }}" class="block py-1 px-2 rounded hover:bg-primary/5 hover:text-primary transition-colors">{{ item }}</a></li>
                   {% endfor %}
@@ -390,11 +405,11 @@
 
         <!-- 4. Corporate & Events (Small Dropdown) -->
         <li class="relative group">
-          <button class="px-2.5 md:px-4 py-1.5 md:py-2 nav-bloom relative hover:text-primary transition-colors text-gray-700 whitespace-nowrap flex items-center gap-1">
+          <a href="/pages/corporate-events?view=corporate-events" class="px-2.5 md:px-4 py-1.5 md:py-2 nav-bloom relative hover:text-primary transition-colors text-gray-700 whitespace-nowrap flex items-center gap-1">
             Corporate & Events
             <svg class="w-3 h-3 md:w-3.5 md:h-3.5 text-gray-400 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
-          </button>
-          <div class="fixed md:absolute left-0 md:left-auto right-0 md:right-auto top-[120px] md:top-full pt-1 opacity-0 invisible transition-all duration-200 z-[100] md:z-40 w-full md:w-auto px-4 md:px-0 mobile-dropdown-panel">
+          </a>
+          <div class="fixed md:absolute left-0 md:left-1/2 right-0 md:right-auto md:-translate-x-1/2 top-[120px] md:top-full pt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] md:z-40 w-full md:w-auto px-4 md:px-0 mobile-dropdown-panel">
             <div class="bg-white rounded-xl shadow-2xl md:shadow-xl border border-gray-100 py-2 w-full md:w-56 mx-auto max-w-sm md:max-w-none">
               <a href="/pages/corporate-events?view=corporate-events" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary transition-colors">Corporate Gifting</a>
               <a href="/pages/corporate-events?view=corporate-events#weddings" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary transition-colors">Weddings</a>
@@ -406,11 +421,11 @@
 
         <!-- 5. Elite / Concierge (Small Dropdown) -->
         <li class="relative group">
-          <button class="px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg hover:bg-amber-50 hover:text-amber-700 transition-colors text-gray-700 whitespace-nowrap flex items-center gap-1">
+          <a href="/pages/elite-concierge?view=elite-concierge" class="px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg hover:bg-amber-50 hover:text-amber-700 transition-colors text-gray-700 whitespace-nowrap flex items-center gap-1">
             Elite Concierge
             <svg class="w-3 h-3 md:w-3.5 md:h-3.5 text-gray-400 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
-          </button>
-          <div class="fixed md:absolute left-0 md:left-auto right-0 md:right-auto top-[120px] md:top-full pt-1 opacity-0 invisible transition-all duration-200 z-[100] md:z-40 w-full md:w-auto px-4 md:px-0 mobile-dropdown-panel">
+          </a>
+          <div class="fixed md:absolute left-0 md:left-1/2 right-0 md:right-auto md:-translate-x-1/2 top-[120px] md:top-full pt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] md:z-40 w-full md:w-auto px-4 md:px-0 mobile-dropdown-panel">
             <div class="bg-white rounded-xl shadow-2xl md:shadow-xl border border-gray-100 py-2 w-full md:w-56 mx-auto max-w-sm md:max-w-none">
               <a href="/pages/elite-concierge?view=elite-concierge#musician" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-700 transition-colors">Musician on Call</a>
               <a href="/pages/elite-concierge?view=elite-concierge#guitarist" class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-700 transition-colors">Guitarist on Call</a>
@@ -425,6 +440,13 @@
         <li>
           <a href="/pages/e-gifts?view=e-gifts" class="px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg hover:bg-pink-50 hover:text-secondary transition-colors text-gray-700 whitespace-nowrap flex items-center gap-1">
             E-Gifts
+          </a>
+        </li>
+
+        <!-- 7. Blogs -->
+        <li>
+          <a href="{{ blogs['blog'].url | default: '/blogs/news' }}" class="px-2.5 md:px-4 py-1.5 md:py-2 rounded-lg hover:bg-emerald-50 hover:text-primary transition-colors text-gray-700 whitespace-nowrap flex items-center gap-1">
+            Blogs
           </a>
         </li>
 
@@ -664,7 +686,7 @@
         </div>
         {%- assign mob_products = 'Exotic Flowers,Plants,Flowers,Cakes,Combo,Balloons,Chocolates,Essentials,Stones,Hampers,Fresh Fruits,Indian Sweets,Perfumes,Jewelry,Soft Toys' | split: ',' -%}
         {% for item in mob_products %}
-          {%- assign mob_product_link = '/collections/' | append: item | handleize -%}
+          {%- assign mob_product_link = item | handleize | prepend: '/collections/' -%}
           {%- if item == 'Combo' -%}{%- assign mob_product_link = '/collections/combos' -%}{%- endif -%}
           <a href="{{ mob_product_link }}" class="block pl-12 pr-5 py-2 text-sm text-gray-600 hover:text-primary transition-colors">{{ item }}</a>
         {% endfor %}
@@ -738,6 +760,14 @@
       E-Gifts
     </a>
 
+    <!-- Blogs & Guides Link -->
+    <a href="{{ blogs['blog'].url | default: '/blogs/news' }}" class="flex items-center justify-between w-full px-5 py-3 text-sm font-medium text-gray-700 hover:bg-emerald-50 hover:text-primary transition-colors">
+      <span class="flex items-center gap-3">
+        <span>Blogs & Guides</span>
+      </span>
+      <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+    </a>
+
 
 
     <div class="border-t border-gray-100 my-3"></div>
@@ -752,7 +782,7 @@
       </button>
     {% endif %}
     <a href="{{ routes.cart_url }}" class="flex items-center gap-3 px-5 py-3 text-sm font-medium text-gray-600 hover:text-primary transition-colors">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Cart ({{ cart.item_count }})
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Cart ({{ real_item_count }})
     </a>
   </div>
 </aside>
@@ -773,6 +803,11 @@
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
   .nav-bloom:hover::after { transform: translateX(-50%) scaleX(1); }
+
+  @media (min-width: 768px) {
+    .group:hover .md\:group-hover\:opacity-100 { opacity: 1 !important; }
+    .group:hover .md\:group-hover\:visible { visibility: visible !important; }
+  }
 </style>
 
 
@@ -819,12 +854,18 @@
     });
 
     /* Nav Dropdowns (Click Toggle for both Desktop & Mobile) */
-    document.querySelectorAll('.group > button').forEach(btn => {
+    document.querySelectorAll('.group > button, .group > a').forEach(btn => {
       btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation(); // prevent outside click from instantly closing
         const panel = btn.nextElementSibling;
         if (!panel || !panel.classList.contains('mobile-dropdown-panel')) return;
+
+        // If Desktop and tag is A, allow redirect without toggling mobile dropdown
+        if (window.innerWidth >= 768 && btn.tagName.toLowerCase() === 'a') {
+          return;
+        }
+
+        e.preventDefault();
+        e.stopPropagation(); // prevent outside click from instantly closing
         
         const isOpen = panel.classList.contains('opacity-100');
         
@@ -915,13 +956,20 @@
       })
       .then(r => r.json())
       .then(function(cart) {
+        let realCount = 0;
+        cart.items.forEach(item => {
+          if (item.handle !== 'peak-season-delivery-surcharge' && item.handle !== 'international-delivery-charge') {
+            realCount += item.quantity;
+          }
+        });
+
         // Update badge count
         const badge = document.getElementById('cart-count-badge');
-        if (badge) badge.textContent = cart.item_count;
+        if (badge) badge.textContent = realCount;
 
         // Update dropdown count text
         const countEl = document.getElementById('cart-dropdown-count');
-        if (countEl) countEl.textContent = cart.item_count + (cart.item_count === 1 ? ' item' : ' items');
+        if (countEl) countEl.textContent = realCount + (realCount === 1 ? ' item' : ' items');
 
         // Update total
         const totalEl = document.getElementById('cart-dropdown-total');
@@ -935,7 +983,7 @@
 
         // If cart is now empty, show empty state
         const itemsContainer = document.getElementById('cart-dropdown-items');
-        if (cart.item_count === 0 && itemsContainer) {
+        if (realCount === 0 && itemsContainer) {
           itemsContainer.innerHTML = '<div class="py-8 text-center text-gray-400 text-sm"><div class="text-4xl mb-2">🛒</div><p>Your cart is empty</p><a href="/collections/all" class="mt-3 inline-block text-xs font-bold text-primary hover:underline">Shop Now →</a></div>';
           // Hide footer buttons
           const footer = dropdown.querySelector('.border-t.border-gray-100.px-4.pb-4');
@@ -943,7 +991,7 @@
         }
 
         // Also update any other cart count on page (mobile badge etc.)
-        document.querySelectorAll('[data-cart-count]').forEach(el => el.textContent = cart.item_count);
+        document.querySelectorAll('[data-cart-count]').forEach(el => el.textContent = realCount);
       })
       .catch(function() {
         if (row) { row.style.opacity = '1'; row.style.pointerEvents = ''; }
